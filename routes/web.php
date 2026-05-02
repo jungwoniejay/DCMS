@@ -167,6 +167,25 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('enrollments/{id}/approve', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'approve'])->name('enrollments.approve');
     Route::post('enrollments/{id}/reject', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'reject'])->name('enrollments.reject');
     Route::delete('enrollments/pending', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'clearPending'])->name('enrollments.clear-pending');
+    Route::get('enrollments/{id}/debug-approve', function($id) {
+        try {
+            $r = \App\Models\EnrollmentRequest::findOrFail($id);
+            $child = \App\Models\Child::create([
+                'guardian_id' => $r->parent_id, 'last_name' => $r->child_last_name,
+                'first_name' => $r->child_first_name, 'middle_name' => $r->child_middle_name,
+                'sex' => $r->child_sex, 'birthdate' => $r->child_birthdate,
+                'age' => $r->child_age, 'address' => $r->child_address,
+                'first_language' => $r->child_first_language, 'second_language' => $r->child_second_language,
+                'profile_picture' => $r->child_photo, 'registration_status' => 'Approved',
+                'accomplished_by' => $r->parent->name, 'reviewed_by' => auth()->user()->name, 'reviewed_at' => now(),
+            ]);
+            $fp = $child->familyProfile()->create(['purok_zone' => $r->purok_zone]);
+            $r->update(['status' => 'Approved', 'reviewed_by' => auth()->id(), 'reviewed_at' => now(), 'child_id' => $child->id]);
+            return response()->json(['success' => true, 'child_id' => $child->id, 'fp_id' => $fp->id]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
+        }
+    })->name('enrollments.debug-approve');
     
     // Appointment Management
     Route::get('appointments', [\App\Http\Controllers\Admin\AdminAppointmentController::class, 'index'])->name('appointments');
