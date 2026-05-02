@@ -61,7 +61,7 @@ export default function Enrollments({ requests, stats }: Props) {
 
     const handleApprove = (id: number) => {
         if (confirm('Approve this enrollment request? A new child record will be created.')) {
-            post(route('admin.enrollments.approve', id));
+            router.post(route('admin.enrollments.approve', id));
         }
     };
 
