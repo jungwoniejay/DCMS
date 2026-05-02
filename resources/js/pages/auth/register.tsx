@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { LoaderCircle, Mail, Lock, User, ArrowRight } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { LoaderCircle, Mail, Lock, User, ArrowRight, Shield } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
 import InputError from '@/components/input-error';
 import DaycareLogo from '@/components/daycare-logo';
 
@@ -10,6 +10,7 @@ interface RegisterForm {
     password: string;
     password_confirmation: string;
     role: string;
+    admin_key: string;
 }
 
 export default function Register() {
@@ -19,7 +20,9 @@ export default function Register() {
         password: '',
         password_confirmation: '',
         role: 'parent',
+        admin_key: '',
     });
+    const [showAdminKey, setShowAdminKey] = useState(false);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -117,13 +120,58 @@ export default function Register() {
                             </div>
 
                             <div>
-                                <label htmlFor="role" className="block text-sm font-semibold text-gray-700 mb-2">
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
                                     Account Type
                                 </label>
-                                <div className="w-full px-4 py-3 border border-gray-100 rounded-xl bg-gray-50 text-gray-500 text-sm">
-                                    Parent / Guardian
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => { setData('role', 'parent'); setShowAdminKey(false); }}
+                                        className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                                            data.role === 'parent'
+                                                ? 'border-green-500 bg-green-50 text-green-700'
+                                                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+                                        }`}
+                                    >
+                                        <User className="w-4 h-4" />
+                                        Parent / Guardian
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => { setData('role', 'admin'); setShowAdminKey(true); }}
+                                        className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                                            data.role === 'admin'
+                                                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+                                        }`}
+                                    >
+                                        <Shield className="w-4 h-4" />
+                                        Administrator
+                                    </button>
                                 </div>
+                                <InputError message={errors.role} className="mt-1" />
                             </div>
+
+                            {showAdminKey && (
+                                <div>
+                                    <label htmlFor="admin_key" className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Admin Registration Key
+                                    </label>
+                                    <div className="relative">
+                                        <Shield className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                                        <input
+                                            id="admin_key"
+                                            type="password"
+                                            value={data.admin_key}
+                                            onChange={(e) => setData('admin_key', e.target.value)}
+                                            placeholder="Enter admin key"
+                                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                        />
+                                    </div>
+                                    <InputError message={errors.admin_key} className="mt-1" />
+                                    <p className="text-xs text-gray-400 mt-1">Contact your system administrator for the registration key.</p>
+                                </div>
+                            )}
 
                             <div>
                                 <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
