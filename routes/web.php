@@ -32,19 +32,14 @@ Route::get('/debug-storage', function () {
     $appPath = storage_path('app');
 
     return response()->json([
-        'storage_path'              => $publicPath,
-        'exists'                    => file_exists($publicPath) ? 'YES' : 'NO',
-        'is_writable'               => is_writable($publicPath) ? 'YES' : 'NO',
-        'files_in_public'           => scandir($publicPath) ?: [],
-        'files_in_app'              => scandir($appPath) ?: [],
-        'files_in_private'          => file_exists($privatePath) ? scandir($privatePath) : 'no private dir',
-        'enrollment_in_public'      => file_exists($publicPath.'/enrollment_photos')
-                                        ? scandir($publicPath.'/enrollment_photos')
-                                        : 'NOT FOUND',
-        'enrollment_in_private'     => file_exists($privatePath.'/enrollment_photos')
-                                        ? scandir($privatePath.'/enrollment_photos')
-                                        : 'NOT FOUND',
-        'latest_db_photo'           => \App\Models\EnrollmentRequest::whereNotNull('child_photo')->latest()->value('child_photo') ?? 'none in DB',
+        'files_in_public'       => scandir($publicPath) ?: [],
+        'files_in_private'      => file_exists($privatePath) ? scandir($privatePath) : 'no private dir',
+        'files_in_app'          => scandir($appPath) ?: [],
+        'enrollment_in_public'  => file_exists($publicPath.'/enrollment_photos') ? scandir($publicPath.'/enrollment_photos') : 'NOT FOUND',
+        'enrollment_in_private' => file_exists($privatePath.'/enrollment_photos') ? scandir($privatePath.'/enrollment_photos') : 'NOT FOUND',
+        'latest_db_photo'       => \App\Models\EnrollmentRequest::whereNotNull('child_photo')->latest()->value('child_photo') ?? 'none in DB',
+        'disk_default'          => config('filesystems.default'),
+        'disk_public_root'      => config('filesystems.disks.public.root'),
     ]);
 });
 
