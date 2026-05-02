@@ -28,26 +28,23 @@ Route::get('/privacy-policy', function () {
 // Debug endpoint - remove after fixing
 Route::get('/debug-storage', function () {
     $publicPath = storage_path('app/public');
-    $testFile = $publicPath . '/test-write.txt';
-
-    // Try writing a test file
-    $writeResult = 'FAILED';
-    try {
-        file_put_contents($testFile, 'test ' . now());
-        $writeResult = file_exists($testFile) ? 'SUCCESS - file written' : 'FAILED - file not found after write';
-    } catch (\Exception $e) {
-        $writeResult = 'ERROR: ' . $e->getMessage();
-    }
+    $privatePath = storage_path('app/private');
+    $appPath = storage_path('app');
 
     return response()->json([
-        'storage_path'        => $publicPath,
-        'exists'              => file_exists($publicPath) ? 'YES' : 'NO',
-        'is_writable'         => is_writable($publicPath) ? 'YES' : 'NO',
-        'write_test'          => $writeResult,
-        'files'               => scandir($publicPath) ?: [],
-        'enrollment_photos'   => file_exists($publicPath . '/enrollment_photos')
-                                    ? scandir($publicPath . '/enrollment_photos')
-                                    : 'directory does not exist',
+        'storage_path'              => $publicPath,
+        'exists'                    => file_exists($publicPath) ? 'YES' : 'NO',
+        'is_writable'               => is_writable($publicPath) ? 'YES' : 'NO',
+        'files_in_public'           => scandir($publicPath) ?: [],
+        'files_in_app'              => scandir($appPath) ?: [],
+        'files_in_private'          => file_exists($privatePath) ? scandir($privatePath) : 'no private dir',
+        'enrollment_in_public'      => file_exists($publicPath.'/enrollment_photos')
+                                        ? scandir($publicPath.'/enrollment_photos')
+                                        : 'NOT FOUND',
+        'enrollment_in_private'     => file_exists($privatePath.'/enrollment_photos')
+                                        ? scandir($privatePath.'/enrollment_photos')
+                                        : 'NOT FOUND',
+        'latest_db_photo'           => \App\Models\EnrollmentRequest::whereNotNull('child_photo')->latest()->value('child_photo') ?? 'none in DB',
     ]);
 });
 
