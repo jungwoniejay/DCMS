@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FamilyProfile extends Model
 {
     protected $fillable = [
-        'child_id', 'ownership', 'materials', 'one_room', 'multiple_rooms',
+        'child_id', 'purok_zone', 'ownership', 'materials', 'one_room', 'multiple_rooms',
         'has_toilet', 'has_bedroom', 'has_dining', 'has_sala', 'has_kitchen',
         'open_play_area', 'running_water', 'electricity', 'aircon', 'mobile_phone',
         'computer', 'internet', 'cd_dvd', 'tv', 'radio', 'magazines', 'books',
