@@ -30,7 +30,7 @@ DB_PORT=${DB_PORT:-5432}
 DB_DATABASE=${DB_DATABASE}
 DB_USERNAME=${DB_USERNAME}
 DB_PASSWORD=${DB_PASSWORD}
-SESSION_DRIVER=database
+SESSION_DRIVER=file
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=false
 SESSION_PATH=/
@@ -38,6 +38,7 @@ SESSION_DOMAIN=
 SESSION_SECURE_COOKIE=false
 SESSION_SAME_SITE=lax
 SESSION_COOKIE=brgy2dms_session
+SESSION_FILES_PATH=/tmp/sessions
 FILESYSTEM_DISK=local
 QUEUE_CONNECTION=database
 CACHE_STORE=database
@@ -62,6 +63,8 @@ if [ -n "$DATABASE_URL" ]; then
 fi
 
 # Storage setup
+mkdir -p /tmp/sessions
+chmod -R 777 /tmp/sessions
 chmod -R 777 /app/storage/app/public 2>/dev/null || true
 mkdir -p /app/storage/app/public/enrollment_photos
 mkdir -p /app/storage/app/public/profile_pictures
