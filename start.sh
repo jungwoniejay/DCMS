@@ -3,6 +3,13 @@ set -e
 
 echo "=== Starting DCMS ==="
 
+# Override DB connection from Railway environment variables if provided
+if [ -n "$DATABASE_URL" ]; then
+    sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=pgsql|" /app/.env
+    sed -i "s|^DB_URL=.*|DB_URL=${DATABASE_URL}|" /app/.env
+    grep -q "^DB_URL=" /app/.env || echo "DB_URL=${DATABASE_URL}" >> /app/.env
+fi
+
 # Fix permissions on volume
 chmod -R 777 /app/storage/app/public 2>/dev/null || true
 
