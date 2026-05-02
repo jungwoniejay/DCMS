@@ -21,6 +21,13 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
 
     const set = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
 
+    const handleBirthdateChange = (birthdate: string) => {
+        const age = birthdate
+            ? String(Math.floor((Date.now() - new Date(birthdate).getTime()) / (365.25 * 24 * 60 * 60 * 1000)))
+            : '';
+        setForm(prev => ({ ...prev, child_birthdate: birthdate, age }));
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -103,8 +110,8 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
-                            <div><label className={labelClass}>Birthdate *</label><input type="date" value={form.birthdate} onChange={e => set('birthdate', e.target.value)} required className={inputClass} /></div>
-                            <div><label className={labelClass}>Age *</label><input type="number" min="0" max="20" value={form.age} onChange={e => set('age', e.target.value)} required className={inputClass} /></div>
+                            <div><label className={labelClass}>Birthdate *</label><input type="date" value={form.birthdate} onChange={e => handleBirthdateChange(e.target.value)} required className={inputClass} /></div>
+                            <div><label className={labelClass}>Age</label><input type="number" value={form.age} readOnly className={`${inputClass} bg-slate-50 cursor-not-allowed`} placeholder="Auto-calculated" /></div>
                         </div>
                         <div><label className={labelClass}>Address *</label><input value={form.address} onChange={e => set('address', e.target.value)} required className={inputClass} /></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

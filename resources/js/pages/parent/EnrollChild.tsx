@@ -27,6 +27,16 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
         emergency_contact_phone: '',
     });
 
+    const handleBirthdateChange = (birthdate: string) => {
+        setData(prev => ({
+            ...prev,
+            child_birthdate: birthdate,
+            child_age: birthdate
+                ? String(Math.floor((Date.now() - new Date(birthdate).getTime()) / (365.25 * 24 * 60 * 60 * 1000)))
+                : '',
+        }));
+    };
+
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!confirm('Are you sure you want to submit this enrollment request?')) return;
@@ -78,11 +88,11 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                             </div>
                             <div>
                                 <label className={lc}>Birthdate *</label>
-                                <input type="date" value={data.child_birthdate} onChange={e => setData('child_birthdate', e.target.value)} className={ic} required />
+                                <input type="date" value={data.child_birthdate} onChange={e => handleBirthdateChange(e.target.value)} className={ic} required />
                             </div>
                             <div>
-                                <label className={lc}>Age *</label>
-                                <input type="number" value={data.child_age} onChange={e => setData('child_age', e.target.value)} className={ic} min="0" max="10" required />
+                                <label className={lc}>Age</label>
+                                <input type="number" value={data.child_age} readOnly className={`${ic} bg-purple-50 cursor-not-allowed`} placeholder="Auto-calculated" />
                             </div>
                             <div className="md:col-span-3">
                                 <label className={lc}>Address *</label>
