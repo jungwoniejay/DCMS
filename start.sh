@@ -66,15 +66,11 @@ rm -f /app/public/storage
 ln -sfn /app/storage/app/public /app/public/storage
 echo "Symlink: $(readlink /app/public/storage)"
 
-# Clear old caches
+# Clear all caches - do NOT cache routes/config as they persist on volume
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
-
-# Rebuild caches
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan cache:clear
 
 # Run migrations
 php artisan migrate --force
