@@ -1,6 +1,5 @@
-import { Head, router, Link } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
-import { Button } from '@/components/ui/button';
 import {
     Activity, AlertTriangle, AlertCircle, Shield, Users, Eye, Download,
     Search, Filter, RefreshCw, Calendar, MapPin, Monitor, Globe,
@@ -302,20 +301,20 @@ export default function ActivityMonitoring({
                         <p className="text-slate-500 mt-1 text-sm">Track user behavior and detect anomalies</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Button
-                            variant="outline"
+                        <button
                             onClick={() => setShowExportModal(true)}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all"
                         >
-                            <Download className="w-4 h-4 mr-2" />
+                            <Download className="w-4 h-4" />
                             Export
-                        </Button>
-                        <Button
+                        </button>
+                        <button
                             onClick={() => router.reload()}
-                            variant="outline"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all"
                         >
-                            <RefreshCw className="w-4 h-4 mr-2" />
+                            <RefreshCw className="w-4 h-4" />
                             Refresh
-                        </Button>
+                        </button>
                     </div>
                 </div>
 
@@ -440,23 +439,21 @@ export default function ActivityMonitoring({
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
+                                <button
                                     onClick={() => setShowFilters(!showFilters)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all"
                                 >
-                                    <Filter className="w-4 h-4 mr-2" />
+                                    <Filter className="w-4 h-4" />
                                     Filters
-                                    {showFilters ? <ChevronDown className="w-3.5 h-3.5 ml-1" /> : <ChevronRight className="w-3.5 h-3.5 ml-1" />}
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
+                                    {showFilters ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                                </button>
+                                <button
                                     onClick={resetFilters}
+                                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all"
                                 >
-                                    <X className="w-4 h-4 mr-2" />
+                                    <X className="w-4 h-4" />
                                     Clear
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -522,9 +519,9 @@ export default function ActivityMonitoring({
                                 </div>
                             </div>
                             <div className="mt-4 flex justify-end">
-                                <Button onClick={applyFilters} className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                            <button onClick={applyFilters} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold hover:shadow-md transition-all">
                                     Apply Filters
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     )}
@@ -660,10 +657,10 @@ export default function ActivityMonitoring({
                         </div>
                         <div className="flex items-center gap-1">
                             {activityLogs.links.map((link, index) => (
-                                link.url !== null ? (
+                                link.url ? (
                                     <button
                                         key={index}
-                                        onClick={() => router.get(link.url)}
+                                        onClick={() => router.get(link.url!)}
                                         className={`px-3 py-1.5 rounded-lg text-sm ${
                                             link.active
                                                 ? 'bg-blue-500 text-white'
@@ -914,21 +911,21 @@ export default function ActivityMonitoring({
                             </div>
 
                             <div className="flex gap-2 justify-end">
-                                <Button
+                            <button
                                     type="button"
-                                    variant="outline"
                                     onClick={() => setShowExportModal(false)}
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all"
                                 >
                                     Cancel
-                                </Button>
-                                <Button
+                                </button>
+                                <button
                                     type="submit"
                                     onClick={handleExport}
-                                    className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold hover:shadow-md transition-all"
                                 >
-                                    <Download className="w-4 h-4 mr-2" />
+                                    <Download className="w-4 h-4" />
                                     Export {exportFormat.toUpperCase()}
-                                </Button>
+                                </button>
                             </div>
                         </div>
                     </div>

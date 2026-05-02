@@ -1,7 +1,6 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
-import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle, X } from 'lucide-react';
 import { useState } from 'react';
 
 const ic = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400';
@@ -289,9 +288,9 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                     </div>
                                 </div>
 
-                                <Button type="submit" disabled={barangayForm.processing} className="bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0">
+                                <button type="submit" disabled={barangayForm.processing} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all disabled:opacity-50">
                                     {barangayForm.processing ? 'Saving...' : 'Save Barangay Settings'}
-                                </Button>
+                                </button>
                             </form>
                         )}
 
@@ -299,9 +298,9 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                         {activeTab === 'users' && (
                             <div className="space-y-4">
                                 <div className="flex justify-end">
-                                    <Button onClick={() => setShowCreateModal(true)}>
-                                        <Plus className="w-4 h-4 mr-2" /> Create User
-                                    </Button>
+                                    <button onClick={() => setShowCreateModal(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all">
+                                        <Plus className="w-4 h-4" /> Create User
+                                    </button>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full divide-y divide-gray-100">
@@ -373,13 +372,10 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                         </div>
                                     </div>
 
-                                    <Button 
-                                        onClick={handleOpenExportModal}
-                                        className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0 w-full md:w-auto"
-                                    >
-                                        <Download className="w-4 h-4 mr-2" />
+                                    <button onClick={handleOpenExportModal} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all w-full md:w-auto justify-center">
+                                        <Download className="w-4 h-4" />
                                         Export Database
-                                    </Button>
+                                    </button>
                                 </div>
 
                                 {/* Clear Cache Section */}
@@ -415,14 +411,10 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                         </div>
                                     </div>
 
-                                    <Button 
-                                        onClick={() => setShowCacheConfirmModal(true)}
-                                        variant="outline"
-                                        className="border-amber-300 text-amber-700 hover:bg-amber-50 w-full md:w-auto"
-                                    >
-                                        <RefreshCw className="w-4 h-4 mr-2" />
+                                    <button onClick={() => setShowCacheConfirmModal(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-300 text-amber-700 hover:bg-amber-50 text-sm font-semibold transition-all w-full md:w-auto justify-center">
+                                        <RefreshCw className="w-4 h-4" />
                                         Clear Cache
-                                    </Button>
+                                    </button>
                                 </div>
 
                                 {/* System Information */}
@@ -473,8 +465,8 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                 </select>
                             </div>
                             <div className="flex gap-2 justify-end pt-2">
-                                <Button type="button" variant="outline" onClick={() => setShowCreateModal(false)}>Cancel</Button>
-                                <Button type="submit" disabled={userForm.processing}>{userForm.processing ? 'Creating...' : 'Create'}</Button>
+                                <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
+                                <button type="submit" disabled={userForm.processing} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">{userForm.processing ? 'Creating...' : 'Create'}</button>
                             </div>
                         </form>
                     </div>
@@ -498,8 +490,8 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                 </select>
                             </div>
                             <div className="flex gap-2 justify-end pt-2">
-                                <Button type="button" variant="outline" onClick={() => setEditingUser(null)}>Cancel</Button>
-                                <Button type="submit" disabled={userForm.processing}>{userForm.processing ? 'Updating...' : 'Update'}</Button>
+                                <button type="button" onClick={() => setEditingUser(null)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
+                                <button type="submit" disabled={userForm.processing} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">{userForm.processing ? 'Updating...' : 'Update'}</button>
                             </div>
                         </form>
                     </div>
@@ -515,15 +507,15 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                 <Download className="w-5 h-5 text-blue-500" />
                                 Export Database
                             </h3>
-                            <button onClick={() => setShowExportModal(false)} className="text-gray-400 hover:text-gray-600">
-                                <Trash2 className="w-5 h-5 rotate-45" />
+                            <button onClick={() => setShowExportModal(false)} className="text-slate-400 hover:text-slate-600">
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
 
                         <form onSubmit={handleExport} className="space-y-5">
                             {/* Format Selection */}
                             <div>
-                                <Label className="text-sm font-semibold">Export Format</Label>
+                                <label className="block text-sm font-semibold text-slate-700 mb-2">Export Format</label>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
                                     {(['csv', 'sql', 'json'] as const).map(format => {
                                         const Icon = getFormatIcon(format);
@@ -566,7 +558,7 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                             {/* Table Selection */}
                             <div>
                                 <div className="flex items-center justify-between mb-3">
-                                    <Label className="text-sm font-semibold">Select Tables</Label>
+                                    <label className="block text-sm font-semibold text-slate-700">Select Tables</label>
                                     <button
                                         type="button"
                                         onClick={handleSelectAllTables}
@@ -620,19 +612,14 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                 </div>
                             </div>
 
-                            {/* Actions */}
                             <div className="flex gap-2 justify-end pt-2">
-                                <Button type="button" variant="outline" onClick={() => setShowExportModal(false)}>
+                                <button type="button" onClick={() => setShowExportModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
                                     Cancel
-                                </Button>
-                                <Button 
-                                    type="submit" 
-                                    className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
-                                    disabled={selectedTables.length === 0}
-                                >
-                                    <Download className="w-4 h-4 mr-2" />
+                                </button>
+                                <button type="submit" disabled={selectedTables.length === 0} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">
+                                    <Download className="w-4 h-4" />
                                     Export
-                                </Button>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -678,21 +665,13 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                         </div>
 
                         <div className="flex gap-2 justify-end">
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                onClick={() => setShowCacheConfirmModal(false)}
-                            >
+                            <button type="button" onClick={() => setShowCacheConfirmModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
                                 Cancel
-                            </Button>
-                            <Button 
-                                type="button"
-                                onClick={handleClearCache}
-                                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white"
-                            >
-                                <RefreshCw className="w-4 h-4 mr-2" />
+                            </button>
+                            <button type="button" onClick={handleClearCache} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold hover:shadow-md transition-all">
+                                <RefreshCw className="w-4 h-4" />
                                 Yes, Clear Cache
-                            </Button>
+                            </button>
                         </div>
                     </div>
                 </div>

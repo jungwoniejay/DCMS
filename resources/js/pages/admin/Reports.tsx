@@ -1,20 +1,19 @@
 import { Head } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
 import { FileText, Download, TrendingUp, Users, Heart, Apple } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 function StatCard({ icon, title, value, color }: any) {
     const colors: Record<string, string> = {
-        blue: 'bg-blue-100 text-blue-600',
-        green: 'bg-green-100 text-green-600',
-        red: 'bg-red-100 text-red-600',
+        blue:   'bg-blue-100 text-blue-600',
+        green:  'bg-green-100 text-green-600',
+        red:    'bg-red-100 text-red-600',
         yellow: 'bg-yellow-100 text-yellow-600',
     };
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
             <div className={`inline-flex p-3 rounded-xl ${colors[color]}`}>{icon}</div>
-            <p className="text-gray-500 text-xs mt-3 font-medium">{title}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+            <p className="text-slate-500 text-xs mt-3 font-medium">{title}</p>
+            <p className="text-2xl font-bold text-slate-800 mt-1">{value}</p>
         </div>
     );
 }
@@ -41,14 +40,14 @@ export default function Reports({ reports }: any) {
                 </div>
 
                 {/* Demographics */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                        <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2">
                             <FileText className="w-4 h-4 text-blue-600" /> Demographics Report
                         </h2>
-                        <Button onClick={() => handleExport('children')} size="sm">
-                            <Download className="w-4 h-4 mr-1" /> Export CSV
-                        </Button>
+                        <button onClick={() => handleExport('children')} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-all">
+                            <Download className="w-3.5 h-3.5" /> Export CSV
+                        </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {[
@@ -72,14 +71,14 @@ export default function Reports({ reports }: any) {
                 </div>
 
                 {/* Health Summary */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                        <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2">
                             <Heart className="w-4 h-4 text-red-500" /> Health Summary
                         </h2>
-                        <Button onClick={() => handleExport('health')} size="sm">
-                            <Download className="w-4 h-4 mr-1" /> Export CSV
-                        </Button>
+                        <button onClick={() => handleExport('health')} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-all">
+                            <Download className="w-3.5 h-3.5" /> Export CSV
+                        </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -111,14 +110,14 @@ export default function Reports({ reports }: any) {
                 </div>
 
                 {/* Nutrition Summary */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                        <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2">
                             <Apple className="w-4 h-4 text-green-600" /> Nutrition Summary
                         </h2>
-                        <Button onClick={() => handleExport('nutrition')} size="sm">
-                            <Download className="w-4 h-4 mr-1" /> Export CSV
-                        </Button>
+                        <button onClick={() => handleExport('nutrition')} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-all">
+                            <Download className="w-3.5 h-3.5" /> Export CSV
+                        </button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -150,7 +149,7 @@ export default function Reports({ reports }: any) {
 
                 {/* Monthly Trend */}
                 {reports?.overview?.registration_by_month?.length > 0 && (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
                         <h2 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
                             <TrendingUp className="w-4 h-4 text-blue-600" /> Monthly Enrollment Trend
                         </h2>
