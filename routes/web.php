@@ -27,13 +27,26 @@ Route::get('/privacy-policy', function () {
 
 // Serve uploaded files directly via Laravel (works on Railway without symlinks)
 Route::get('/storage/{path}', function (string $path) {
-    $fullPath = storage_path('app/public/' . $path);
-    \Log::info('Storage serve request', ['path' => $path, 'fullPath' => $fullPath, 'exists' => file_exists($fullPath)]);
-    if (!file_exists($fullPath)) {
-        \Log::error('Storage file not found', ['fullPath' => $fullPath]);
-        abort(404);
+    // Try multiple possible storage locations
+    $possiblePaths = [
+        storage_path('app/public/' . $path),
+        '/app/storage/app/public/' . $path,
+        base_path('storage/app/public/' . $path),
+    ];
+
+    foreach ($possiblePaths as $fullPath) {
+        if (file_exists($fullPath)) {
+            return response()->file($fullPath);
+        }
     }
-    return response()->file($fullPath);
+
+    \Log::error('Storage 404', [
+        'path' => $path,
+        'tried' => $possiblePaths,
+        'storage_path' => storage_path(),
+        'base_path' => base_path(),
+    ]);
+    abort(404);
 })->where('path', '.*')->name('storage.serve');
 
 // Admin Routes (Protected)
