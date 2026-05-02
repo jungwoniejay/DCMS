@@ -162,6 +162,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('welcome-content', [WelcomeContentController::class, 'index'])->name('welcome-content');
     Route::post('welcome-content', [WelcomeContentController::class, 'update'])->name('welcome-content.update');
     
+    Route::get('enrollments/debug-list', function() {
+        return response()->json([
+            'enrollment_requests' => \App\Models\EnrollmentRequest::select('id','child_first_name','child_last_name','status')->get(),
+            'total' => \App\Models\EnrollmentRequest::count(),
+        ]);
+    })->name('enrollments.debug-list');
     // Enrollment Management
     Route::get('enrollments', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'index'])->name('enrollments');
     Route::post('enrollments/{id}/approve', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'approve'])->name('enrollments.approve');
