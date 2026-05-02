@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Child extends Model
 {
@@ -29,7 +30,7 @@ class Child extends Model
     public function getProfilePictureUrlAttribute(): ?string
     {
         if (!$this->profile_picture) return null;
-        return asset('storage/' . $this->profile_picture);
+        return Storage::url($this->profile_picture);
     }
 
     public function guardian(): BelongsTo
