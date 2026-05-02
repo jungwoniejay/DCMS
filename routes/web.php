@@ -30,13 +30,14 @@ Route::get('/test-login', function() {
     if (!\Illuminate\Support\Facades\Hash::check($password, $user->password)) return response()->json(['error' => 'Wrong password']);
     return response()->json(['success' => true, 'role' => $user->role, 'name' => $user->name]);
 });
-
 Route::get('/debug-auth', function() {
     return response()->json([
         'logged_in' => auth()->check(),
         'user' => auth()->user() ? ['id' => auth()->id(), 'role' => auth()->user()->role, 'email' => auth()->user()->email] : null,
         'session_id' => session()->getId(),
         'session_driver' => config('session.driver'),
+        'session_path' => config('session.files'),
+        'session_file_exists' => file_exists(config('session.files') . '/' . session()->getId()),
     ]);
 });
 
