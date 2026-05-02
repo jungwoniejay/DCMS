@@ -32,13 +32,13 @@ class AdminChildrenController extends Controller
         if ($request->age_group) {
             switch ($request->age_group) {
                 case '0-2':
-                    $query->whereRaw('CAST((julianday("now") - julianday(birthdate)) / 365.25 AS INTEGER) <= 2');
+                    $query->whereRaw('EXTRACT(YEAR FROM AGE(birthdate)) <= 2');
                     break;
                 case '3-4':
-                    $query->whereRaw('CAST((julianday("now") - julianday(birthdate)) / 365.25 AS INTEGER) BETWEEN 3 AND 4');
+                    $query->whereRaw('EXTRACT(YEAR FROM AGE(birthdate)) BETWEEN 3 AND 4');
                     break;
                 case '5-6':
-                    $query->whereRaw('CAST((julianday("now") - julianday(birthdate)) / 365.25 AS INTEGER) BETWEEN 5 AND 6');
+                    $query->whereRaw('EXTRACT(YEAR FROM AGE(birthdate)) BETWEEN 5 AND 6');
                     break;
             }
         }
