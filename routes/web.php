@@ -15,54 +15,6 @@ use App\Models\WelcomeContent;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Temporary: clear rate limiter cache
-Route::get('/clear-rate-limit', function() {
-    \Illuminate\Support\Facades\Cache::flush();
-    return 'Cache and rate limit cleared - try logging in now';
-});
-
-Route::get('/test-login', function() {
-    $email = request('email', 'admin@brgy2dms.com');
-    $password = request('password', '');
-    $user = \App\Models\User::where('email', $email)->first();
-    if (!$user) return response()->json(['error' => 'User not found', 'email' => $email, 'all_users' => \App\Models\User::select('id','email','role')->get()]);
-    if (!$password) return response()->json(['users' => \App\Models\User::select('id','email','role')->get()]);
-    if (!\Illuminate\Support\Facades\Hash::check($password, $user->password)) return response()->json(['error' => 'Wrong password']);
-    return response()->json(['success' => true, 'role' => $user->role, 'name' => $user->name]);
-});
-Route::get('/debug-auth', function() {
-    return response()->json([
-        'logged_in' => auth()->check(),
-        'user' => auth()->user() ? ['id' => auth()->id(), 'role' => auth()->user()->role, 'email' => auth()->user()->email] : null,
-        'session_id' => session()->getId(),
-        'session_driver' => config('session.driver'),
-        'session_path' => config('session.files'),
-        'session_file_exists' => file_exists(config('session.files') . '/' . session()->getId()),
-    ]);
-});
-
-Route::get('/debug-parent-dashboard', function() {
-    try {
-        $parentId = auth()->id();
-        $children = \App\Models\Child::where('guardian_id', $parentId)
-            ->with(['familyProfile'])
-            ->get()
-            ->map(function ($child) {
-                return [
-                    'id' => $child->id,
-                    'name' => "{$child->first_name} {$child->last_name}",
-                    'has_emergency_alert' => false,
-                    'nutritional_status' => 'Not assessed',
-                    'height' => null,
-                    'weight' => null,
-                ];
-            });
-        return response()->json(['ok' => true, 'children' => $children]);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage(), 'line' => $e->getLine(), 'file' => basename($e->getFile())]);
-    }
-})->middleware(['auth', 'parent']);
-
 // Public Welcome Page
 Route::get('/', function () {
     $contents = WelcomeContent::all()->keyBy('key');
