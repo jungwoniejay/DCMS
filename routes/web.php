@@ -53,8 +53,9 @@ Route::get('/debug-parent-dashboard', function() {
                     ->orderBy('assessment_date', 'desc')
                     ->first();
                 $latestMedical = \Illuminate\Support\Facades\DB::table('medical_assessments')
-                    ->where('child_id', $child->id)
-                    ->orderBy('created_at', 'desc')
+                    ->join('health_assessments', 'medical_assessments.health_assessment_id', '=', 'health_assessments.id')
+                    ->where('health_assessments.child_id', $child->id)
+                    ->orderBy('medical_assessments.created_at', 'desc')
                     ->first();
                 return [
                     'id' => $child->id,
