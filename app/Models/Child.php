@@ -12,6 +12,8 @@ class Child extends Model
 {
     use SoftDeletes;
 
+    protected $appends = ['profile_picture_url'];
+
     protected $fillable = [
         'guardian_id', 'last_name', 'first_name', 'middle_name', 'sex', 'profile_picture',
         'birthdate', 'age', 'classroom', 'address', 'first_language', 'second_language',
@@ -23,6 +25,12 @@ class Child extends Model
         'reviewed_at' => 'datetime',
         'deleted_at'  => 'datetime',
     ];
+
+    public function getProfilePictureUrlAttribute(): ?string
+    {
+        if (!$this->profile_picture) return null;
+        return asset('storage/' . $this->profile_picture);
+    }
 
     public function guardian(): BelongsTo
     {
