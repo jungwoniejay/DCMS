@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class EnrollmentRequest extends Model
 {
@@ -43,7 +44,7 @@ class EnrollmentRequest extends Model
     public function getChildPhotoUrlAttribute(): ?string
     {
         if (!$this->child_photo) return null;
-        return asset('storage/' . $this->child_photo);
+        return Storage::url($this->child_photo);
     }
 
     public function parent()

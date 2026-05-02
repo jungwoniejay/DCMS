@@ -7,6 +7,8 @@ cmds = [
   "php artisan config:cache",
   "php artisan route:cache",
   "php artisan view:cache",
+  # Creates the public/storage symlink for the local "public" disk.
+  # This is a no-op when FILESYSTEM_DISK=s3 — files are served from S3/R2.
   "php artisan storage:link"
 ]
 

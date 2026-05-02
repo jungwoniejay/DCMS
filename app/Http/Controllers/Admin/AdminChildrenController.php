@@ -126,7 +126,7 @@ class AdminChildrenController extends Controller
 
         $picturePath = null;
         if ($request->hasFile('profile_picture')) {
-            $picturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $picturePath = $request->file('profile_picture')->store('profile_pictures');
         }
 
         $child = Child::create([
@@ -219,10 +219,10 @@ class AdminChildrenController extends Controller
         ]);
 
         if ($request->hasFile('profile_picture')) {
-            if ($child->profile_picture && \Storage::disk('public')->exists($child->profile_picture)) {
-                \Storage::disk('public')->delete($child->profile_picture);
+            if ($child->profile_picture && \Storage::exists($child->profile_picture)) {
+                \Storage::delete($child->profile_picture);
             }
-            $validated['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $validated['profile_picture'] = $request->file('profile_picture')->store('profile_pictures');
         }
 
         $oldValues = $child->only(['first_name', 'last_name', 'sex', 'birthdate', 'registration_status']);
