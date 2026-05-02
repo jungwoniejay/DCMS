@@ -28,8 +28,8 @@ export default function EnrollmentRequests({ requests }: { requests: EnrollmentR
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Enrollment Requests</h1>
-                        <p className="text-gray-500 mt-1 text-sm">Track the status of your enrollment submissions</p>
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Enrollment Requests</h1>
+                        <p className="text-slate-500 mt-1 text-sm">Track the status of your enrollment submissions</p>
                     </div>
                     <Link
                         href="/parent/enroll"
