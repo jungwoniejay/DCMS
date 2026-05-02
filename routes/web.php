@@ -21,13 +21,23 @@ Route::get('/clear-rate-limit', function() {
     return 'Cache and rate limit cleared - try logging in now';
 });
 
-Route::post('/test-login', function() {
-    $email = request('email');
-    $password = request('password');
+Route::get('/test-login', function() {
+    $email = request('email', 'admin@brgy2dms.com');
+    $password = request('password', '');
     $user = \App\Models\User::where('email', $email)->first();
-    if (!$user) return response()->json(['error' => 'User not found', 'email' => $email]);
+    if (!$user) return response()->json(['error' => 'User not found', 'email' => $email, 'all_users' => \App\Models\User::select('id','email','role')->get()]);
+    if (!$password) return response()->json(['users' => \App\Models\User::select('id','email','role')->get()]);
     if (!\Illuminate\Support\Facades\Hash::check($password, $user->password)) return response()->json(['error' => 'Wrong password']);
     return response()->json(['success' => true, 'role' => $user->role, 'name' => $user->name]);
+});
+
+Route::get('/debug-auth', function() {
+    return response()->json([
+        'logged_in' => auth()->check(),
+        'user' => auth()->user() ? ['id' => auth()->id(), 'role' => auth()->user()->role, 'email' => auth()->user()->email] : null,
+        'session_id' => session()->getId(),
+        'session_driver' => config('session.driver'),
+    ]);
 });
 
 // Public Welcome Page
