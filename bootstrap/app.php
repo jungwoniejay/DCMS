@@ -40,7 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response) {
-            if (in_array($response->getStatusCode(), [403, 404, 500, 503])
+            if (in_array($response->getStatusCode(), [403, 404, 503])
                 && !app()->runningInConsole()
                 && request()->header('X-Inertia')) {
                 return back();
