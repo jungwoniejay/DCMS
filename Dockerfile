@@ -26,25 +26,10 @@ RUN mkdir -p storage/framework/{sessions,views,cache,testing} \
     storage/logs bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
+# Copy start script separately to ensure it's always fresh
+COPY start.sh /start.sh
+RUN chmod +x /start.sh && echo "start.sh updated: $(date)"
+
 EXPOSE 8080
 
-# Write startup script
-RUN echo '#!/bin/sh' > /start.sh \
-    && echo 'set -e' >> /start.sh \
-    && echo 'echo "=== Starting DCMS ==="' >> /start.sh \
-    && echo 'chmod -R 777 /app/storage' >> /start.sh \
-    && echo 'mkdir -p /app/storage/app/public/enrollment_photos' >> /start.sh \
-    && echo 'mkdir -p /app/storage/app/public/profile_pictures' >> /start.sh \
-    && echo 'php artisan config:clear' >> /start.sh \
-    && echo 'php artisan route:clear' >> /start.sh \
-    && echo 'php artisan view:clear' >> /start.sh \
-    && echo 'php artisan config:cache' >> /start.sh \
-    && echo 'php artisan route:cache' >> /start.sh \
-    && echo 'php artisan view:cache' >> /start.sh \
-    && echo 'php artisan migrate --force' >> /start.sh \
-    && echo 'php artisan storage:link --force' >> /start.sh \
-    && echo 'echo "=== DCMS Ready ==="' >> /start.sh \
-    && echo 'php artisan serve --host=0.0.0.0 --port=${PORT:-8080}' >> /start.sh \
-    && chmod +x /start.sh
-
-CMD ["/start.sh"]
+ENTRYPOINT ["/bin/sh", "/start.sh"]
