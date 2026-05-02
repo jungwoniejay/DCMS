@@ -22,6 +22,8 @@ COPY . .
 
 RUN npm run build && npm prune --omit=dev
 
+ARG CACHE_BUST=1
+
 RUN mkdir -p storage/framework/{sessions,views,cache,testing} \
     storage/logs bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
