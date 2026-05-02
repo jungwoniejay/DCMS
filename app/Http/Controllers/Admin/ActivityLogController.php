@@ -174,7 +174,7 @@ class ActivityLogController extends Controller
 
         $dailyStats = ActivityLog::selectRaw('DATE(created_at) as date, 
                     COUNT(*) as total,
-                    SUM(CASE WHEN is_suspicious = 1 THEN 1 ELSE 0 END) as suspicious')
+                    SUM(CASE WHEN is_suspicious THEN 1 ELSE 0 END) as suspicious')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('date')
             ->orderBy('date')
