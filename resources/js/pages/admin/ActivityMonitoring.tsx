@@ -220,11 +220,11 @@ export default function ActivityMonitoring({
     };
 
     const StatCard = ({ title, value, icon: Icon, trend, trendValue, color }: any) => (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
             <div className="flex items-start justify-between">
                 <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-500">{title}</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+                    <p className="text-sm font-medium text-slate-500">{title}</p>
+                    <p className="text-2xl font-bold text-slate-800 mt-1">{value}</p>
                     {trend !== undefined && (
                         <div className={`flex items-center gap-1 mt-2 text-sm ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {trend >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
@@ -350,9 +350,9 @@ export default function ActivityMonitoring({
                 {/* Charts Row */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Suspicious Activity Trends */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <h2 className="text-lg font-bold text-slate-700 flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5 text-blue-500" />
                                 Activity Trends (Last 7 Days)
                             </h2>
@@ -371,9 +371,9 @@ export default function ActivityMonitoring({
                     </div>
 
                     {/* Action Distribution */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <h2 className="text-lg font-bold text-slate-700 flex items-center gap-2">
                                 <Database className="w-5 h-5 text-purple-500" />
                                 Action Distribution
                             </h2>
@@ -390,9 +390,9 @@ export default function ActivityMonitoring({
                                 <AlertTriangle className="w-5 h-5 text-red-500" />
                                 Recent Suspicious Activities
                             </h2>
-                            <Badge className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                            <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
                                 {recentSuspicious.length} Alerts
-                            </Badge>
+                            </span>
                         </div>
                         <div className="space-y-2">
                             {recentSuspicious.slice(0, 5).map((log) => (
@@ -573,9 +573,9 @@ export default function ActivityMonitoring({
                                                             log.is_suspicious ? 'text-red-500' : 'text-gray-500'
                                                         }`} />
                                                     </div>
-                                                    <Badge className={`${getActionBadgeColor(log.action)} px-2 py-0.5 rounded-full text-xs font-medium border`}>
-                                                        <span className="capitalize">{log.action}</span>
-                                                    </Badge>
+                                                    <span className={`${getActionBadgeColor(log.action)} px-2 py-0.5 rounded-full text-xs font-medium border capitalize`}>
+                                                        {log.action}
+                                                    </span>
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3">
@@ -731,9 +731,9 @@ export default function ActivityMonitoring({
                                 <div className="bg-gray-50 rounded-lg p-4">
                                     <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Action</p>
                                     <div className="flex items-center gap-2">
-                                        <Badge className={`${getActionBadgeColor(selectedLog.action)} px-2 py-0.5 rounded-full text-xs font-medium border`}>
-                                            <span className="capitalize">{selectedLog.action}</span>
-                                        </Badge>
+                                        <span className={`${getActionBadgeColor(selectedLog.action)} px-2 py-0.5 rounded-full text-xs font-medium border capitalize`}>
+                                            {selectedLog.action}
+                                        </span>
                                         {selectedLog.action_type && (
                                             <span className="text-sm text-gray-600 capitalize">{selectedLog.action_type}</span>
                                         )}

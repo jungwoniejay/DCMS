@@ -96,14 +96,18 @@ export default function Reports({ reports }: any) {
                             </div>
                         </div>
                         <div>
-                            <h3 className="text-sm font-semibold text-gray-600 mb-2">Health Conditions</h3>
+                            <h3 className="text-sm font-semibold text-slate-600 mb-2">Health Conditions</h3>
                             <div className="space-y-1">
-                                {Object.entries(reports?.health_summary?.health_conditions || {}).map(([condition, count]: any) => (
-                                    <div key={condition} className="flex justify-between items-center py-1 border-b border-gray-50">
-                                        <span className="text-sm text-gray-600 capitalize">{condition}</span>
-                                        <span className="font-semibold text-sm">{count}</span>
-                                    </div>
-                                ))}
+                                {Object.keys(reports?.health_summary?.health_conditions || {}).length > 0 ? (
+                                    Object.entries(reports.health_summary.health_conditions).map(([condition, count]: any) => (
+                                        <div key={condition} className="flex justify-between items-center py-1 border-b border-gray-50">
+                                            <span className="text-sm text-slate-600 capitalize">{condition}</span>
+                                            <span className="font-semibold text-sm text-slate-800">{count}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-slate-400 py-4 text-center">No data available</p>
+                                )}
                             </div>
                         </div>
                     </div>

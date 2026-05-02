@@ -40,7 +40,10 @@ class AdminReportsController extends Controller
             ->whereYear('created_at', now()->year)
             ->groupBy('month')
             ->orderBy('month')
-            ->get(),
+            ->get()
+            ->map(fn($item) => ['month' => $item->month, 'count' => (int) $item->count])
+            ->values()
+            ->toArray(),
         ];
     }
     
@@ -117,7 +120,7 @@ class AdminReportsController extends Controller
     
     private function getHealthConditionsSummary()
     {
-        return DB::table('health_problems')
+        $result = DB::table('health_problems')
             ->select(
                 DB::raw('SUM(CASE WHEN allergies = 1 THEN 1 ELSE 0 END) as allergies'),
                 DB::raw('SUM(CASE WHEN asthma = 1 THEN 1 ELSE 0 END) as asthma'),
@@ -126,6 +129,16 @@ class AdminReportsController extends Controller
                 DB::raw('SUM(CASE WHEN eyes = 1 THEN 1 ELSE 0 END) as eyes')
             )
             ->first();
+
+        if (!$result) return [];
+
+        return [
+            'Allergies'  => (int) $result->allergies,
+            'Asthma'     => (int) $result->asthma,
+            'Diabetes'   => (int) $result->diabetes,
+            'Ear Issues' => (int) $result->ears,
+            'Eye Issues' => (int) $result->eyes,
+        ];
     }
     
     public function export($type)
