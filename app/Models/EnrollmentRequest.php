@@ -11,6 +11,7 @@ class EnrollmentRequest extends Model
         'child_last_name',
         'child_first_name',
         'child_middle_name',
+        'child_photo',
         'child_sex',
         'child_birthdate',
         'child_age',

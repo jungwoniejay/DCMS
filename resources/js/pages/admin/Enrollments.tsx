@@ -14,6 +14,7 @@ interface EnrollmentRequest {
   child_address: string;
   child_first_language: string;
   child_second_language: string;
+  child_photo: string | null;
   purok_zone: string;
   father_name: string;
   father_occupation: string;
@@ -122,26 +123,40 @@ export default function Enrollments({ requests, stats }: Props) {
 
       <div className="space-y-4">
         {requests.data.map((request) => (
-          <div key={request.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div key={request.id} className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm p-6">
             <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  {request.child_first_name} {request.child_middle_name} {request.child_last_name}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {request.child_age} years old • {request.child_sex} • Born {request.child_birthdate}
-                </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <User className="w-4 h-4 text-gray-500" />
-                  <p className="text-sm text-gray-600">
-                    Submitted by: {request.parent.name} ({request.parent.email})
+              <div className="flex items-start gap-4">
+                {/* Child Photo */}
+                {request.child_photo ? (
+                  <img
+                    src={`/storage/${request.child_photo}`}
+                    alt={request.child_first_name}
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-slate-100 shadow shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shrink-0">
+                    <User className="w-7 h-7 text-slate-400" />
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-800">
+                    {request.child_first_name} {request.child_middle_name} {request.child_last_name}
+                  </h3>
+                  <p className="text-sm text-slate-500">
+                    {request.child_age} years old • {request.child_sex} • Born {request.child_birthdate}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <User className="w-3.5 h-3.5 text-slate-400" />
+                    <p className="text-xs text-slate-500">
+                      {request.parent.name} ({request.parent.email})
+                    </p>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Submitted: {new Date(request.created_at).toLocaleString()}
                   </p>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
-                  Submitted: {new Date(request.created_at).toLocaleString()}
-                </p>
               </div>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(request.status)}`}>
+              <span className={`shrink-0 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(request.status)}`}>
                 {request.status}
               </span>
             </div>

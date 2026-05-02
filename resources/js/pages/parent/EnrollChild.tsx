@@ -1,13 +1,13 @@
 import ParentLayout from '@/layouts/parent-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEvent } from 'react';
-import { Baby, Users, Phone, ArrowLeft, Send } from 'lucide-react';
+import { FormEvent, useState } from 'react';
+import { Baby, Users, Phone, ArrowLeft, Send, Camera } from 'lucide-react';
 
 const ic = 'w-full px-3 py-2 border border-purple-100 rounded-xl bg-white/80 text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all';
 const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
 export default function EnrollChild({ puroks }: { puroks: string[] }) {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm<any>({
         child_last_name: '',
         child_first_name: '',
         child_middle_name: '',
@@ -25,10 +25,23 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
         guardian_contact: '',
         emergency_contact_name: '',
         emergency_contact_phone: '',
+        child_photo: null as File | null,
     });
 
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('child_photo', file);
+            const reader = new FileReader();
+            reader.onloadend = () => setPreviewUrl(reader.result as string);
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleBirthdateChange = (birthdate: string) => {
-        setData(prev => ({
+        setData((prev: any) => ({
             ...prev,
             child_birthdate: birthdate,
             child_age: birthdate
@@ -40,7 +53,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         if (!confirm('Are you sure you want to submit this enrollment request?')) return;
-        post(route('parent.enroll.store'));
+        post(route('parent.enroll.store'), { forceFormData: true });
     };
 
     return (
@@ -64,6 +77,36 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                         <h2 className="text-sm font-bold text-purple-600 uppercase tracking-wide flex items-center gap-2">
                             <Baby className="w-4 h-4" /> Child Information
                         </h2>
+
+                        {/* Photo Upload */}
+                        <div>
+                            <label className={lc}>Child Photo <span className="text-slate-400 font-normal">(optional)</span></label>
+                            <div className="flex items-center gap-4">
+                                <div className="relative shrink-0">
+                                    {previewUrl ? (
+                                        <img src={previewUrl} alt="Preview" className="w-20 h-20 rounded-2xl object-cover border-2 border-purple-100 shadow" />
+                                    ) : (
+                                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center border-2 border-dashed border-purple-200">
+                                            <Camera className="w-7 h-7 text-purple-300" />
+                                        </div>
+                                    )}
+                                    <label htmlFor="child_photo" className="absolute -bottom-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white p-1.5 rounded-full cursor-pointer hover:shadow-md transition-all">
+                                        <Camera className="w-3 h-3" />
+                                    </label>
+                                    <input id="child_photo" type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-slate-600">Upload a photo of your child</p>
+                                    <p className="text-xs text-slate-400 mt-0.5">JPG, PNG or GIF (max 2MB)</p>
+                                    {previewUrl && (
+                                        <button type="button" onClick={() => { setPreviewUrl(null); setData('child_photo', null); }} className="text-xs text-red-400 hover:text-red-600 mt-1 transition-colors">
+                                            Remove photo
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label className={lc}>Last Name *</label>

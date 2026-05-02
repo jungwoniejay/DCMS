@@ -19,31 +19,36 @@ class ParentEnrollmentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'child_last_name' => 'required|string|max:255',
-            'child_first_name' => 'required|string|max:255',
-            'child_middle_name' => 'nullable|string|max:255',
-            'child_sex' => 'required|in:Male,Female',
-            'child_birthdate' => 'required|date',
-            'child_age' => 'required|integer|min:0|max:10',
-            'child_address' => 'required|string',
-            'child_first_language' => 'required|string|max:255',
-            'child_second_language' => 'nullable|string|max:255',
-            'purok_zone' => 'required|string|max:255',
-            'father_name' => 'nullable|string|max:255',
-            'father_occupation' => 'nullable|string|max:255',
-            'mother_name' => 'nullable|string|max:255',
-            'mother_occupation' => 'nullable|string|max:255',
-            'guardian_contact' => 'required|string|max:255',
-            'emergency_contact_name' => 'required|string|max:255',
+            'child_last_name'         => 'required|string|max:255',
+            'child_first_name'        => 'required|string|max:255',
+            'child_middle_name'       => 'nullable|string|max:255',
+            'child_sex'               => 'required|in:Male,Female',
+            'child_birthdate'         => 'required|date',
+            'child_age'               => 'required|integer|min:0|max:10',
+            'child_address'           => 'required|string',
+            'child_first_language'    => 'required|string|max:255',
+            'child_second_language'   => 'nullable|string|max:255',
+            'purok_zone'              => 'required|string|max:255',
+            'father_name'             => 'nullable|string|max:255',
+            'father_occupation'       => 'nullable|string|max:255',
+            'mother_name'             => 'nullable|string|max:255',
+            'mother_occupation'       => 'nullable|string|max:255',
+            'guardian_contact'        => 'required|string|max:255',
+            'emergency_contact_name'  => 'required|string|max:255',
             'emergency_contact_phone' => 'required|string|max:255',
+            'child_photo'             => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        if ($request->hasFile('child_photo')) {
+            $validated['child_photo'] = $request->file('child_photo')->store('enrollment_photos', 'public');
+        }
+
         $validated['parent_id'] = auth()->id();
-        $validated['status'] = 'Pending';
+        $validated['status']    = 'Pending';
 
         EnrollmentRequest::create($validated);
 
-        return redirect()->route('parent.dashboard')->with('success', 'Enrollment request submitted successfully! Waiting for admin approval.');
+        return redirect()->route('parent.enrollment.index')->with('success', 'Enrollment request submitted successfully! Waiting for admin approval.');
     }
 
     public function index()

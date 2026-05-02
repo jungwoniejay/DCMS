@@ -52,6 +52,7 @@ class AdminEnrollmentController extends Controller
             'address'             => $request->child_address,
             'first_language'      => $request->child_first_language,
             'second_language'     => $request->child_second_language,
+            'profile_picture'     => $request->child_photo,
             'registration_status' => 'Approved',
             'accomplished_by'     => $request->parent->name,
             'reviewed_by'         => auth()->user()->name,
