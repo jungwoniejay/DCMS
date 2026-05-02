@@ -17,11 +17,17 @@ use Inertia\Inertia;
 
 // Temporary: clear rate limiter cache
 Route::get('/clear-rate-limit', function() {
-    \Illuminate\Support\Facades\RateLimiter::clear(
-        \Illuminate\Support\Str::lower(request('email', '')) . '|' . request()->ip()
-    );
     \Illuminate\Support\Facades\Cache::flush();
-    return 'Rate limit cleared';
+    return 'Cache and rate limit cleared - try logging in now';
+});
+
+Route::post('/test-login', function() {
+    $email = request('email');
+    $password = request('password');
+    $user = \App\Models\User::where('email', $email)->first();
+    if (!$user) return response()->json(['error' => 'User not found', 'email' => $email]);
+    if (!\Illuminate\Support\Facades\Hash::check($password, $user->password)) return response()->json(['error' => 'Wrong password']);
+    return response()->json(['success' => true, 'role' => $user->role, 'name' => $user->name]);
 });
 
 // Public Welcome Page

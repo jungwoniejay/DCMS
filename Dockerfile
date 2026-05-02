@@ -18,7 +18,7 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 COPY package.json package-lock.json ./
 RUN npm ci
 
-ARG CACHE_BUST=5
+ARG CACHE_BUST=6
 COPY . .
 
 RUN npm run build && npm prune --omit=dev
