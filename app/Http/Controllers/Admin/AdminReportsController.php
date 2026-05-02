@@ -122,11 +122,11 @@ class AdminReportsController extends Controller
     {
         $result = DB::table('health_problems')
             ->select(
-                DB::raw('SUM(CASE WHEN allergies = 1 THEN 1 ELSE 0 END) as allergies'),
-                DB::raw('SUM(CASE WHEN asthma = 1 THEN 1 ELSE 0 END) as asthma'),
-                DB::raw('SUM(CASE WHEN diabetes = 1 THEN 1 ELSE 0 END) as diabetes'),
-                DB::raw('SUM(CASE WHEN ears = 1 THEN 1 ELSE 0 END) as ears'),
-                DB::raw('SUM(CASE WHEN eyes = 1 THEN 1 ELSE 0 END) as eyes')
+                DB::raw('SUM(CASE WHEN allergies THEN 1 ELSE 0 END) as allergies'),
+                DB::raw('SUM(CASE WHEN asthma THEN 1 ELSE 0 END) as asthma'),
+                DB::raw('SUM(CASE WHEN diabetes THEN 1 ELSE 0 END) as diabetes'),
+                DB::raw('SUM(CASE WHEN ears THEN 1 ELSE 0 END) as ears'),
+                DB::raw('SUM(CASE WHEN eyes THEN 1 ELSE 0 END) as eyes')
             )
             ->first();
 
