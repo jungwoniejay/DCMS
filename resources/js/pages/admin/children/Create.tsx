@@ -54,19 +54,19 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
             <div className="space-y-6 max-w-3xl">
                 {/* Header */}
                 <div className="flex items-center gap-4">
-                    <Link href={route('admin.children.index')} className="text-gray-500 hover:text-gray-800">
+                    <Link href={route('admin.children.index')} className="text-slate-500 hover:text-slate-800 transition-colors">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Add New Child</h1>
-                        <p className="text-gray-500 mt-1 text-sm">Create a new child record directly</p>
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Add New Child</h1>
+                        <p className="text-slate-500 mt-1 text-sm">Create a new child record directly</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Profile Picture */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                        <h2 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Profile Picture</h2>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5">
+                        <h2 className="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Profile Picture</h2>
                         <div className="flex items-center gap-5">
                             <div className="relative">
                                 {previewUrl ? (
@@ -82,15 +82,15 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                                 <input id="profile_picture" type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-600">Upload a profile photo</p>
-                                <p className="text-xs text-gray-400 mt-1">JPG, PNG or GIF (max 2MB)</p>
+                                <p className="text-sm text-slate-600">Upload a profile photo</p>
+                                <p className="text-xs text-slate-400 mt-1">JPG, PNG or GIF (max 2MB)</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Basic Info */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-4">
-                        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Basic Information</h2>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 space-y-4">
+                        <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Basic Information</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div><Label>Last Name *</Label><Input value={form.last_name} onChange={e => set('last_name', e.target.value)} required className="mt-1" /></div>
                             <div><Label>First Name *</Label><Input value={form.first_name} onChange={e => set('first_name', e.target.value)} required className="mt-1" /></div>
@@ -132,8 +132,8 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                     </div>
 
                     {/* Guardian Info */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 space-y-4">
-                        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Guardian Information <span className="text-gray-400 font-normal normal-case">(optional)</span></h2>
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 space-y-4">
+                        <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Guardian Information <span className="text-slate-400 font-normal normal-case">(optional)</span></h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><Label>Guardian Name</Label><Input value={form.guardian_name} onChange={e => set('guardian_name', e.target.value)} className="mt-1" /></div>
                             <div>
