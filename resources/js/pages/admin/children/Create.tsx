@@ -2,8 +2,6 @@ import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
 import { ArrowLeft, Save, User, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 
 export default function ChildCreate({ puroks }: { puroks: string[] }) {
@@ -46,7 +44,8 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
         });
     };
 
-    const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400';
+    const inputClass = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-slate-400';
+    const labelClass = 'block text-sm font-medium text-slate-600 mb-1';
 
     return (
         <AdminLayout>
@@ -92,37 +91,37 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                     <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 space-y-4">
                         <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Basic Information</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div><Label>Last Name *</Label><Input value={form.last_name} onChange={e => set('last_name', e.target.value)} required className="mt-1" /></div>
-                            <div><Label>First Name *</Label><Input value={form.first_name} onChange={e => set('first_name', e.target.value)} required className="mt-1" /></div>
-                            <div><Label>Middle Name</Label><Input value={form.middle_name} onChange={e => set('middle_name', e.target.value)} className="mt-1" /></div>
+                            <div><label className={labelClass}>Last Name *</label><input value={form.last_name} onChange={e => set('last_name', e.target.value)} required className={inputClass} /></div>
+                            <div><label className={labelClass}>First Name *</label><input value={form.first_name} onChange={e => set('first_name', e.target.value)} required className={inputClass} /></div>
+                            <div><label className={labelClass}>Middle Name</label><input value={form.middle_name} onChange={e => set('middle_name', e.target.value)} className={inputClass} /></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <Label>Sex *</Label>
-                                <select value={form.sex} onChange={e => set('sex', e.target.value)} className={`mt-1 ${inputClass}`}>
+                                <label className={labelClass}>Sex *</label>
+                                <select value={form.sex} onChange={e => set('sex', e.target.value)} className={inputClass}>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
-                            <div><Label>Birthdate *</Label><Input type="date" value={form.birthdate} onChange={e => set('birthdate', e.target.value)} required className="mt-1" /></div>
-                            <div><Label>Age *</Label><Input type="number" min="0" max="20" value={form.age} onChange={e => set('age', e.target.value)} required className="mt-1" /></div>
+                            <div><label className={labelClass}>Birthdate *</label><input type="date" value={form.birthdate} onChange={e => set('birthdate', e.target.value)} required className={inputClass} /></div>
+                            <div><label className={labelClass}>Age *</label><input type="number" min="0" max="20" value={form.age} onChange={e => set('age', e.target.value)} required className={inputClass} /></div>
                         </div>
-                        <div><Label>Address *</Label><Input value={form.address} onChange={e => set('address', e.target.value)} required className="mt-1" /></div>
+                        <div><label className={labelClass}>Address *</label><input value={form.address} onChange={e => set('address', e.target.value)} required className={inputClass} /></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><Label>First Language *</Label><Input value={form.first_language} onChange={e => set('first_language', e.target.value)} required className="mt-1" /></div>
-                            <div><Label>Second Language</Label><Input value={form.second_language} onChange={e => set('second_language', e.target.value)} className="mt-1" /></div>
+                            <div><label className={labelClass}>First Language *</label><input value={form.first_language} onChange={e => set('first_language', e.target.value)} required className={inputClass} /></div>
+                            <div><label className={labelClass}>Second Language</label><input value={form.second_language} onChange={e => set('second_language', e.target.value)} className={inputClass} /></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <Label>Purok / Zone</Label>
-                                <select value={form.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={`mt-1 ${inputClass}`}>
+                                <label className={labelClass}>Purok / Zone</label>
+                                <select value={form.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={inputClass}>
                                     <option value="">Select Purok...</option>
                                     {puroks.map(p => <option key={p} value={p}>{p}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <Label>Registration Status *</Label>
-                                <select value={form.registration_status} onChange={e => set('registration_status', e.target.value)} className={`mt-1 ${inputClass}`}>
+                                <label className={labelClass}>Registration Status *</label>
+                                <select value={form.registration_status} onChange={e => set('registration_status', e.target.value)} className={inputClass}>
                                     <option value="Approved">Approved</option>
                                     <option value="Pending">Pending</option>
                                     <option value="Rejected">Rejected</option>
@@ -135,18 +134,18 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                     <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 space-y-4">
                         <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Guardian Information <span className="text-slate-400 font-normal normal-case">(optional)</span></h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><Label>Guardian Name</Label><Input value={form.guardian_name} onChange={e => set('guardian_name', e.target.value)} className="mt-1" /></div>
+                            <div><label className={labelClass}>Guardian Name</label><input value={form.guardian_name} onChange={e => set('guardian_name', e.target.value)} className={inputClass} /></div>
                             <div>
-                                <Label>Relationship</Label>
-                                <select value={form.guardian_relationship} onChange={e => set('guardian_relationship', e.target.value)} className={`mt-1 ${inputClass}`}>
+                                <label className={labelClass}>Relationship</label>
+                                <select value={form.guardian_relationship} onChange={e => set('guardian_relationship', e.target.value)} className={inputClass}>
                                     <option value="Father">Father</option>
                                     <option value="Mother">Mother</option>
                                     <option value="Guardian">Guardian</option>
                                     <option value="Other">Other</option>
                                 </select>
                             </div>
-                            <div><Label>Mobile Phone</Label><Input value={form.guardian_mobile} onChange={e => set('guardian_mobile', e.target.value)} className="mt-1" /></div>
-                            <div><Label>Email</Label><Input type="email" value={form.guardian_email} onChange={e => set('guardian_email', e.target.value)} className="mt-1" /></div>
+                            <div><label className={labelClass}>Mobile Phone</label><input value={form.guardian_mobile} onChange={e => set('guardian_mobile', e.target.value)} className={inputClass} /></div>
+                            <div><label className={labelClass}>Email</label><input type="email" value={form.guardian_email} onChange={e => set('guardian_email', e.target.value)} className={inputClass} /></div>
                         </div>
                     </div>
 
