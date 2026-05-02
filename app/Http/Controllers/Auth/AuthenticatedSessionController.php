@@ -34,15 +34,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        try {
-            $this->logLogin();
-        } catch (\Exception $e) {
-            \Log::warning('logLogin failed: ' . $e->getMessage());
+        if (auth()->user()->role === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
         }
-
-        $role = auth()->user()->role;
-        $url = $role === 'admin' ? route('admin.dashboard') : route('parent.dashboard');
-        return redirect($url);
+        return redirect()->intended(route('parent.dashboard'));
     }
 
     /**

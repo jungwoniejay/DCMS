@@ -26,6 +26,11 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         e.preventDefault();
         post(route('login'), {
             onFinish: () => reset('password'),
+            onSuccess: (page) => {
+                window.location.href = (page.props.auth as any)?.user?.role === 'admin'
+                    ? '/admin/dashboard'
+                    : '/parent/dashboard';
+            },
         });
     };
 
