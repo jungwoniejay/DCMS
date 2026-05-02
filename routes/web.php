@@ -25,6 +25,19 @@ Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 })->name('privacy-policy');
 
+// Debug endpoint - remove after fixing
+Route::get('/debug-storage', function () {
+    $testPaths = [
+        'storage_path()' => storage_path(),
+        'storage_path(app/public)' => storage_path('app/public'),
+        'base_path()' => base_path(),
+        '/app/storage/app/public exists' => file_exists('/app/storage/app/public') ? 'YES' : 'NO',
+        'storage_path(app/public) exists' => file_exists(storage_path('app/public')) ? 'YES' : 'NO',
+        'files in storage/app/public' => implode(', ', array_slice(scandir(storage_path('app/public')) ?: [], 0, 10)),
+    ];
+    return response()->json($testPaths);
+});
+
 // Serve uploaded files directly via Laravel (works on Railway without symlinks)
 Route::get('/storage/{path}', function (string $path) {
     // Try multiple possible storage locations
