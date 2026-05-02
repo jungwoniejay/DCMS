@@ -6,8 +6,24 @@ echo "=== Starting DCMS ==="
 # Override DB connection from Railway environment variables if provided
 if [ -n "$DATABASE_URL" ]; then
     sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=pgsql|" /app/.env
-    sed -i "s|^DB_URL=.*|DB_URL=${DATABASE_URL}|" /app/.env
-    grep -q "^DB_URL=" /app/.env || echo "DB_URL=${DATABASE_URL}" >> /app/.env
+    # Parse DATABASE_URL into individual components
+    # Format: postgresql://user:password@host:port/database
+    DB_USER=$(echo "$DATABASE_URL" | sed -E 's|.*://([^:]+):.*|\1|')
+    DB_PASS=$(echo "$DATABASE_URL" | sed -E 's|.*://[^:]+:([^@]+)@.*|\1|')
+    DB_HOST=$(echo "$DATABASE_URL" | sed -E 's|.*@([^:/]+)[:/].*|\1|')
+    DB_PORT=$(echo "$DATABASE_URL" | sed -E 's|.*@[^:]+:([0-9]+)/.*|\1|')
+    DB_NAME=$(echo "$DATABASE_URL" | sed -E 's|.*/([^?]+).*|\1|')
+    sed -i "s|^DB_HOST=.*|DB_HOST=${DB_HOST}|" /app/.env
+    sed -i "s|^DB_PORT=.*|DB_PORT=${DB_PORT}|" /app/.env
+    sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${DB_NAME}|" /app/.env
+    sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${DB_USER}|" /app/.env
+    sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASS}|" /app/.env
+    grep -q "^DB_HOST=" /app/.env || echo "DB_HOST=${DB_HOST}" >> /app/.env
+    grep -q "^DB_PORT=" /app/.env || echo "DB_PORT=${DB_PORT}" >> /app/.env
+    grep -q "^DB_DATABASE=" /app/.env || echo "DB_DATABASE=${DB_NAME}" >> /app/.env
+    grep -q "^DB_USERNAME=" /app/.env || echo "DB_USERNAME=${DB_USER}" >> /app/.env
+    grep -q "^DB_PASSWORD=" /app/.env || echo "DB_PASSWORD=${DB_PASS}" >> /app/.env
+    echo "DB configured from DATABASE_URL: host=${DB_HOST} db=${DB_NAME}"
 fi
 
 # Fix permissions on volume
