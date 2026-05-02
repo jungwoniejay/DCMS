@@ -41,45 +41,53 @@ class AdminEnrollmentController extends Controller
             return back()->with('error', 'This request has already been processed.');
         }
 
-        $child = Child::create([
-            'guardian_id'         => $request->parent_id,
-            'last_name'           => $request->child_last_name,
-            'first_name'          => $request->child_first_name,
-            'middle_name'         => $request->child_middle_name,
-            'sex'                 => $request->child_sex,
-            'birthdate'           => $request->child_birthdate,
-            'age'                 => $request->child_age,
-            'address'             => $request->child_address,
-            'first_language'      => $request->child_first_language,
-            'second_language'     => $request->child_second_language,
-            'profile_picture'     => $request->child_photo,
-            'registration_status' => 'Approved',
-            'accomplished_by'     => $request->parent->name,
-            'reviewed_by'         => auth()->user()->name,
-            'reviewed_at'         => now(),
-        ]);
+        try {
+            $child = Child::create([
+                'guardian_id'         => $request->parent_id,
+                'last_name'           => $request->child_last_name,
+                'first_name'          => $request->child_first_name,
+                'middle_name'         => $request->child_middle_name,
+                'sex'                 => $request->child_sex,
+                'birthdate'           => $request->child_birthdate,
+                'age'                 => $request->child_age,
+                'address'             => $request->child_address,
+                'first_language'      => $request->child_first_language,
+                'second_language'     => $request->child_second_language,
+                'profile_picture'     => $request->child_photo,
+                'registration_status' => 'Approved',
+                'accomplished_by'     => $request->parent->name,
+                'reviewed_by'         => auth()->user()->name,
+                'reviewed_at'         => now(),
+            ]);
 
-        $child->familyProfile()->create(['purok_zone' => $request->purok_zone]);
+            $child->familyProfile()->create(['purok_zone' => $request->purok_zone]);
 
-        $request->update([
-            'status'      => 'Approved',
-            'reviewed_by' => auth()->id(),
-            'reviewed_at' => now(),
-            'child_id'    => $child->id,
-        ]);
+            $request->update([
+                'status'      => 'Approved',
+                'reviewed_by' => auth()->id(),
+                'reviewed_at' => now(),
+                'child_id'    => $child->id,
+            ]);
 
-        // Notify parent
-        Notification::send(
-            $request->parent_id,
-            'enrollment_approved',
-            '🎉 Enrollment Approved!',
-            "Your enrollment request for {$request->child_first_name} {$request->child_last_name} has been approved. Your child has been added to the system.",
-            ['child_id' => $child->id, 'child_name' => "{$request->child_first_name} {$request->child_last_name}"]
-        );
+            Notification::send(
+                $request->parent_id,
+                'enrollment_approved',
+                '🎉 Enrollment Approved!',
+                "Your enrollment request for {$request->child_first_name} {$request->child_last_name} has been approved. Your child has been added to the system.",
+                ['child_id' => $child->id, 'child_name' => "{$request->child_first_name} {$request->child_last_name}"]
+            );
 
-        $this->logActivity('update', "Approved enrollment for {$request->child_first_name} {$request->child_last_name}", 'enrollment', EnrollmentRequest::class, $request->id);
+            try {
+                $this->logActivity('update', "Approved enrollment for {$request->child_first_name} {$request->child_last_name}", 'enrollment', EnrollmentRequest::class, $request->id);
+            } catch (\Exception $e) {
+                \Log::warning('logActivity failed on approve: ' . $e->getMessage());
+            }
 
-        return back()->with('success', 'Enrollment approved! Parent has been notified.');
+            return back()->with('success', 'Enrollment approved! Parent has been notified.');
+        } catch (\Exception $e) {
+            \Log::error('Enrollment approve failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to approve enrollment: ' . $e->getMessage());
+        }
     }
 
     public function clearPending()
