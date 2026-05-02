@@ -1,7 +1,7 @@
 import AdminLayout from '@/layouts/admin-layout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
-import { Clock, CheckCircle, XCircle, User, MapPin, Phone, Users, X, CheckCheck, AlertCircle } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, User, MapPin, Trash2, X, CheckCheck, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 
 interface EnrollmentRequest {
@@ -87,9 +87,24 @@ export default function Enrollments({ requests, stats }: Props) {
             <div className="space-y-6">
 
                 {/* Header */}
-                <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Enrollment Requests</h1>
-                    <p className="text-slate-500 mt-1 text-sm">Review and process parent enrollment submissions</p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Enrollment Requests</h1>
+                        <p className="text-slate-500 mt-1 text-sm">Review and process parent enrollment submissions</p>
+                    </div>
+                    {stats.pending > 0 && (
+                        <button
+                            onClick={() => {
+                                if (confirm(`Clear all ${stats.pending} pending enrollment request(s)? This cannot be undone.`)) {
+                                    router.delete(route('admin.enrollments.clear-pending'));
+                                }
+                            }}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 transition-all shadow-sm"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            Clear All Pending
+                        </button>
+                    )}
                 </div>
 
                 {/* Stats */}

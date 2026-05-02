@@ -82,6 +82,16 @@ class AdminEnrollmentController extends Controller
         return back()->with('success', 'Enrollment approved! Parent has been notified.');
     }
 
+    public function clearPending()
+    {
+        $count = EnrollmentRequest::where('status', 'Pending')->count();
+        EnrollmentRequest::where('status', 'Pending')->delete();
+
+        $this->logActivity('delete', "Cleared {$count} pending enrollment request(s)", 'enrollment', EnrollmentRequest::class, null);
+
+        return back()->with('success', "{$count} pending enrollment request(s) cleared.");
+    }
+
     public function reject(Request $request, $id)
     {
         $validated = $request->validate([
