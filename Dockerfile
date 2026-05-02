@@ -19,7 +19,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 ARG CACHE_BUST=10
-COPY . .\
+COPY . .
+
+RUN npm run build && npm prune --omit=dev
 
 RUN npm run build && npm prune --omit=dev
 
