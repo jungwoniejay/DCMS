@@ -2,7 +2,7 @@ FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
     git curl zip unzip libpq-dev libpng-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd \
+    && docker-php-ext-install pdo pdo_sqlite pdo_pgsql mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
