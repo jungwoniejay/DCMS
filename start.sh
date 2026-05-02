@@ -3,6 +3,13 @@ set -e
 
 echo "=== Starting DCMS ==="
 
+# Force delete cached files from volume
+rm -f /app/bootstrap/cache/routes-v7.php
+rm -f /app/bootstrap/cache/config.php
+rm -f /app/bootstrap/cache/packages.php
+rm -f /app/bootstrap/cache/services.php
+rm -f /app/storage/framework/views/*.php
+
 # Always regenerate .env from Railway environment variables
 echo "Generating .env from environment variables..."
 cat > /app/.env << EOF

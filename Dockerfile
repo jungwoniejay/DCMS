@@ -18,14 +18,17 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 COPY package.json package-lock.json ./
 RUN npm ci
 
-ARG CACHE_BUST=8
+ARG CACHE_BUST=9
 COPY . .
 
 RUN npm run build && npm prune --omit=dev
 
 RUN mkdir -p storage/framework/{sessions,views,cache,testing} \
     storage/logs bootstrap/cache \
-    && chmod -R 777 storage bootstrap/cache
+    && chmod -R 777 storage bootstrap/cache \
+    && php artisan route:clear \
+    && php artisan config:clear \
+    && php artisan view:clear
 
 # Copy start script separately to ensure it's always fresh
 COPY start.sh /start.sh
