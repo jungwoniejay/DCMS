@@ -15,6 +15,15 @@ use App\Models\WelcomeContent;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// Temporary: clear rate limiter cache
+Route::get('/clear-rate-limit', function() {
+    \Illuminate\Support\Facades\RateLimiter::clear(
+        \Illuminate\Support\Str::lower(request('email', '')) . '|' . request()->ip()
+    );
+    \Illuminate\Support\Facades\Cache::flush();
+    return 'Rate limit cleared';
+});
+
 // Public Welcome Page
 Route::get('/', function () {
     $contents = WelcomeContent::all()->keyBy('key');
