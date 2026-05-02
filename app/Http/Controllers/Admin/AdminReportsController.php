@@ -34,7 +34,7 @@ class AdminReportsController extends Controller
             'total_health_assessments' => HealthAssessment::count(),
             'total_nutrition_records' => NutritionRecord::count(),
             'registration_by_month' => Child::select(
-                DB::raw("strftime('%Y-%m', created_at) as month"),
+                DB::raw("to_char(created_at, 'YYYY-MM') as month"),
                 DB::raw('count(*) as count')
             )
             ->whereYear('created_at', now()->year)
