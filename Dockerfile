@@ -39,15 +39,15 @@ RUN mkdir -p storage/framework/{sessions,views,cache,testing} \
 EXPOSE 8080
 
 # Start script - runs at container startup AFTER volume is mounted
-CMD php artisan config:clear \
+CMD chmod -R 777 /app/storage/app/public \
+    && mkdir -p /app/storage/app/public/enrollment_photos \
+    && mkdir -p /app/storage/app/public/profile_pictures \
+    && php artisan config:clear \
     && php artisan route:clear \
     && php artisan view:clear \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
     && php artisan migrate --force \
-    && mkdir -p /app/storage/app/public/enrollment_photos \
-    && mkdir -p /app/storage/app/public/profile_pictures \
-    && chmod -R 775 /app/storage/app/public \
     && php artisan storage:link --force \
     && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
