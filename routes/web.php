@@ -27,15 +27,28 @@ Route::get('/privacy-policy', function () {
 
 // Debug endpoint - remove after fixing
 Route::get('/debug-storage', function () {
-    $testPaths = [
-        'storage_path()' => storage_path(),
-        'storage_path(app/public)' => storage_path('app/public'),
-        'base_path()' => base_path(),
-        '/app/storage/app/public exists' => file_exists('/app/storage/app/public') ? 'YES' : 'NO',
-        'storage_path(app/public) exists' => file_exists(storage_path('app/public')) ? 'YES' : 'NO',
-        'files in storage/app/public' => implode(', ', array_slice(scandir(storage_path('app/public')) ?: [], 0, 10)),
-    ];
-    return response()->json($testPaths);
+    $publicPath = storage_path('app/public');
+    $testFile = $publicPath . '/test-write.txt';
+
+    // Try writing a test file
+    $writeResult = 'FAILED';
+    try {
+        file_put_contents($testFile, 'test ' . now());
+        $writeResult = file_exists($testFile) ? 'SUCCESS - file written' : 'FAILED - file not found after write';
+    } catch (\Exception $e) {
+        $writeResult = 'ERROR: ' . $e->getMessage();
+    }
+
+    return response()->json([
+        'storage_path'        => $publicPath,
+        'exists'              => file_exists($publicPath) ? 'YES' : 'NO',
+        'is_writable'         => is_writable($publicPath) ? 'YES' : 'NO',
+        'write_test'          => $writeResult,
+        'files'               => scandir($publicPath) ?: [],
+        'enrollment_photos'   => file_exists($publicPath . '/enrollment_photos')
+                                    ? scandir($publicPath . '/enrollment_photos')
+                                    : 'directory does not exist',
+    ]);
 });
 
 // Serve uploaded files directly via Laravel (works on Railway without symlinks)
