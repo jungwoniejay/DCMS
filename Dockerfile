@@ -22,7 +22,7 @@ COPY . .
 
 RUN npm run build && npm prune --omit=dev
 
-ARG CACHE_BUST=1
+ARG CACHE_BUST=2
 
 RUN mkdir -p storage/framework/{sessions,views,cache,testing} \
     storage/logs bootstrap/cache \

@@ -40,10 +40,9 @@ class AuthenticatedSessionController extends Controller
             \Log::warning('logLogin failed: ' . $e->getMessage());
         }
 
-        if (auth()->user()->role === 'admin') {
-            return Inertia::location(route('admin.dashboard'));
-        }
-        return Inertia::location(route('parent.dashboard'));
+        $role = auth()->user()->role;
+        $url = $role === 'admin' ? route('admin.dashboard') : route('parent.dashboard');
+        return redirect($url);
     }
 
     /**
