@@ -43,7 +43,7 @@ class EnrollmentRequest extends Model
     public function getChildPhotoUrlAttribute(): ?string
     {
         if (!$this->child_photo) return null;
-        return \Storage::disk('public')->url($this->child_photo);
+        return asset('storage/' . $this->child_photo);
     }
 
     public function parent()
