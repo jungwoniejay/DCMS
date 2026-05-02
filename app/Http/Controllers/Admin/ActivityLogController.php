@@ -8,9 +8,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use App\Traits\DbCompatible;
 
 class ActivityLogController extends Controller
 {
+    use DbCompatible;
     /**
      * Display the activity monitoring dashboard
      */
@@ -169,26 +171,28 @@ class ActivityLogController extends Controller
     private function getSuspiciousTrends(): array
     {
         $trends = [];
-        $endDate = now()->endOfDay();
+        $endDate   = now()->endOfDay();
         $startDate = now()->subDays(6)->startOfDay();
 
-        $dailyStats = ActivityLog::selectRaw('DATE(created_at) as date, 
-                    COUNT(*) as total,
-                    SUM(CASE WHEN is_suspicious = 1 THEN 1 ELSE 0 END) as suspicious')
+        $suspiciousExpr = DB::getDriverName() === 'pgsql'
+            ? 'SUM(CASE WHEN is_suspicious = true THEN 1 ELSE 0 END)'
+            : 'SUM(CASE WHEN is_suspicious = 1 THEN 1 ELSE 0 END)';
+
+        $dailyStats = ActivityLog::selectRaw(
+            'DATE(created_at) as date, COUNT(*) as total, ' . $suspiciousExpr . ' as suspicious'
+        )
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        // Fill in all 7 days
         for ($i = 6; $i >= 0; $i--) {
-            $date = now()->subDays($i)->format('Y-m-d');
+            $date    = now()->subDays($i)->format('Y-m-d');
             $dayData = $dailyStats->firstWhere('date', $date);
-            
             $trends[] = [
-                'date' => now()->subDays($i)->format('M d'),
-                'total' => $dayData ? (int)$dayData->total : 0,
-                'suspicious' => $dayData ? (int)$dayData->suspicious : 0,
+                'date'       => now()->subDays($i)->format('M d'),
+                'total'      => $dayData ? (int) $dayData->total : 0,
+                'suspicious' => $dayData ? (int) $dayData->suspicious : 0,
             ];
         }
 

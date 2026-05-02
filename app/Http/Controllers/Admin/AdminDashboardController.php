@@ -14,11 +14,13 @@ use App\Models\NutritionRecord;
 use App\Models\FeedingProfile;
 use App\Models\Logistics;
 use App\Models\PriorExperience;
+use App\Traits\DbCompatible;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
 {
+    use DbCompatible;
     public function index()
     {
         $currentYear = now()->year;
@@ -101,19 +103,17 @@ class AdminDashboardController extends Controller
     private function getMonthlyEnrollmentTrend()
     {
         return Child::select(
-            DB::raw("to_char(created_at, 'YYYY-MM') as month"),
+            $this->yearMonthExpr('created_at'),
             DB::raw('count(*) as count')
         )
         ->whereYear('created_at', now()->year)
         ->groupBy('month')
         ->orderBy('month')
         ->get()
-        ->map(function($item) {
-            return [
-                'month' => date('M Y', strtotime($item->month . '-01')),
-                'count' => $item->count
-            ];
-        })
+        ->map(fn($item) => [
+            'month' => date('M Y', strtotime($item->month . '-01')),
+            'count' => (int) $item->count,
+        ])
         ->toArray();
     }
 

@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Child;
 use App\Models\FamilyProfile;
 use App\Traits\LogsActivity;
+use App\Traits\DbCompatible;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class AdminChildrenController extends Controller
 {
-    use LogsActivity;
+    use LogsActivity, DbCompatible;
 
     public function index(Request $request)
     {
@@ -30,15 +31,16 @@ class AdminChildrenController extends Controller
         }
 
         if ($request->age_group) {
+            $ageExpr = $this->ageRawExpr('birthdate');
             switch ($request->age_group) {
                 case '0-2':
-                    $query->whereRaw('CAST((julianday("now") - julianday(birthdate)) / 365.25 AS INTEGER) <= 2');
+                    $query->whereRaw("{$ageExpr} <= 2");
                     break;
                 case '3-4':
-                    $query->whereRaw('CAST((julianday("now") - julianday(birthdate)) / 365.25 AS INTEGER) BETWEEN 3 AND 4');
+                    $query->whereRaw("{$ageExpr} BETWEEN 3 AND 4");
                     break;
                 case '5-6':
-                    $query->whereRaw('CAST((julianday("now") - julianday(birthdate)) / 365.25 AS INTEGER) BETWEEN 5 AND 6');
+                    $query->whereRaw("{$ageExpr} BETWEEN 5 AND 6");
                     break;
             }
         }

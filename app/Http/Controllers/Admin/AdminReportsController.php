@@ -9,11 +9,13 @@ use App\Models\HealthAssessment;
 use App\Models\MedicalAssessment;
 use App\Models\NutritionRecord;
 use App\Models\Logistics;
+use App\Traits\DbCompatible;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminReportsController extends Controller
 {
+    use DbCompatible;
     public function index()
     {
         $reports = [
@@ -34,7 +36,7 @@ class AdminReportsController extends Controller
             'total_health_assessments' => HealthAssessment::count(),
             'total_nutrition_records' => NutritionRecord::count(),
             'registration_by_month' => Child::select(
-                DB::raw("strftime('%Y-%m', created_at) as month"),
+                $this->yearMonthExpr('created_at'),
                 DB::raw('count(*) as count')
             )
             ->whereYear('created_at', now()->year)
@@ -120,13 +122,16 @@ class AdminReportsController extends Controller
     
     private function getHealthConditionsSummary()
     {
+        $isPgsql = DB::getDriverName() === 'pgsql';
+        $cast    = $isPgsql ? 'true' : '1';
+
         $result = DB::table('health_problems')
             ->select(
-                DB::raw('SUM(CASE WHEN allergies = 1 THEN 1 ELSE 0 END) as allergies'),
-                DB::raw('SUM(CASE WHEN asthma = 1 THEN 1 ELSE 0 END) as asthma'),
-                DB::raw('SUM(CASE WHEN diabetes = 1 THEN 1 ELSE 0 END) as diabetes'),
-                DB::raw('SUM(CASE WHEN ears = 1 THEN 1 ELSE 0 END) as ears'),
-                DB::raw('SUM(CASE WHEN eyes = 1 THEN 1 ELSE 0 END) as eyes')
+                DB::raw("SUM(CASE WHEN allergies = {$cast} THEN 1 ELSE 0 END) as allergies"),
+                DB::raw("SUM(CASE WHEN asthma = {$cast} THEN 1 ELSE 0 END) as asthma"),
+                DB::raw("SUM(CASE WHEN diabetes = {$cast} THEN 1 ELSE 0 END) as diabetes"),
+                DB::raw("SUM(CASE WHEN ears = {$cast} THEN 1 ELSE 0 END) as ears"),
+                DB::raw("SUM(CASE WHEN eyes = {$cast} THEN 1 ELSE 0 END) as eyes")
             )
             ->first();
 
