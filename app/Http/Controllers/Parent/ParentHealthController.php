@@ -18,16 +18,19 @@ class ParentHealthController extends Controller
             ->get()
             ->map(function ($child) {
                 $medicalAssessment = DB::table('medical_assessments')
-                    ->where('child_id', $child->id)
-                    ->orderBy('created_at', 'desc')
+                    ->join('health_assessments', 'medical_assessments.health_assessment_id', '=', 'health_assessments.id')
+                    ->where('health_assessments.child_id', $child->id)
+                    ->orderBy('medical_assessments.created_at', 'desc')
                     ->first();
                 
                 $healthProblems = DB::table('health_problems')
-                    ->where('child_id', $child->id)
+                    ->join('health_assessments', 'health_problems.health_assessment_id', '=', 'health_assessments.id')
+                    ->where('health_assessments.child_id', $child->id)
                     ->get();
                 
                 $medications = DB::table('medications')
-                    ->where('child_id', $child->id)
+                    ->join('health_assessments', 'medications.health_assessment_id', '=', 'health_assessments.id')
+                    ->where('health_assessments.child_id', $child->id)
                     ->get();
                 
                 $appointments = DB::table('checkup_appointments')

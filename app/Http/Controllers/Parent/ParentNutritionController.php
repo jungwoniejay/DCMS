@@ -19,7 +19,7 @@ class ParentNutritionController extends Controller
             ->map(function ($child) {
                 $nutritionHistory = DB::table('nutrition_records')
                     ->where('child_id', $child->id)
-                    ->orderBy('date_taken', 'desc')
+                    ->orderBy('assessment_date', 'desc')
                     ->get();
                 
                 $latestNutrition = $nutritionHistory->first();
@@ -33,15 +33,15 @@ class ParentNutritionController extends Controller
                     'child_name' => "{$child->first_name} {$child->last_name}",
                     'age' => $child->age,
                     'sex' => $child->sex,
-                    'current_status' => $latestNutrition?->nutritional_status ?? 'Not assessed',
-                    'current_height' => $latestNutrition?->height ?? null,
-                    'current_weight' => $latestNutrition?->weight ?? null,
-                    'last_measured' => $latestNutrition?->date_taken ?? null,
+                    'current_status' => $latestNutrition?->nutritional_status_result ?? 'Not assessed',
+                    'current_height' => $latestNutrition?->height_first ?? null,
+                    'current_weight' => $latestNutrition?->weight_first ?? null,
+                    'last_measured' => $latestNutrition?->assessment_date ?? null,
                     'history' => $nutritionHistory->map(fn($record) => [
-                        'date' => $record->date_taken,
-                        'height' => $record->height,
-                        'weight' => $record->weight,
-                        'status' => $record->nutritional_status,
+                        'date' => $record->assessment_date,
+                        'height' => $record->height_first,
+                        'weight' => $record->weight_first,
+                        'status' => $record->nutritional_status_result,
                     ]),
                     'food_allergies' => $feedingProfile?->food_allergies ?? null,
                     'eating_habits' => $feedingProfile?->eating_habits ?? null,
