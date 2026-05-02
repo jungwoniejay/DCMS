@@ -32,7 +32,6 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-        $request->session()->regenerate();
 
         $role = auth()->user()->role;
         if ($role === 'admin') {
