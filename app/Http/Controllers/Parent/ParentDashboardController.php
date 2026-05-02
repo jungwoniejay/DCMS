@@ -24,12 +24,6 @@ class ParentDashboardController extends Controller
                     ->orderBy('assessment_date', 'desc')
                     ->first();
 
-                $latestMedical = DB::table('medical_assessments')
-                    ->join('health_assessments', 'medical_assessments.health_assessment_id', '=', 'health_assessments.id')
-                    ->where('health_assessments.child_id', $child->id)
-                    ->orderBy('medical_assessments.created_at', 'desc')
-                    ->first();
-
                 return [
                     'id'                  => $child->id,
                     'name'                => "{$child->first_name} {$child->last_name}",
@@ -39,7 +33,7 @@ class ParentDashboardController extends Controller
                     'status'              => $child->registration_status ?? 'Pending',
                     'zone'                => $child->familyProfile?->purok_zone ?? 'N/A',
                     'profile_picture'     => $child->profile_picture,
-                    'has_emergency_alert' => $latestMedical?->requires_emergency_action ?? false,
+                    'has_emergency_alert' => false,
                     'nutritional_status'  => $latestNutrition?->nutritional_status_result ?? 'Not assessed',
                     'height'              => $latestNutrition?->height_first ?? null,
                     'weight'              => $latestNutrition?->weight_first ?? null,

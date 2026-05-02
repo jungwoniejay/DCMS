@@ -19,18 +19,16 @@ class ParentChildrenController extends Controller
             ->map(function ($child) {
                 $latestNutrition = DB::table('nutrition_records')
                     ->where('child_id', $child->id)
-                    ->orderBy('date_taken', 'desc')
+                    ->orderBy('assessment_date', 'desc')
                     ->first();
 
                 $vaccinations = DB::table('medical_assessments')
-                    ->where('child_id', $child->id)
-                    ->orderBy('created_at', 'desc')
+                    ->join('health_assessments', 'medical_assessments.health_assessment_id', '=', 'health_assessments.id')
+                    ->where('health_assessments.child_id', $child->id)
+                    ->orderBy('medical_assessments.created_at', 'desc')
                     ->first();
 
-                $latestMedical = DB::table('medical_assessments')
-                    ->where('child_id', $child->id)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
+                $latestMedical = $vaccinations;
 
                 return [
                     'id'                   => $child->id,
@@ -46,9 +44,9 @@ class ParentChildrenController extends Controller
                     'profile_picture'      => $child->profile_picture,
                     'emergency_alert'      => $latestMedical?->requires_emergency_action ?? false,
                     'emergency_description'=> $latestMedical?->emergency_action_description ?? null,
-                    'nutritional_status'   => $latestNutrition?->nutritional_status ?? 'Not assessed',
-                    'height'               => $latestNutrition?->height ?? null,
-                    'weight'               => $latestNutrition?->weight ?? null,
+                    'nutritional_status'   => $latestNutrition?->nutritional_status_result ?? 'Not assessed',
+                    'height'               => $latestNutrition?->height_first ?? null,
+                    'weight'               => $latestNutrition?->weight_first ?? null,
                     'vaccinations'         => [
                         'bcg'     => $vaccinations?->bcg_status ?? 'Unknown',
                         'dpt'     => $vaccinations?->dpt_status ?? 'Unknown',
@@ -78,20 +76,23 @@ class ParentChildrenController extends Controller
 
         $nutritionHistory = DB::table('nutrition_records')
             ->where('child_id', $id)
-            ->orderBy('date_taken', 'desc')
+            ->orderBy('assessment_date', 'desc')
             ->get();
 
         $medicalAssessment = DB::table('medical_assessments')
-            ->where('child_id', $id)
-            ->orderBy('created_at', 'desc')
+            ->join('health_assessments', 'medical_assessments.health_assessment_id', '=', 'health_assessments.id')
+            ->where('health_assessments.child_id', $id)
+            ->orderBy('medical_assessments.created_at', 'desc')
             ->first();
 
         $healthProblems = DB::table('health_problems')
-            ->where('child_id', $id)
+            ->join('health_assessments', 'health_problems.health_assessment_id', '=', 'health_assessments.id')
+            ->where('health_assessments.child_id', $id)
             ->get();
 
         $medications = DB::table('medications')
-            ->where('child_id', $id)
+            ->join('health_assessments', 'medications.health_assessment_id', '=', 'health_assessments.id')
+            ->where('health_assessments.child_id', $id)
             ->get();
 
         return Inertia::render('parent/ChildDetail', [

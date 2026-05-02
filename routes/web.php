@@ -45,23 +45,16 @@ Route::get('/debug-parent-dashboard', function() {
     try {
         $parentId = auth()->id();
         $children = \App\Models\Child::where('guardian_id', $parentId)
-            ->with(['familyProfile', 'healthAssessment', 'nutritionRecord'])
+            ->with(['familyProfile'])
             ->get()
             ->map(function ($child) {
-                $latestNutrition = \Illuminate\Support\Facades\DB::table('nutrition_records')
-                    ->where('child_id', $child->id)
-                    ->orderBy('assessment_date', 'desc')
-                    ->first();
-                $latestMedical = \Illuminate\Support\Facades\DB::table('medical_assessments')
-                    ->join('health_assessments', 'medical_assessments.health_assessment_id', '=', 'health_assessments.id')
-                    ->where('health_assessments.child_id', $child->id)
-                    ->orderBy('medical_assessments.created_at', 'desc')
-                    ->first();
                 return [
                     'id' => $child->id,
                     'name' => "{$child->first_name} {$child->last_name}",
-                    'nutritional_status' => $latestNutrition?->nutritional_status_result ?? 'Not assessed',
-                    'has_emergency_alert' => $latestMedical?->requires_emergency_action ?? false,
+                    'has_emergency_alert' => false,
+                    'nutritional_status' => 'Not assessed',
+                    'height' => null,
+                    'weight' => null,
                 ];
             });
         return response()->json(['ok' => true, 'children' => $children]);
