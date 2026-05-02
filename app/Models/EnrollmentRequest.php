@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EnrollmentRequest extends Model
 {
+    protected $appends = ['child_photo_url'];
+
     protected $fillable = [
         'parent_id',
         'child_last_name',
@@ -37,6 +39,12 @@ class EnrollmentRequest extends Model
         'child_birthdate' => 'date',
         'reviewed_at' => 'datetime',
     ];
+
+    public function getChildPhotoUrlAttribute(): ?string
+    {
+        if (!$this->child_photo) return null;
+        return \Storage::disk('public')->url($this->child_photo);
+    }
 
     public function parent()
     {

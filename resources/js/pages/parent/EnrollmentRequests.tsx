@@ -9,6 +9,7 @@ interface EnrollmentRequest {
     child_age: number;
     child_sex: string;
     child_photo: string | null;
+    child_photo_url: string | null;
     purok_zone: string;
     status: string;
     rejection_reason: string | null;
@@ -71,8 +72,8 @@ export default function EnrollmentRequests({ requests }: { requests: EnrollmentR
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="flex items-start gap-3 min-w-0">
                                                 {/* Photo or avatar */}
-                                                {req.child_photo ? (
-                                                    <img src={`/storage/${req.child_photo}`} alt={req.child_first_name} className="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm shrink-0" />
+                                                {req.child_photo_url ? (
+                                                    <img src={req.child_photo_url} alt={req.child_first_name} className="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm shrink-0" />
                                                 ) : (
                                                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center shrink-0">
                                                         <Icon className={`w-5 h-5 ${st.text}`} />

@@ -16,6 +16,7 @@ interface EnrollmentRequest {
     child_first_language: string;
     child_second_language: string;
     child_photo: string | null;
+    child_photo_url: string | null;
     purok_zone: string;
     father_name: string;
     father_occupation: string;
@@ -133,8 +134,8 @@ export default function Enrollments({ requests, stats }: Props) {
                                             onClick={() => setExpandedId(isExpanded ? null : req.id)}
                                         >
                                             {/* Photo */}
-                                            {req.child_photo ? (
-                                                <img src={`/storage/${req.child_photo}`} alt={req.child_first_name} className="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm shrink-0" />
+                                            {req.child_photo_url ? (
+                                                <img src={req.child_photo_url} alt={req.child_first_name} className="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm shrink-0" />
                                             ) : (
                                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shrink-0">
                                                     <User className="w-5 h-5 text-slate-400" />
