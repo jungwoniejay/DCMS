@@ -58,6 +58,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return $user->role === 'admin' ? to_route('admin.dashboard') : to_route('parent.dashboard');
+        return $user->role === 'admin'
+            ? \Inertia\Inertia::location(route('admin.dashboard'))
+            : \Inertia\Inertia::location(route('parent.dashboard'));
     }
 }

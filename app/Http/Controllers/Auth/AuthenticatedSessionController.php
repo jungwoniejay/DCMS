@@ -41,9 +41,9 @@ class AuthenticatedSessionController extends Controller
         }
 
         if (auth()->user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+            return Inertia::location(route('admin.dashboard'));
         }
-        return redirect()->route('parent.dashboard');
+        return Inertia::location(route('parent.dashboard'));
     }
 
     /**
