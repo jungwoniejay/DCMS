@@ -18,11 +18,10 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 COPY package.json package-lock.json ./
 RUN npm ci
 
+ARG CACHE_BUST=3
 COPY . .
 
 RUN npm run build && npm prune --omit=dev
-
-ARG CACHE_BUST=2
 
 RUN mkdir -p storage/framework/{sessions,views,cache,testing} \
     storage/logs bootstrap/cache \
