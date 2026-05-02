@@ -27,7 +27,8 @@ export default function Register() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
+            onSuccess: () => reset('password', 'password_confirmation', 'admin_key'),
+            onError: () => reset('password', 'password_confirmation'),
         });
     };
 
@@ -126,7 +127,7 @@ export default function Register() {
                                 <div className="grid grid-cols-2 gap-3">
                                     <button
                                         type="button"
-                                        onClick={() => { setData('role', 'parent'); setShowAdminKey(false); }}
+                                        onClick={() => { setData('role', 'parent'); setShowAdminKey(false); setData('admin_key', ''); }}
                                         className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
                                             data.role === 'parent'
                                                 ? 'border-green-500 bg-green-50 text-green-700'
@@ -152,7 +153,7 @@ export default function Register() {
                                 <InputError message={errors.role} className="mt-1" />
                             </div>
 
-                            {showAdminKey && (
+                            {(showAdminKey || data.role === 'admin') && (
                                 <div>
                                     <label htmlFor="admin_key" className="block text-sm font-semibold text-gray-700 mb-2">
                                         Admin Registration Key

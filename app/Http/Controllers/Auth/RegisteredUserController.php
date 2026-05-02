@@ -31,16 +31,19 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'     => 'required|in:parent,admin',
-            'admin_key' => 'required_if:role,admin|nullable|string',
+            'name'      => 'required|string|max:255',
+            'email'     => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'password'  => ['required', 'confirmed', Rules\Password::defaults()],
+            'role'      => 'required|in:parent,admin',
+            'admin_key' => 'nullable|string',
         ]);
 
         if ($request->role === 'admin') {
-            if ($request->admin_key !== config('app.admin_register_key', env('ADMIN_REGISTER_KEY'))) {
-                return back()->withErrors(['admin_key' => 'Invalid admin registration key.'])->withInput();
+            $validKey = env('ADMIN_REGISTER_KEY', 'Brgy2DMS@AdminKey2024');
+            if (trim($request->admin_key) !== trim($validKey)) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'admin_key' => 'Invalid admin registration key.',
+                ]);
             }
         }
 
