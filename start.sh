@@ -14,7 +14,7 @@ cat > /app/.env << EOF
 APP_NAME=${APP_NAME:-Brgy2DMS}
 APP_ENV=production
 APP_KEY=${APP_KEY}
-APP_DEBUG=false
+APP_DEBUG=true
 APP_URL=${APP_URL:-http://localhost}
 APP_LOCALE=en
 APP_FALLBACK_LOCALE=en
