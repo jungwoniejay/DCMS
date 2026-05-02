@@ -46,5 +46,8 @@ CMD php artisan config:clear \
     && php artisan route:cache \
     && php artisan view:cache \
     && php artisan migrate --force \
+    && mkdir -p /app/storage/app/public/enrollment_photos \
+    && mkdir -p /app/storage/app/public/profile_pictures \
+    && chmod -R 775 /app/storage/app/public \
     && php artisan storage:link --force \
     && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
