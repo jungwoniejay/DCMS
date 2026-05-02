@@ -104,6 +104,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('settings/puroks', [\App\Http\Controllers\Admin\PurokController::class, 'store'])->name('settings.puroks.store');
     Route::put('settings/puroks/{purok}', [\App\Http\Controllers\Admin\PurokController::class, 'update'])->name('settings.puroks.update');
     Route::delete('settings/puroks/{purok}', [\App\Http\Controllers\Admin\PurokController::class, 'destroy'])->name('settings.puroks.destroy');
+    Route::post('settings/puroks/seed', [\App\Http\Controllers\Admin\PurokController::class, 'seed'])->name('settings.puroks.seed');
 
     // Settings - Locations
     Route::get('settings/locations', [\App\Http\Controllers\Admin\LocationController::class, 'index'])->name('settings.locations');
