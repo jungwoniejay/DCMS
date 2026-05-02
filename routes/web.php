@@ -44,10 +44,26 @@ Route::get('/debug-auth', function() {
 Route::get('/debug-parent-dashboard', function() {
     try {
         $parentId = auth()->id();
-        $children = \App\Models\Child::where('guardian_id', $parentId)->with(['familyProfile', 'healthAssessment', 'nutritionRecord'])->get();
-        $appointments = \App\Models\CheckupAppointment::where('requested_by', $parentId)->with('child')->orderBy('created_at', 'desc')->take(3)->get();
-        $enrollments = \App\Models\EnrollmentRequest::where('parent_id', $parentId)->where('status', 'Pending')->count();
-        return response()->json(['ok' => true, 'children' => $children->count(), 'appointments' => $appointments->count(), 'enrollments' => $enrollments]);
+        $children = \App\Models\Child::where('guardian_id', $parentId)
+            ->with(['familyProfile', 'healthAssessment', 'nutritionRecord'])
+            ->get()
+            ->map(function ($child) {
+                $latestNutrition = \Illuminate\Support\Facades\DB::table('nutrition_records')
+                    ->where('child_id', $child->id)
+                    ->orderBy('assessment_date', 'desc')
+                    ->first();
+                $latestMedical = \Illuminate\Support\Facades\DB::table('medical_assessments')
+                    ->where('child_id', $child->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                return [
+                    'id' => $child->id,
+                    'name' => "{$child->first_name} {$child->last_name}",
+                    'nutritional_status' => $latestNutrition?->nutritional_status_result ?? 'Not assessed',
+                    'has_emergency_alert' => $latestMedical?->requires_emergency_action ?? false,
+                ];
+            });
+        return response()->json(['ok' => true, 'children' => $children]);
     } catch (\Exception $e) {
         return response()->json(['error' => $e->getMessage(), 'line' => $e->getLine(), 'file' => basename($e->getFile())]);
     }
