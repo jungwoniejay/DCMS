@@ -3,10 +3,9 @@ set -e
 
 echo "=== Starting DCMS ==="
 
-# Generate .env from Railway environment variables if it doesn't exist
-if [ ! -f /app/.env ]; then
-    echo "Generating .env from environment variables..."
-    cat > /app/.env << EOF
+# Always regenerate .env from Railway environment variables
+echo "Generating .env from environment variables..."
+cat > /app/.env << EOF
 APP_NAME=${APP_NAME:-Brgy2DMS}
 APP_ENV=${APP_ENV:-production}
 APP_KEY=${APP_KEY}
@@ -18,9 +17,7 @@ APP_FAKER_LOCALE=en_US
 APP_MAINTENANCE_DRIVER=file
 PHP_CLI_SERVER_WORKERS=4
 BCRYPT_ROUNDS=12
-LOG_CHANNEL=stack
-LOG_STACK=single
-LOG_DEPRECATIONS_CHANNEL=null
+LOG_CHANNEL=stderr
 LOG_LEVEL=debug
 DB_CONNECTION=pgsql
 DB_HOST=${DB_HOST}
@@ -28,7 +25,7 @@ DB_PORT=${DB_PORT:-5432}
 DB_DATABASE=${DB_DATABASE}
 DB_USERNAME=${DB_USERNAME}
 DB_PASSWORD=${DB_PASSWORD}
-SESSION_DRIVER=file
+SESSION_DRIVER=cookie
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=true
 SESSION_PATH=/
@@ -40,7 +37,6 @@ MAIL_MAILER=log
 VITE_APP_NAME=\${APP_NAME}
 ADMIN_REGISTER_KEY=${ADMIN_REGISTER_KEY:-Brgy2DMS@AdminKey2024}
 EOF
-fi
 
 # If DATABASE_URL is set, parse and override DB vars
 if [ -n "$DATABASE_URL" ]; then
