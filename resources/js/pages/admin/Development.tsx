@@ -19,8 +19,8 @@ export default function Development({ prior_schooling, social_interaction, home_
             <Head title="Developmental Background" />
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Developmental Background</h1>
-                    <p className="text-gray-500 mt-1 text-sm">Prior experiences and social development</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Developmental Background</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Prior experiences and social development</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

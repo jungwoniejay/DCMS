@@ -75,8 +75,8 @@ export default function DevelopmentPlans({ child, plans }: Props) {
       <div className="p-8">
         <div className="mb-8 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Development Plans</h1>
-            <p className="text-gray-600 mt-2">{child.first_name} {child.last_name}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Development Plans</h1>
+            <p className="text-slate-500 mt-1">{child.first_name} {child.last_name}</p>
           </div>
           <button
             onClick={() => setShowModal(true)}

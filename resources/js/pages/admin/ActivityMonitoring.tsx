@@ -1,9 +1,6 @@
 import { Head, router, Link } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import {
     Activity, AlertTriangle, AlertCircle, Shield, Users, Eye, Download,
     Search, Filter, RefreshCw, Calendar, MapPin, Monitor, Globe,
@@ -298,11 +295,11 @@ export default function ActivityMonitoring({
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center gap-3">
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-800 flex items-center gap-3">
                             <Shield className="w-7 h-7 text-blue-500" />
                             Activity Monitoring
                         </h1>
-                        <p className="text-gray-500 mt-1 text-sm">Track user behavior and detect anomalies</p>
+                        <p className="text-slate-500 mt-1 text-sm">Track user behavior and detect anomalies</p>
                     </div>
                     <div className="flex items-center gap-3">
                         <Button
@@ -394,7 +391,7 @@ export default function ActivityMonitoring({
                                 <AlertTriangle className="w-5 h-5 text-red-500" />
                                 Recent Suspicious Activities
                             </h2>
-                            <Badge className="bg-red-500 text-white">
+                            <Badge className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
                                 {recentSuspicious.length} Alerts
                             </Badge>
                         </div>
@@ -433,12 +430,12 @@ export default function ActivityMonitoring({
                             <div className="flex-1 max-w-md">
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <Input
+                                    <input
                                         placeholder="Search activities..."
                                         value={currentFilters.search}
                                         onChange={(e) => handleFilterChange('search', e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && applyFilters()}
-                                        className="pl-9"
+                                        className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                     />
                                 </div>
                             </div>
@@ -469,7 +466,7 @@ export default function ActivityMonitoring({
                         <div className="p-4 border-b border-gray-100 bg-gray-50">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div>
-                                    <Label className="text-xs">User</Label>
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">User</label>
                                     <select
                                         value={currentFilters.user_id}
                                         onChange={(e) => handleFilterChange('user_id', e.target.value)}
@@ -482,7 +479,7 @@ export default function ActivityMonitoring({
                                     </select>
                                 </div>
                                 <div>
-                                    <Label className="text-xs">Action</Label>
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Action</label>
                                     <select
                                         value={currentFilters.action}
                                         onChange={(e) => handleFilterChange('action', e.target.value)}
@@ -495,7 +492,7 @@ export default function ActivityMonitoring({
                                     </select>
                                 </div>
                                 <div>
-                                    <Label className="text-xs">Status</Label>
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Status</label>
                                     <select
                                         value={currentFilters.is_suspicious}
                                         onChange={(e) => handleFilterChange('is_suspicious', e.target.value)}
@@ -507,19 +504,19 @@ export default function ActivityMonitoring({
                                     </select>
                                 </div>
                                 <div>
-                                    <Label className="text-xs">Date Range</Label>
+                                    <label className="block text-xs font-medium text-slate-600 mb-1">Date Range</label>
                                     <div className="flex gap-2 mt-1">
-                                        <Input
+                                        <input
                                             type="date"
                                             value={currentFilters.date_from}
                                             onChange={(e) => handleFilterChange('date_from', e.target.value)}
-                                            className="text-sm"
+                                            className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         />
-                                        <Input
+                                        <input
                                             type="date"
                                             value={currentFilters.date_to}
                                             onChange={(e) => handleFilterChange('date_to', e.target.value)}
-                                            className="text-sm"
+                                            className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         />
                                     </div>
                                 </div>
@@ -579,7 +576,7 @@ export default function ActivityMonitoring({
                                                             log.is_suspicious ? 'text-red-500' : 'text-gray-500'
                                                         }`} />
                                                     </div>
-                                                    <Badge className={getActionBadgeColor(log.action)}>
+                                                    <Badge className={`${getActionBadgeColor(log.action)} px-2 py-0.5 rounded-full text-xs font-medium border`}>
                                                         <span className="capitalize">{log.action}</span>
                                                     </Badge>
                                                 </div>
@@ -737,7 +734,7 @@ export default function ActivityMonitoring({
                                 <div className="bg-gray-50 rounded-lg p-4">
                                     <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Action</p>
                                     <div className="flex items-center gap-2">
-                                        <Badge className={getActionBadgeColor(selectedLog.action)}>
+                                        <Badge className={`${getActionBadgeColor(selectedLog.action)} px-2 py-0.5 rounded-full text-xs font-medium border`}>
                                             <span className="capitalize">{selectedLog.action}</span>
                                         </Badge>
                                         {selectedLog.action_type && (
@@ -876,7 +873,7 @@ export default function ActivityMonitoring({
 
                         <div className="space-y-4">
                             <div>
-                                <Label className="text-sm font-semibold">Export Format</Label>
+                                <label className="text-sm font-semibold text-slate-700">Export Format</label>
                                 <div className="grid grid-cols-2 gap-3 mt-2">
                                     {(['csv', 'json'] as const).map(format => (
                                         <button

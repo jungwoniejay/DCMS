@@ -8,8 +8,8 @@ export default function Health({ vaccination_coverage, health_conditions, emerge
             <Head title="Health Intelligence" />
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Health Intelligence</h1>
-                    <p className="text-gray-500 mt-1 text-sm">Consolidated health and medical data</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Health Intelligence</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Consolidated health and medical data</p>
                 </div>
 
                 {/* Vaccination Coverage */}

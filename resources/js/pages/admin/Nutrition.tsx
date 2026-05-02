@@ -15,8 +15,8 @@ export default function Nutrition({ status_distribution, average_measurements, f
             <Head title="Nutrition Monitoring" />
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Nutrition Monitoring</h1>
-                    <p className="text-gray-500 mt-1 text-sm">Nutritional status and feeding data</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Nutrition Monitoring</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Nutritional status and feeding data</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

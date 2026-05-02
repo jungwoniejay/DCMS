@@ -15,8 +15,8 @@ export default function Logistics({ transportation_modes, travel_times, accompan
             <Head title="Logistics & Access" />
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Logistics & Access</h1>
-                    <p className="text-gray-500 mt-1 text-sm">Transportation and meal security data</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Logistics & Access</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Transportation and meal security data</p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
