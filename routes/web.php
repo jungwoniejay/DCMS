@@ -41,6 +41,18 @@ Route::get('/debug-auth', function() {
     ]);
 });
 
+Route::get('/debug-parent-dashboard', function() {
+    try {
+        $parentId = auth()->id();
+        $children = \App\Models\Child::where('guardian_id', $parentId)->with(['familyProfile', 'healthAssessment', 'nutritionRecord'])->get();
+        $appointments = \App\Models\CheckupAppointment::where('requested_by', $parentId)->with('child')->orderBy('created_at', 'desc')->take(3)->get();
+        $enrollments = \App\Models\EnrollmentRequest::where('parent_id', $parentId)->where('status', 'Pending')->count();
+        return response()->json(['ok' => true, 'children' => $children->count(), 'appointments' => $appointments->count(), 'enrollments' => $enrollments]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage(), 'line' => $e->getLine(), 'file' => basename($e->getFile())]);
+    }
+})->middleware(['auth', 'parent']);
+
 // Public Welcome Page
 Route::get('/', function () {
     $contents = WelcomeContent::all()->keyBy('key');
