@@ -260,12 +260,15 @@ Route::middleware(['auth', 'parent'])->prefix('parent')->name('parent.')->group(
 });
 
 // Catch-all redirect for authenticated users
-Route::middleware(['auth'])->get('dashboard', function () {
+Route::get('dashboard', function () {
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    }
     if (auth()->user()->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('parent.dashboard');
-})->name('dashboard');
+})->middleware('auth')->name('dashboard');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

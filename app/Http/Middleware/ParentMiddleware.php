@@ -10,13 +10,14 @@ class ParentMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || auth()->user()->role !== 'parent') {
-            if ($request->expectsJson() || $request->header('X-Inertia')) {
-                abort(403, 'Access denied.');
-            }
-            return redirect()->route('welcome')->with('error', 'Access denied.');
+        if (!auth()->check()) {
+            \Log::warning('ParentMiddleware: not authenticated', ['session_id' => session()->getId(), 'url' => $request->url()]);
+            return redirect()->route('login');
         }
-
+        if (auth()->user()->role !== 'parent') {
+            \Log::warning('ParentMiddleware: wrong role', ['role' => auth()->user()->role, 'url' => $request->url()]);
+            return redirect()->route('welcome');
+        }
         return $next($request);
     }
 }
