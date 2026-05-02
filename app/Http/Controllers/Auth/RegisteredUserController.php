@@ -34,14 +34,21 @@ class RegisteredUserController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'     => 'required|in:parent', // Only parents can self-register
+            'role'     => 'required|in:parent,admin',
+            'admin_key' => 'required_if:role,admin|nullable|string',
         ]);
+
+        if ($request->role === 'admin') {
+            if ($request->admin_key !== config('app.admin_register_key', env('ADMIN_REGISTER_KEY'))) {
+                return back()->withErrors(['admin_key' => 'Invalid admin registration key.'])->withInput();
+            }
+        }
 
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'parent', // Always force parent role on self-registration
+            'role'     => $request->role === 'admin' ? 'admin' : 'parent',
         ]);
 
         event(new Registered($user));
