@@ -77,8 +77,8 @@ export default function Appointments({ appointments }: Props) {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Appointment Requests</h1>
-          <p className="text-gray-500 mt-1 text-sm">Manage checkup and vaccination appointments</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Appointment Requests</h1>
+          <p className="text-slate-500 mt-1 text-sm">Manage checkup and vaccination appointments</p>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

@@ -2,9 +2,10 @@ import { Head, useForm, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
 import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useState } from 'react';
+
+const ic = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400';
+const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
 export default function System({ users, stats, barangay_settings, provinces, cities, tables }: any) {
     const [activeTab, setActiveTab] = useState<'barangay' | 'users' | 'maintenance'>(() => {
@@ -83,7 +84,7 @@ export default function System({ users, stats, barangay_settings, provinces, cit
         { id: 'maintenance',   label: 'System Maintenance',    icon: Settings },
     ];
 
-    const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 mt-1';
+    const inputClass = ic;
 
     // Table selection handlers
     const handleSelectAllTables = () => {
@@ -180,8 +181,8 @@ export default function System({ users, stats, barangay_settings, provinces, cit
             <Head title="System Administration" />
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">System Administration</h1>
-                    <p className="text-gray-500 mt-1 text-sm">Manage barangay info, users, and system maintenance</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">System Administration</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Manage barangay info, users, and system maintenance</p>
                 </div>
 
                 {/* Stats */}
@@ -192,13 +193,13 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                         { label: 'Parent Users',  value: stats?.parent_users  ?? 0, color: 'bg-green-500' },
                         { label: 'Total Records', value: stats?.total_records ?? 0, color: 'bg-orange-500' },
                     ].map(s => (
-                        <div key={s.label} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 flex items-center gap-3">
+                        <div key={s.label} className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-4 flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-xl ${s.color} flex items-center justify-center shrink-0`}>
                                 <Users className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-                                <p className="text-xs text-gray-500">{s.label}</p>
+                                <p className="text-2xl font-bold text-slate-800">{s.value}</p>
+                                <p className="text-xs text-slate-500">{s.label}</p>
                             </div>
                         </div>
                     ))}
@@ -233,16 +234,16 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                     </h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <Label>Barangay Name *</Label>
-                                            <Input value={barangayForm.data.barangay_name} onChange={e => barangayForm.setData('barangay_name', e.target.value)} className="mt-1" required />
+                                            <label className={lc}>Barangay Name *</label>
+                                            <input value={barangayForm.data.barangay_name} onChange={e => barangayForm.setData('barangay_name', e.target.value)} className={ic} required />
                                         </div>
                                         <div>
-                                            <Label>System Name *</Label>
-                                            <Input value={barangayForm.data.system_name} onChange={e => barangayForm.setData('system_name', e.target.value)} className="mt-1" required />
+                                            <label className={lc}>System Name *</label>
+                                            <input value={barangayForm.data.system_name} onChange={e => barangayForm.setData('system_name', e.target.value)} className={ic} required />
                                         </div>
                                         <div>
-                                            <Label>City / Municipality *</Label>
-                                            <select value={barangayForm.data.city_municipality} onChange={e => barangayForm.setData('city_municipality', e.target.value)} className={`${inputClass} mt-1`} required>
+                                            <label className={lc}>City / Municipality *</label>
+                                            <select value={barangayForm.data.city_municipality} onChange={e => barangayForm.setData('city_municipality', e.target.value)} className={ic} required>
                                                 <option value="">Select City...</option>
                                                 {filteredCities.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
                                                 {barangayForm.data.city_municipality && !filteredCities.find((c: any) => c.name === barangayForm.data.city_municipality) && (
@@ -251,15 +252,15 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                             </select>
                                         </div>
                                         <div>
-                                            <Label>Province *</Label>
-                                            <select value={barangayForm.data.province} onChange={e => handleProvinceChange(e.target.value)} className={`${inputClass} mt-1`} required>
+                                            <label className={lc}>Province *</label>
+                                            <select value={barangayForm.data.province} onChange={e => handleProvinceChange(e.target.value)} className={ic} required>
                                                 <option value="">Select Province...</option>
                                                 {provinces?.map((p: any) => <option key={p.id} value={p.name}>{p.name}</option>)}
                                             </select>
                                         </div>
                                         <div className="md:col-span-2">
-                                            <Label>CDC Name *</Label>
-                                            <Input value={barangayForm.data.cdc_name} onChange={e => barangayForm.setData('cdc_name', e.target.value)} className="mt-1" required />
+                                            <label className={lc}>CDC Name *</label>
+                                            <input value={barangayForm.data.cdc_name} onChange={e => barangayForm.setData('cdc_name', e.target.value)} className={ic} required />
                                         </div>
                                     </div>
                                 </div>
@@ -270,20 +271,20 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                     </h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <Label>Phone Number</Label>
-                                            <Input value={barangayForm.data.contact_phone} onChange={e => barangayForm.setData('contact_phone', e.target.value)} className="mt-1" placeholder="+63 912 345 6789" />
+                                            <label className={lc}>Phone Number</label>
+                                            <input value={barangayForm.data.contact_phone} onChange={e => barangayForm.setData('contact_phone', e.target.value)} className={ic} placeholder="+63 912 345 6789" />
                                         </div>
                                         <div>
-                                            <Label>Email Address</Label>
-                                            <Input type="email" value={barangayForm.data.contact_email} onChange={e => barangayForm.setData('contact_email', e.target.value)} className="mt-1" placeholder="cdc@barangay.gov.ph" />
+                                            <label className={lc}>Email Address</label>
+                                            <input type="email" value={barangayForm.data.contact_email} onChange={e => barangayForm.setData('contact_email', e.target.value)} className={ic} placeholder="cdc@barangay.gov.ph" />
                                         </div>
                                         <div className="md:col-span-2">
-                                            <Label>Address</Label>
-                                            <Input value={barangayForm.data.contact_address} onChange={e => barangayForm.setData('contact_address', e.target.value)} className="mt-1" placeholder="Barangay Hall, ..." />
+                                            <label className={lc}>Address</label>
+                                            <input value={barangayForm.data.contact_address} onChange={e => barangayForm.setData('contact_address', e.target.value)} className={ic} placeholder="Barangay Hall, ..." />
                                         </div>
                                         <div className="md:col-span-2">
-                                            <Label>Office Hours</Label>
-                                            <Input value={barangayForm.data.office_hours} onChange={e => barangayForm.setData('office_hours', e.target.value)} className="mt-1" placeholder="Monday - Friday, 8:00 AM - 5:00 PM" />
+                                            <label className={lc}>Office Hours</label>
+                                            <input value={barangayForm.data.office_hours} onChange={e => barangayForm.setData('office_hours', e.target.value)} className={ic} placeholder="Monday - Friday, 8:00 AM - 5:00 PM" />
                                         </div>
                                     </div>
                                 </div>
@@ -461,12 +462,12 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                     <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
                         <h3 className="text-lg font-bold mb-4">Create New User</h3>
                         <form onSubmit={handleCreateUser} className="space-y-4">
-                            <div><Label>Name</Label><Input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className="mt-1" required /></div>
-                            <div><Label>Email</Label><Input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className="mt-1" required /></div>
-                            <div><Label>Password</Label><Input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className="mt-1" required /></div>
+                            <div><label className={lc}>Name</label><input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className={ic} required /></div>
+                            <div><label className={lc}>Email</label><input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className={ic} required /></div>
+                            <div><label className={lc}>Password</label><input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className={ic} required /></div>
                             <div>
-                                <Label>Role</Label>
-                                <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={inputClass}>
+                                <label className={lc}>Role</label>
+                                <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={ic}>
                                     <option value="parent">Parent</option>
                                     <option value="admin">Admin</option>
                                 </select>
@@ -486,12 +487,12 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                     <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
                         <h3 className="text-lg font-bold mb-4">Edit User</h3>
                         <form onSubmit={handleUpdateUser} className="space-y-4">
-                            <div><Label>Name</Label><Input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className="mt-1" required /></div>
-                            <div><Label>Email</Label><Input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className="mt-1" required /></div>
-                            <div><Label>Password <span className="text-gray-400 font-normal">(leave blank to keep)</span></Label><Input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className="mt-1" /></div>
+                            <div><label className={lc}>Name</label><input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className={ic} required /></div>
+                            <div><label className={lc}>Email</label><input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className={ic} required /></div>
+                            <div><label className={lc}>Password <span className="text-slate-400 font-normal">(leave blank to keep)</span></label><input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className={ic} /></div>
                             <div>
-                                <Label>Role</Label>
-                                <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={inputClass}>
+                                <label className={lc}>Role</label>
+                                <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={ic}>
                                     <option value="parent">Parent</option>
                                     <option value="admin">Admin</option>
                                 </select>

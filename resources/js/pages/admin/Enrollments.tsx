@@ -84,8 +84,8 @@ export default function Enrollments({ requests, stats }: Props) {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Enrollment Requests</h1>
-          <p className="text-gray-500 mt-1 text-sm">Review and approve parent enrollment submissions</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Enrollment Requests</h1>
+          <p className="text-slate-500 mt-1 text-sm">Review and approve parent enrollment submissions</p>
         </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

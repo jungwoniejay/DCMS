@@ -15,20 +15,20 @@ export default function Dashboard({ stats }: any) {
             <Head title="Dashboard" />
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard</h1>
-                    <p className="text-gray-500 mt-1 text-sm">Overview of Child Development Center</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Dashboard</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Overview of Child Development Center</p>
                 </div>
 
                 {/* Stat Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     {statCards.map((s) => (
-                        <div key={s.title} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+                        <div key={s.title} className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 flex items-center gap-4">
                             <div className={`p-3 rounded-xl ${s.color}`}>
                                 <s.icon className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 font-medium">{s.title}</p>
-                                <p className="text-2xl font-bold text-gray-900">{s.value}</p>
+                                <p className="text-xs text-slate-500 font-medium">{s.title}</p>
+                                <p className="text-2xl font-bold text-slate-800">{s.value}</p>
                             </div>
                         </div>
                     ))}
