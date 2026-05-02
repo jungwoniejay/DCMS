@@ -40,7 +40,7 @@ class ParentEnrollmentController extends Controller
         ]);
 
         if ($request->hasFile('child_photo')) {
-            $validated['child_photo'] = $request->file('child_photo')->store('enrollment_photos');
+            $validated['child_photo'] = $request->file('child_photo')->store('enrollment_photos', 'public');
         }
 
         $validated['parent_id'] = auth()->id();
