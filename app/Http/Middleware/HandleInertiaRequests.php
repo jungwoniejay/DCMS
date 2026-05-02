@@ -56,12 +56,12 @@ class HandleInertiaRequests extends Middleware
                 'warning' => $request->session()->get('warning'),
                 'info'    => $request->session()->get('info'),
             ],
-            'notifications_count' => $request->user()
+            'notifications_count' => rescue(fn() => $request->user()
                 ? \App\Models\Notification::where('user_id', $request->user()->id)
                     ->whereNull('read_at')
                     ->count()
-                : 0,
-            'barangay' => \App\Models\BarangaySetting::allKeyed(),
+                : 0, 0),
+            'barangay' => rescue(fn() => \App\Models\BarangaySetting::allKeyed(), []),
         ]);
     }
 }
