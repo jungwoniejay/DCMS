@@ -231,6 +231,18 @@ Route::middleware(['auth', 'parent'])->prefix('parent')->name('parent.')->group(
     
     // View Development Plans
     Route::get('children/{childId}/development-plans', [\App\Http\Controllers\Parent\ParentDevelopmentPlanController::class, 'index'])->name('development-plans');
+
+    // Form 2 — Children's Profile
+    Route::get('children/{childId}/profile', [\App\Http\Controllers\Parent\ChildProfileController::class, 'edit'])->name('children.profile.edit');
+    Route::post('children/{childId}/profile', [\App\Http\Controllers\Parent\ChildProfileController::class, 'store'])->name('children.profile.store');
+
+    // Form 2 — Health Assessment
+    Route::get('children/{childId}/health-assessment', [\App\Http\Controllers\Parent\HealthAssessmentController::class, 'edit'])->name('children.health.edit');
+    Route::post('children/{childId}/health-assessment', [\App\Http\Controllers\Parent\HealthAssessmentController::class, 'store'])->name('children.health.store');
+
+    // Form 3 — Nutrition
+    Route::get('children/{childId}/nutrition', [\App\Http\Controllers\Parent\NutritionFormController::class, 'edit'])->name('children.nutrition.edit');
+    Route::post('children/{childId}/nutrition', [\App\Http\Controllers\Parent\NutritionFormController::class, 'store'])->name('children.nutrition.store');
 });
 
 // Catch-all redirect for authenticated users

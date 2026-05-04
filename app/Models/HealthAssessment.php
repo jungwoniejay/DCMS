@@ -12,14 +12,18 @@ class HealthAssessment extends Model
 
     protected $fillable = [
         'child_id',
-        'hospital_center_name',
-        'hospital_center_address',
-        'last_checkup_date',
-        'general_notes',
+        'routine_hospital', 'routine_address', 'routine_phone',
+        'last_checkup_date', 'last_checkup_hospital',
+        'health_problems', 'takes_medication', 'medication_description',
+        'special_treatment', 'treatment_type',
+        'serious_accident', 'accident_description',
+        'immunizations', 'on_medication', 'medication_nature',
     ];
 
     protected $casts = [
         'last_checkup_date' => 'date',
+        'health_problems'   => 'array',
+        'immunizations'     => 'array',
     ];
 
     public function child()
