@@ -70,8 +70,9 @@ mkdir -p /app/storage/app/public/profile_pictures
 rm -f /app/public/storage
 ln -sfn /app/storage/app/public /app/public/storage
 
-# Run migrations
+# Run migrations and seed default content
 php artisan migrate --force
+php artisan db:seed --class=WelcomeContentSeeder --force
 
 echo "=== DCMS Ready on port ${PORT:-8080} ==="
 exec php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
