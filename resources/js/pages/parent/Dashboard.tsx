@@ -86,8 +86,13 @@ export default function Dashboard({ children, stats, recentAppointments, pending
 
                 {/* Stat Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    {statCards.map((s) => (
-                        <div key={s.label} className={`flex items-center gap-3 p-4 rounded-2xl border ${s.bg}`}>
+                    {[
+                        { label: 'My Children',   value: stats.total_children,       icon: Users,         color: 'from-sky-400 to-sky-600',      bg: 'bg-sky-50 border-sky-100 text-sky-700',     href: '/parent/my-children' },
+                        { label: 'Pending',       value: stats.pending_registrations, icon: Clock,         color: 'from-amber-400 to-orange-500', bg: 'bg-amber-50 border-amber-100 text-amber-700', href: '/parent/enrollment-requests' },
+                        { label: 'Approved',      value: stats.approved_children,     icon: CheckCircle,   color: 'from-teal-400 to-emerald-500', bg: 'bg-teal-50 border-teal-100 text-teal-700',   href: '/parent/my-children' },
+                        { label: 'Health Alerts', value: stats.health_alerts,         icon: AlertTriangle, color: 'from-red-400 to-rose-500',     bg: 'bg-red-50 border-red-100 text-red-700',      href: '/parent/health' },
+                    ].map((s) => (
+                        <Link key={s.label} href={s.href} className={`flex items-center gap-3 p-4 rounded-2xl border ${s.bg} hover:shadow-md transition-all`}>
                             <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center shadow-sm shrink-0`}>
                                 <s.icon className="w-5 h-5 text-white" />
                             </div>
@@ -95,7 +100,7 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                                 <p className="text-2xl font-bold">{s.value}</p>
                                 <p className="text-xs font-medium opacity-80">{s.label}</p>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 
