@@ -88,7 +88,7 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
                                         type="text"
                                         value={data.parent_name}
                                         onChange={(e) => setData('parent_name', e.target.value)}
-                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm"
+                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm bg-white"
                                         placeholder="Enter parent or guardian name"
                                     />
                                     {errors.parent_name && (
@@ -103,7 +103,7 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
                                     <select
                                         value={data.parent_relationship}
                                         onChange={(e) => setData('parent_relationship', e.target.value)}
-                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm"
+                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm bg-white"
                                     >
                                         <option value="">Select relationship</option>
                                         {relationshipOptions.map((option) => (
@@ -123,7 +123,7 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
                                         type="text"
                                         value={data.parent_contact}
                                         onChange={(e) => setData('parent_contact', e.target.value)}
-                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm"
+                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm bg-white"
                                         placeholder="Enter contact number"
                                     />
                                     {errors.parent_contact && (
@@ -139,7 +139,7 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
                                         type="email"
                                         value={data.parent_email}
                                         onChange={(e) => setData('parent_email', e.target.value)}
-                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm"
+                                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm bg-white"
                                         placeholder="Enter email address"
                                     />
                                     {errors.parent_email && (
@@ -180,7 +180,7 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
                                 <textarea
                                     value={data.additional_notes}
                                     onChange={(e) => setData('additional_notes', e.target.value)}
-                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm"
+                                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm bg-white"
                                     rows={4}
                                     placeholder="Enter any additional notes about parent involvement..."
                                 />
@@ -208,7 +208,7 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
 
 function Section({ icon, title, children }: any) {
     return (
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-gray-50 rounded-lg shadow p-6">
             <div className="flex items-center gap-2 mb-4">
                 <div className="text-green-600">{icon}</div>
                 <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
