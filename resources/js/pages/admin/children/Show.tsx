@@ -173,10 +173,10 @@ export default function ChildShow({ child }: { child: Child }) {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     {/* Father Profile */}
-                    {child.father_profile && (
+                    {child.father_profile ? (
                         <SectionCard icon={<User className="w-4 h-4" />} title="Father's Profile" color="blue">
                             <div className="grid grid-cols-2 gap-4">
-                                <InfoItem label="Name" value={`${child.father_profile.first_name} ${child.father_profile.last_name}`} />
+                                <InfoItem label="Name" value={`${child.father_profile.first_name ?? ''} ${child.father_profile.last_name ?? ''}`.trim() || 'N/A'} />
                                 <InfoItem label="Age" value={child.father_profile.age} icon={<Calendar className="w-3 h-3" />} />
                                 <InfoItem label="Civil Status" value={child.father_profile.civil_status} />
                                 <InfoItem label="Education" value={child.father_profile.educational_attainment} icon={<GraduationCap className="w-3 h-3" />} />
@@ -184,13 +184,17 @@ export default function ChildShow({ child }: { child: Child }) {
                                 <InfoItem label="Mother Tongue" value={child.father_profile.mother_tongue} icon={<Languages className="w-3 h-3" />} />
                             </div>
                         </SectionCard>
+                    ) : (
+                        <SectionCard icon={<User className="w-4 h-4" />} title="Father's Profile" color="blue">
+                            <p className="text-sm text-slate-400">No father profile recorded.</p>
+                        </SectionCard>
                     )}
 
                     {/* Mother Profile */}
-                    {child.mother_profile && (
+                    {child.mother_profile ? (
                         <SectionCard icon={<User className="w-4 h-4" />} title="Mother's Profile" color="pink">
                             <div className="grid grid-cols-2 gap-4">
-                                <InfoItem label="Name" value={`${child.mother_profile.first_name} ${child.mother_profile.last_name}`} />
+                                <InfoItem label="Name" value={`${child.mother_profile.first_name ?? ''} ${child.mother_profile.last_name ?? ''}`.trim() || 'N/A'} />
                                 <InfoItem label="Age" value={child.mother_profile.age} icon={<Calendar className="w-3 h-3" />} />
                                 <InfoItem label="Civil Status" value={child.mother_profile.civil_status} />
                                 <InfoItem label="Education" value={child.mother_profile.educational_attainment} icon={<GraduationCap className="w-3 h-3" />} />
@@ -198,10 +202,14 @@ export default function ChildShow({ child }: { child: Child }) {
                                 <InfoItem label="Pregnant" value={child.mother_profile.pregnant ? 'Yes' : 'No'} />
                             </div>
                         </SectionCard>
+                    ) : (
+                        <SectionCard icon={<User className="w-4 h-4" />} title="Mother's Profile" color="pink">
+                            <p className="text-sm text-slate-400">No mother profile recorded.</p>
+                        </SectionCard>
                     )}
 
                     {/* Guardians */}
-                    {child.guardians?.length > 0 && (
+                    {child.guardians?.length > 0 ? (
                         <SectionCard icon={<Shield className="w-4 h-4" />} title="Guardians" color="violet">
                             <div className="space-y-3">
                                 {child.guardians.map((guardian: any, index: number) => (
@@ -228,10 +236,14 @@ export default function ChildShow({ child }: { child: Child }) {
                                 ))}
                             </div>
                         </SectionCard>
+                    ) : (
+                        <SectionCard icon={<Shield className="w-4 h-4" />} title="Guardians" color="violet">
+                            <p className="text-sm text-slate-400">No guardian recorded.</p>
+                        </SectionCard>
                     )}
 
                     {/* Emergency Contacts */}
-                    {child.emergency_contacts?.length > 0 && (
+                    {child.emergency_contacts?.length > 0 ? (
                         <SectionCard icon={<Phone className="w-4 h-4" />} title="Emergency Contacts" color="red">
                             <div className="space-y-3">
                                 {child.emergency_contacts.map((contact: any, index: number) => (
@@ -251,6 +263,10 @@ export default function ChildShow({ child }: { child: Child }) {
                                     </div>
                                 ))}
                             </div>
+                        </SectionCard>
+                    ) : (
+                        <SectionCard icon={<Phone className="w-4 h-4" />} title="Emergency Contacts" color="red">
+                            <p className="text-sm text-slate-400">No emergency contact recorded.</p>
                         </SectionCard>
                     )}
 
