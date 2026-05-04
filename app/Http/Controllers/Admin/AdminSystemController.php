@@ -149,9 +149,10 @@ class AdminSystemController extends Controller
 
     private function exportAsCsv($tables, $timestamp)
     {
+        $timestamp = preg_replace('/[^a-zA-Z0-9_-]/', '', $timestamp);
         $zip = new \ZipArchive();
         $zipFilename = 'database_export_' . $timestamp . '.zip';
-        $zipPath = storage_path('app/temp/' . $zipFilename);
+        $zipPath = storage_path('app/temp/' . basename($zipFilename));
         
         if (!file_exists(storage_path('app/temp'))) {
             mkdir(storage_path('app/temp'), 0755, true);
@@ -190,6 +191,7 @@ class AdminSystemController extends Controller
 
     private function exportAsSql($tables, $timestamp)
     {
+        $timestamp = preg_replace('/[^a-zA-Z0-9_-]/', '', $timestamp);
         $sqlContent = "-- Database Export\n";
         $sqlContent .= "-- Generated: " . date('Y-m-d H:i:s') . "\n";
         $sqlContent .= "-- Tables: " . implode(', ', $tables) . "\n\n";
@@ -215,7 +217,7 @@ class AdminSystemController extends Controller
         }
 
         $filename = 'database_export_' . $timestamp . '.sql';
-        $path = storage_path('app/temp/' . $filename);
+        $path = storage_path('app/temp/' . basename($filename));
         
         if (!file_exists(storage_path('app/temp'))) {
             mkdir(storage_path('app/temp'), 0755, true);
@@ -228,6 +230,7 @@ class AdminSystemController extends Controller
 
     private function exportAsJson($tables, $timestamp)
     {
+        $timestamp = preg_replace('/[^a-zA-Z0-9_-]/', '', $timestamp);
         $exportData = [
             'export_date' => date('Y-m-d H:i:s'),
             'tables' => [],
@@ -242,7 +245,7 @@ class AdminSystemController extends Controller
         }
 
         $filename = 'database_export_' . $timestamp . '.json';
-        $path = storage_path('app/temp/' . $filename);
+        $path = storage_path('app/temp/' . basename($filename));
         
         if (!file_exists(storage_path('app/temp'))) {
             mkdir(storage_path('app/temp'), 0755, true);

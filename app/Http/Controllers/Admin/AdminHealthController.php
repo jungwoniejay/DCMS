@@ -7,11 +7,13 @@ use App\Models\Child;
 use App\Models\HealthAssessment;
 use App\Models\HealthProblem;
 use App\Models\MedicalAssessment;
+use App\Traits\DbCompatible;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminHealthController extends Controller
 {
+    use DbCompatible;
     public function index()
     {
         $healthData = [
@@ -47,12 +49,13 @@ class AdminHealthController extends Controller
         $conditions = [];
         $totalChildren = Child::count();
         
+        $cast = DB::getDriverName() === 'pgsql' ? 'true' : '1';
         $healthProblems = HealthProblem::select(
-            DB::raw('SUM(CASE WHEN allergies = true THEN 1 ELSE 0 END) as allergies'),
-            DB::raw('SUM(CASE WHEN asthma = true THEN 1 ELSE 0 END) as asthma'),
-            DB::raw('SUM(CASE WHEN diabetes = true THEN 1 ELSE 0 END) as diabetes'),
-            DB::raw('SUM(CASE WHEN ears = true THEN 1 ELSE 0 END) as ears'),
-            DB::raw('SUM(CASE WHEN eyes = true THEN 1 ELSE 0 END) as eyes')
+            DB::raw("SUM(CASE WHEN allergies = {$cast} THEN 1 ELSE 0 END) as allergies"),
+            DB::raw("SUM(CASE WHEN asthma = {$cast} THEN 1 ELSE 0 END) as asthma"),
+            DB::raw("SUM(CASE WHEN diabetes = {$cast} THEN 1 ELSE 0 END) as diabetes"),
+            DB::raw("SUM(CASE WHEN ears = {$cast} THEN 1 ELSE 0 END) as ears"),
+            DB::raw("SUM(CASE WHEN eyes = {$cast} THEN 1 ELSE 0 END) as eyes")
         )->first();
         
         foreach (['allergies', 'asthma', 'diabetes', 'ears', 'eyes'] as $condition) {
