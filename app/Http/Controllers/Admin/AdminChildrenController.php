@@ -158,6 +158,72 @@ class AdminChildrenController extends Controller
             ]);
         }
 
+        // Save emergency contact
+        if ($request->filled('emergency_name')) {
+            $child->emergencyContacts()->create([
+                'name'         => $request->emergency_name,
+                'relationship' => $request->emergency_relationship ?? null,
+                'mobile_phone' => $request->emergency_home ?? null,
+            ]);
+        }
+
+        // Save father profile
+        if ($request->has('father')) {
+            $f = is_string($request->father) ? json_decode($request->father, true) : $request->father;
+            if (!empty($f['first_name'])) {
+                $child->fatherProfile()->create([
+                    'last_name'              => $f['last_name'] ?? null,
+                    'first_name'             => $f['first_name'],
+                    'middle_initial'         => $f['middle_initial'] ?? null,
+                    'date_of_birth'          => !empty($f['date_of_birth']) ? $f['date_of_birth'] : null,
+                    'age'                    => !empty($f['age']) ? (int)$f['age'] : 0,
+                    'civil_status'           => $f['civil_status'] ?? 'Married',
+                    'district'               => $f['district'] ?? null,
+                    'purok_zone'             => $f['purok_zone'] ?? null,
+                    'mother_tongue'          => $f['mother_tongue'] ?? null,
+                    'other_dialects'         => $f['other_dialects'] ?? null,
+                    'educational_attainment' => $f['educational_attainment'] ?? null,
+                    'occupational_status'    => $f['occupational_status'] ?? null,
+                ]);
+            }
+        }
+
+        // Save mother profile
+        if ($request->has('mother')) {
+            $m = is_string($request->mother) ? json_decode($request->mother, true) : $request->mother;
+            if (!empty($m['first_name'])) {
+                $child->motherProfile()->create([
+                    'last_name'              => $m['last_name'] ?? null,
+                    'first_name'             => $m['first_name'],
+                    'middle_initial'         => $m['middle_initial'] ?? null,
+                    'date_of_birth'          => !empty($m['date_of_birth']) ? $m['date_of_birth'] : null,
+                    'age'                    => !empty($m['age']) ? (int)$m['age'] : 0,
+                    'civil_status'           => $m['civil_status'] ?? 'Married',
+                    'district'               => $m['district'] ?? null,
+                    'purok_zone'             => $m['purok_zone'] ?? null,
+                    'mother_tongue'          => $m['mother_tongue'] ?? null,
+                    'other_dialects'         => $m['other_dialects'] ?? null,
+                    'educational_attainment' => $m['educational_attainment'] ?? null,
+                    'occupational_status'    => $m['occupational_status'] ?? null,
+                    'pregnant'               => filter_var($m['pregnant'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'age_interest_daycare'   => $m['age_interest_daycare'] ?? null,
+                ]);
+            }
+        }
+
+        // Save family profile
+        if ($request->has('family')) {
+            $fam = is_string($request->family) ? json_decode($request->family, true) : $request->family;
+            $boolFields = ['one_room','multiple_rooms','has_toilet','has_bedroom','has_dining','has_sala','has_kitchen','open_play_area','running_water','electricity','aircon','mobile_phone','computer','internet','cd_dvd','tv','radio','magazines','books','newspapers','storybooks','board_games','puzzles','pets','toys'];
+            $famData = ['purok_zone' => $validated['purok_zone'] ?? null, 'ownership' => $fam['ownership'] ?? null, 'materials' => $fam['materials'] ?? null];
+            foreach ($boolFields as $bf) { $famData[$bf] = filter_var($fam[$bf] ?? false, FILTER_VALIDATE_BOOLEAN); }
+            if ($child->familyProfile) {
+                $child->familyProfile->update($famData);
+            } else {
+                $child->familyProfile()->create($famData);
+            }
+        }
+
         $this->logCreate(Child::class, $child, "Created child record: {$child->first_name} {$child->last_name}");
 
         return redirect()->route('admin.children.show', $child->id)
