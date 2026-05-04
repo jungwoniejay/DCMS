@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { Shield, Cookie, FileText, Users, Lock, Bell, ChevronRight, ArrowLeft } from 'lucide-react';
 import DaycareLogo from '@/components/daycare-logo';
@@ -15,6 +15,9 @@ const sections = [
 
 export default function PrivacyPolicy() {
     const [active, setActive] = useState('overview');
+    const barangay = (usePage().props as any).barangay ?? {};
+    const contents = (usePage().props as any).contents ?? {};
+    const gc = (key: string, fallback: string) => contents?.[key]?.value || fallback;
 
     const scrollTo = (id: string) => {
         setActive(id);
@@ -89,8 +92,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section: Overview */}
                         <Section id="overview" icon={FileText} title="Overview" color="blue">
-                            <p>KidCare Hinoba-an (Barangay Child Development Data Management System) is committed to protecting the personal information of children, parents, and guardians registered in our system.</p>
-                            <p className="mt-3">This Privacy Policy applies to all users of the KidCare Hinoba-an platform, including administrators, parents, and guardians. By using our system, you agree to the collection and use of information in accordance with this policy.</p>
+                            <p>{gc('privacy_overview', 'KidCare Hinoba-an (Barangay Child Development Data Management System) is committed to protecting the personal information of children, parents, and guardians registered in our system.')}</p>
                             <InfoBox color="blue" text="This system is operated by the Barangay Child Development Center (CDC) and is intended solely for the management of child development records within the barangay." />
                         </Section>
 

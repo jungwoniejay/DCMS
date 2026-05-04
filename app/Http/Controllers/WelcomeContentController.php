@@ -25,6 +25,16 @@ class WelcomeContentController extends Controller
             'services_title', 'services_description',
             'contact_title', 'contact_description',
             'footer_text',
+            'feature_1_title', 'feature_1_description',
+            'feature_2_title', 'feature_2_description',
+            'feature_3_title', 'feature_3_description',
+            'footer_tagline', 'footer_address', 'footer_phone',
+            'footer_email', 'footer_hours', 'footer_copyright',
+            'privacy_overview', 'privacy_data_collection',
+            'cookie_essential_name', 'cookie_essential_purpose', 'cookie_essential_duration',
+            'cookie_analytics_name', 'cookie_analytics_purpose', 'cookie_analytics_duration',
+            'cookie_optional_name', 'cookie_optional_purpose', 'cookie_optional_duration',
+            'privacy_terms',
         ];
 
         $validated = $request->validate([

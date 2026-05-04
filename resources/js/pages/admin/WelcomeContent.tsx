@@ -13,20 +13,32 @@ export default function WelcomeContent({ contents }: Props) {
 
     const { data, setData, post, processing } = useForm({
         contents: [
-            { key: 'hero_title',            value: get('hero_title') },
-            { key: 'hero_subtitle',         value: get('hero_subtitle') },
-            { key: 'feature_1_title',       value: get('feature_1_title') },
-            { key: 'feature_1_description', value: get('feature_1_description') },
-            { key: 'feature_2_title',       value: get('feature_2_title') },
-            { key: 'feature_2_description', value: get('feature_2_description') },
-            { key: 'feature_3_title',       value: get('feature_3_title') },
-            { key: 'feature_3_description', value: get('feature_3_description') },
-            { key: 'footer_tagline',        value: get('footer_tagline') },
-            { key: 'footer_address',        value: get('footer_address') },
-            { key: 'footer_phone',          value: get('footer_phone') },
-            { key: 'footer_email',          value: get('footer_email') },
-            { key: 'footer_hours',          value: get('footer_hours') },
-            { key: 'footer_copyright',      value: get('footer_copyright') },
+            { key: 'hero_title',                  value: get('hero_title') },
+            { key: 'hero_subtitle',               value: get('hero_subtitle') },
+            { key: 'feature_1_title',             value: get('feature_1_title') },
+            { key: 'feature_1_description',       value: get('feature_1_description') },
+            { key: 'feature_2_title',             value: get('feature_2_title') },
+            { key: 'feature_2_description',       value: get('feature_2_description') },
+            { key: 'feature_3_title',             value: get('feature_3_title') },
+            { key: 'feature_3_description',       value: get('feature_3_description') },
+            { key: 'footer_tagline',              value: get('footer_tagline') },
+            { key: 'footer_address',              value: get('footer_address') },
+            { key: 'footer_phone',                value: get('footer_phone') },
+            { key: 'footer_email',                value: get('footer_email') },
+            { key: 'footer_hours',                value: get('footer_hours') },
+            { key: 'footer_copyright',            value: get('footer_copyright') },
+            { key: 'privacy_overview',            value: get('privacy_overview') },
+            { key: 'privacy_data_collection',     value: get('privacy_data_collection') },
+            { key: 'cookie_essential_name',       value: get('cookie_essential_name') },
+            { key: 'cookie_essential_purpose',    value: get('cookie_essential_purpose') },
+            { key: 'cookie_essential_duration',   value: get('cookie_essential_duration') },
+            { key: 'cookie_analytics_name',       value: get('cookie_analytics_name') },
+            { key: 'cookie_analytics_purpose',    value: get('cookie_analytics_purpose') },
+            { key: 'cookie_analytics_duration',   value: get('cookie_analytics_duration') },
+            { key: 'cookie_optional_name',        value: get('cookie_optional_name') },
+            { key: 'cookie_optional_purpose',     value: get('cookie_optional_purpose') },
+            { key: 'cookie_optional_duration',    value: get('cookie_optional_duration') },
+            { key: 'privacy_terms',               value: get('privacy_terms') },
         ],
     });
 
@@ -127,6 +139,38 @@ export default function WelcomeContent({ contents }: Props) {
                             </div>
                         </div>
                         <Field label="Copyright Text" id="footer_copyright" />
+                    </div>
+
+                    {/* Cookie Policy */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 space-y-4">
+                        <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-pink-500" /> Cookie Policy Table
+                        </h2>
+                        <p className="text-xs text-slate-400">These values appear in the Cookie Policy table on the Privacy Policy page.</p>
+                        {[
+                            { label: 'Essential Cookie', nameKey: 'cookie_essential_name', purposeKey: 'cookie_essential_purpose', durationKey: 'cookie_essential_duration' },
+                            { label: 'Analytics Cookie', nameKey: 'cookie_analytics_name', purposeKey: 'cookie_analytics_purpose', durationKey: 'cookie_analytics_duration' },
+                            { label: 'Optional Cookie',  nameKey: 'cookie_optional_name',  purposeKey: 'cookie_optional_purpose',  durationKey: 'cookie_optional_duration'  },
+                        ].map(row => (
+                            <div key={row.label} className="p-4 border border-slate-100 rounded-xl space-y-3 bg-slate-50/50">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">{row.label}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <Field label="Cookie Name" id={row.nameKey} />
+                                    <Field label="Purpose" id={row.purposeKey} />
+                                    <Field label="Duration" id={row.durationKey} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Privacy Policy Text */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 space-y-4">
+                        <h2 className="text-base font-semibold text-slate-700 flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-blue-500" /> Privacy Policy Content
+                        </h2>
+                        <Field label="Overview Text" id="privacy_overview" multiline rows={4} />
+                        <Field label="Data Collection Text" id="privacy_data_collection" multiline rows={4} />
+                        <Field label="Terms & Conditions Text" id="privacy_terms" multiline rows={6} />
                     </div>
 
                     <button
