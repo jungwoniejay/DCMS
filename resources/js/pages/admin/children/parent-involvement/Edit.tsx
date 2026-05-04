@@ -157,14 +157,14 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
                                 </p>
                                 <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
                                     {supportRoleOptions.map((role) => (
-                                        <label key={role} className="flex items-center gap-2 p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+                                        <label key={role} className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-50">
                                             <input
                                                 type="checkbox"
                                                 checked={data.support_roles?.includes(role) || false}
                                                 onChange={() => handleRoleToggle(role)}
                                                 className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                                             />
-                                            <span className="text-sm text-gray-700">{role}</span>
+                                            <span className="text-sm text-gray-900">{role}</span>
                                         </label>
                                     ))}
                                 </div>
