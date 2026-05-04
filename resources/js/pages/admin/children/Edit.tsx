@@ -3,6 +3,26 @@ import AdminLayout from '@/layouts/admin-layout';
 import { ArrowLeft, Save, User, Users, Home, Camera } from 'lucide-react';
 import { useState } from 'react';
 
+const RadioGroup = ({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) => (
+    <div className="flex flex-wrap gap-4">
+        {options.map(o => (
+            <label key={o} className="flex items-center gap-2 cursor-pointer">
+                <input type="radio" checked={value === o} onChange={() => onChange(o)}
+                    className="w-4 h-4 border-slate-300 text-blue-500 focus:ring-blue-400" />
+                <span className="text-sm text-slate-700">{o}</span>
+            </label>
+        ))}
+    </div>
+);
+
+const CheckGroup = ({ label, checked, onChange }: any) => (
+    <label className="flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)}
+            className="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-400" />
+        <span className="text-sm text-slate-700">{label}</span>
+    </label>
+);
+
 const ic = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400';
 const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
@@ -13,6 +33,12 @@ export default function ChildEdit({ child, puroks }: any) {
         child.profile_picture ? `/storage/${child.profile_picture}` : null
     );
     const [processing, setProcessing] = useState(false);
+
+    const fp = child.father_profile || {};
+    const mp = child.mother_profile || {};
+    const fam = child.family_profile || {};
+    const g = child.guardians?.[0] || {};
+    const ec = child.emergency_contacts?.[0] || {};
 
     const [data, setData] = useState({
         last_name: child.last_name || '',
@@ -25,34 +51,75 @@ export default function ChildEdit({ child, puroks }: any) {
         first_language: child.first_language || '',
         second_language: child.second_language || '',
         registration_status: child.registration_status || 'Pending',
-        guardians: child.guardians || [],
-        emergency_contacts: child.emergency_contacts || [],
-        father: child.father_profile || {},
-        mother: child.mother_profile || {},
-        family: child.family_profile || {},
+        purok_zone: child.purok_zone || '',
+        guardian_name: g.name || '',
+        guardian_relationship: g.relationship || 'Guardian',
+        guardian_mobile: g.mobile_phone || '',
+        guardian_email: g.email || '',
+        emergency_name: ec.name || '',
+        emergency_relationship: ec.relationship || '',
+        emergency_home: ec.home_phone || '',
+        emergency_work: ec.work_phone || '',
+        accomplished_by: child.accomplished_by || '',
+        accomplished_date: child.accomplished_date || '',
+        reviewed_by: child.reviewed_by || '',
+        reviewed_date: child.reviewed_date || '',
+    });
+
+    const [father, setFather] = useState({
+        last_name: fp.last_name || '', first_name: fp.first_name || '', middle_initial: fp.middle_initial || '',
+        date_of_birth: fp.date_of_birth ? fp.date_of_birth.split('T')[0] : '', age: fp.age || '',
+        civil_status: fp.civil_status || 'Married', district: fp.district || '', purok_zone: fp.purok_zone || '',
+        mother_tongue: fp.mother_tongue || 'Tagalog', other_dialects: fp.other_dialects || '',
+        educational_attainment: fp.educational_attainment || 'Elementary',
+        occupational_status: fp.occupational_status || 'Employed',
+        occupation: fp.occupation || '', address: fp.address || '',
+        contact_home: fp.contact_home || '', contact_work: fp.contact_work || '',
+    });
+
+    const [mother, setMother] = useState({
+        last_name: mp.last_name || '', first_name: mp.first_name || '', middle_initial: mp.middle_initial || '',
+        date_of_birth: mp.date_of_birth ? mp.date_of_birth.split('T')[0] : '', age: mp.age || '',
+        pregnant: mp.pregnant || false, civil_status: mp.civil_status || 'Married',
+        district: mp.district || '', purok_zone: mp.purok_zone || '',
+        mother_tongue: mp.mother_tongue || 'Tagalog', other_dialects: mp.other_dialects || '',
+        educational_attainment: mp.educational_attainment || 'Elementary',
+        occupational_status: mp.occupational_status || 'Employed',
+        occupation: mp.occupation || '', address: mp.address || '',
+        contact_home: mp.contact_home || '', contact_work: mp.contact_work || '',
+        age_interest_daycare: mp.age_interest_daycare || '3yr',
+    });
+
+    const [family, setFamily] = useState({
+        ownership: fam.home_ownership || 'Owned', materials: fam.home_materials || 'Concrete',
+        one_room: fam.one_room || false, multiple_rooms: fam.multiple_rooms || false,
+        has_toilet: fam.has_toilet || false, has_bedroom: fam.has_bedroom || false,
+        has_dining: fam.has_dining || false, has_sala: fam.has_sala || false,
+        has_kitchen: fam.has_kitchen || false, open_play_area: fam.open_play_area || false,
+        running_water: fam.running_water || false, electricity: fam.electricity || false,
+        aircon: fam.aircon || false, mobile_phone: fam.mobile_phone || false,
+        computer: fam.computer || false, internet: fam.internet || false,
+        cd_dvd: fam.cd_dvd || false, tv: fam.tv || false, radio: fam.radio || false,
+        magazines: fam.magazines || false, books: fam.books || false,
+        newspapers: fam.newspapers || false, storybooks: fam.storybooks || false,
+        board_games: fam.board_games || false, puzzles: fam.puzzles || false,
+        pets: fam.pets || false, toys: fam.toys || false,
+        purok_zone: fam.purok_zone || '',
     });
 
     const set = (key: string, value: any) => setData(prev => ({ ...prev, [key]: value }));
+    const setF = (key: string, value: any) => setFather(prev => ({ ...prev, [key]: value }));
+    const setM = (key: string, value: any) => setMother(prev => ({ ...prev, [key]: value }));
+    const setFam = (key: string, value: any) => setFamily(prev => ({ ...prev, [key]: value }));
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setProcessing(true);
         const formData = new FormData();
-        formData.append('last_name', data.last_name);
-        formData.append('first_name', data.first_name);
-        formData.append('middle_name', data.middle_name || '');
-        formData.append('sex', data.sex);
-        formData.append('birthdate', data.birthdate);
-        formData.append('age', data.age.toString());
-        formData.append('address', data.address);
-        formData.append('first_language', data.first_language);
-        formData.append('second_language', data.second_language || '');
-        formData.append('registration_status', data.registration_status);
-        formData.append('guardians', JSON.stringify(data.guardians));
-        formData.append('emergency_contacts', JSON.stringify(data.emergency_contacts));
-        formData.append('father', JSON.stringify(data.father));
-        formData.append('mother', JSON.stringify(data.mother));
-        formData.append('family', JSON.stringify(data.family));
+        Object.entries(data).forEach(([k, v]) => formData.append(k, String(v)));
+        formData.append('father', JSON.stringify(father));
+        formData.append('mother', JSON.stringify(mother));
+        formData.append('family', JSON.stringify(family));
         if (profilePicture) formData.append('profile_picture', profilePicture);
         router.post(route('admin.children.update.post', child.id), formData, {
             forceFormData: true,
@@ -72,7 +139,6 @@ export default function ChildEdit({ child, puroks }: any) {
 
     const tabs = [
         { id: 'basic', label: 'Basic Info', icon: User },
-        { id: 'guardians', label: 'Guardians', icon: Users },
         { id: 'parents', label: 'Parents', icon: Users },
         { id: 'family', label: 'Family', icon: Home },
     ];
@@ -138,142 +204,202 @@ export default function ChildEdit({ child, puroks }: any) {
                                         </div>
                                     </div>
                                 </div>
-
                                 <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Personal Information</h2>
+                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Child Information</h2>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div><label className={lc}>Last Name *</label><input value={data.last_name} onChange={e => set('last_name', e.target.value)} required className={ic} /></div>
                                         <div><label className={lc}>First Name *</label><input value={data.first_name} onChange={e => set('first_name', e.target.value)} required className={ic} /></div>
                                         <div><label className={lc}>Middle Name</label><input value={data.middle_name} onChange={e => set('middle_name', e.target.value)} className={ic} /></div>
                                     </div>
-                                </div>
-
-                                <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Birth Information</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                                         <div>
                                             <label className={lc}>Sex *</label>
                                             <select value={data.sex} onChange={e => set('sex', e.target.value)} className={ic}>
-                                                <option value="Male">Male</option>
-                                                <option value="Female">Female</option>
+                                                <option>Male</option><option>Female</option>
                                             </select>
                                         </div>
-                                        <div><label className={lc}>Birthdate *</label><input type="date" value={data.birthdate} onChange={e => set('birthdate', e.target.value)} required className={ic} /></div>
-                                        <div><label className={lc}>Age *</label><input type="number" value={data.age} onChange={e => set('age', parseInt(e.target.value))} className={ic} /></div>
+                                        <div><label className={lc}>Birthday *</label><input type="date" value={data.birthdate} onChange={e => set('birthdate', e.target.value)} required className={ic} /></div>
+                                        <div><label className={lc}>Age</label><input type="number" value={data.age} onChange={e => set('age', e.target.value)} className={ic} /></div>
+                                        <div>
+                                            <label className={lc}>Status</label>
+                                            <select value={data.registration_status} onChange={e => set('registration_status', e.target.value)} className={ic}>
+                                                <option value="Approved">Approved</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Rejected">Rejected</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Address & Language</h2>
-                                    <div className="space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                         <div><label className={lc}>Address *</label><input value={data.address} onChange={e => set('address', e.target.value)} required className={ic} /></div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div><label className={lc}>First Language *</label><input value={data.first_language} onChange={e => set('first_language', e.target.value)} required className={ic} /></div>
-                                            <div><label className={lc}>Second Language</label><input value={data.second_language} onChange={e => set('second_language', e.target.value)} className={ic} /></div>
+                                        <div>
+                                            <label className={lc}>Purok / Zone</label>
+                                            <select value={data.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={ic}>
+                                                <option value="">Select Purok...</option>
+                                                {puroks?.map((p: string) => <option key={p} value={p}>{p}</option>)}
+                                            </select>
                                         </div>
+                                        <div><label className={lc}>First Language *</label><input value={data.first_language} onChange={e => set('first_language', e.target.value)} required className={ic} /></div>
+                                        <div><label className={lc}>Second Language</label><input value={data.second_language} onChange={e => set('second_language', e.target.value)} className={ic} /></div>
                                     </div>
                                 </div>
-
                                 <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Registration Status</h2>
-                                    <div className="max-w-xs">
-                                        <label className={lc}>Status</label>
-                                        <select value={data.registration_status} onChange={e => set('registration_status', e.target.value)} className={ic}>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Approved">Approved</option>
-                                            <option value="Rejected">Rejected</option>
-                                        </select>
+                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Guardian</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div><label className={lc}>Guardian Name</label><input value={data.guardian_name} onChange={e => set('guardian_name', e.target.value)} className={ic} /></div>
+                                        <div>
+                                            <label className={lc}>Relationship</label>
+                                            <select value={data.guardian_relationship} onChange={e => set('guardian_relationship', e.target.value)} className={ic}>
+                                                {['Father','Mother','Guardian','Grandparent','Other'].map(r => <option key={r}>{r}</option>)}
+                                            </select>
+                                        </div>
+                                        <div><label className={lc}>Mobile</label><input value={data.guardian_mobile} onChange={e => set('guardian_mobile', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Email</label><input type="email" value={data.guardian_email} onChange={e => set('guardian_email', e.target.value)} className={ic} /></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">In Case of Emergency</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div><label className={lc}>Name</label><input value={data.emergency_name} onChange={e => set('emergency_name', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Relationship</label><input value={data.emergency_relationship} onChange={e => set('emergency_relationship', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Home Number</label><input value={data.emergency_home} onChange={e => set('emergency_home', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Work Number</label><input value={data.emergency_work} onChange={e => set('emergency_work', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-100">
+                                        <div><label className={lc}>Accomplished by</label><input value={data.accomplished_by} onChange={e => set('accomplished_by', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Date</label><input type="date" value={data.accomplished_date} onChange={e => set('accomplished_date', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Reviewed by (CDT)</label><input value={data.reviewed_by} onChange={e => set('reviewed_by', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Date</label><input type="date" value={data.reviewed_date} onChange={e => set('reviewed_date', e.target.value)} className={ic} /></div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Guardians Tab */}
-                        {activeTab === 'guardians' && (
-                            <div className="space-y-6">
-                                <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Guardians</h2>
-                                    {data.guardians.length === 0 && <p className="text-sm text-slate-400">No guardians on record.</p>}
-                                    {data.guardians.map((guardian: any, index: number) => (
-                                        <div key={index} className="p-4 border border-slate-100 rounded-xl mb-4 bg-slate-50/50">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div><label className={lc}>Name</label><input value={guardian.name || ''} onChange={e => { const g = [...data.guardians]; g[index].name = e.target.value; set('guardians', g); }} className={ic} /></div>
-                                                <div><label className={lc}>Relationship</label><input value={guardian.relationship || ''} onChange={e => { const g = [...data.guardians]; g[index].relationship = e.target.value; set('guardians', g); }} className={ic} /></div>
-                                                <div><label className={lc}>Email</label><input type="email" value={guardian.email || ''} onChange={e => { const g = [...data.guardians]; g[index].email = e.target.value; set('guardians', g); }} className={ic} /></div>
-                                                <div><label className={lc}>Mobile Phone</label><input value={guardian.mobile_phone || ''} onChange={e => { const g = [...data.guardians]; g[index].mobile_phone = e.target.value; set('guardians', g); }} className={ic} /></div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Emergency Contacts</h2>
-                                    {data.emergency_contacts.length === 0 && <p className="text-sm text-slate-400">No emergency contacts on record.</p>}
-                                    {data.emergency_contacts.map((contact: any, index: number) => (
-                                        <div key={index} className="p-4 border border-slate-100 rounded-xl mb-4 bg-slate-50/50">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div><label className={lc}>Name</label><input value={contact.name || ''} onChange={e => { const c = [...data.emergency_contacts]; c[index].name = e.target.value; set('emergency_contacts', c); }} className={ic} /></div>
-                                                <div><label className={lc}>Relationship</label><input value={contact.relationship || ''} onChange={e => { const c = [...data.emergency_contacts]; c[index].relationship = e.target.value; set('emergency_contacts', c); }} className={ic} /></div>
-                                                <div><label className={lc}>Mobile Phone</label><input value={contact.mobile_phone || ''} onChange={e => { const c = [...data.emergency_contacts]; c[index].mobile_phone = e.target.value; set('emergency_contacts', c); }} className={ic} /></div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        {/* Guardians Tab - removed, merged into basic */}
 
-                        {/* Parents Tab */}
+                        {/* Parents Tab - Form 1A + 1B */}
                         {activeTab === 'parents' && (
                             <div className="space-y-6">
                                 <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Father's Profile</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label className={lc}>First Name</label><input value={data.father.first_name || ''} onChange={e => set('father', { ...data.father, first_name: e.target.value })} className={ic} /></div>
-                                        <div><label className={lc}>Last Name</label><input value={data.father.last_name || ''} onChange={e => set('father', { ...data.father, last_name: e.target.value })} className={ic} /></div>
-                                        <div><label className={lc}>Age</label><input type="number" value={data.father.age || ''} onChange={e => set('father', { ...data.father, age: e.target.value })} className={ic} /></div>
-                                        <div><label className={lc}>Occupation</label><input value={data.father.occupational_status || ''} onChange={e => set('father', { ...data.father, occupational_status: e.target.value })} className={ic} /></div>
+                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Form 1A — Father's Profile</h2>
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">1. Personal Information</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        <div><label className={lc}>Last Name</label><input value={father.last_name} onChange={e => setF('last_name', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>First Name</label><input value={father.first_name} onChange={e => setF('first_name', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Middle Initial</label><input value={father.middle_initial} onChange={e => setF('middle_initial', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Date of Birth</label><input type="date" value={father.date_of_birth} onChange={e => setF('date_of_birth', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                        <div><label className={lc}>Age</label><input type="number" value={father.age} onChange={e => setF('age', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Occupation</label><input value={father.occupation} onChange={e => setF('occupation', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Address</label><input value={father.address} onChange={e => setF('address', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                        <div><label className={lc}>Home Number</label><input value={father.contact_home} onChange={e => setF('contact_home', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Work Number</label><input value={father.contact_work} onChange={e => setF('contact_work', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">2. Civil Status</p>
+                                        <RadioGroup options={['Single','Married','Separated','Widower','Live-in']} value={father.civil_status} onChange={v => setF('civil_status', v)} />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                        <div><label className={lc}>3. District</label><input value={father.district} onChange={e => setF('district', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Purok/Zone</label><input value={father.purok_zone} onChange={e => setF('purok_zone', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">4. Mother Tongue</p>
+                                        <RadioGroup options={['Tagalog','Visayan','Ilocano','Bicolnon','Others']} value={father.mother_tongue} onChange={v => setF('mother_tongue', v)} />
+                                    </div>
+                                    <div className="mt-4"><label className={lc}>5. Other Dialects</label><input value={father.other_dialects} onChange={e => setF('other_dialects', e.target.value)} className={ic} /></div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">6. Educational Attainment</p>
+                                        <RadioGroup options={['Elementary','High School','College','Tech-Voc','Masteral','Doctoral']} value={father.educational_attainment} onChange={v => setF('educational_attainment', v)} />
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">7. Occupational Status</p>
+                                        <RadioGroup options={['Employed','Unemployed','Retired','OFW','Others']} value={father.occupational_status} onChange={v => setF('occupational_status', v)} />
                                     </div>
                                 </div>
-                                <div>
-                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Mother's Profile</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div><label className={lc}>First Name</label><input value={data.mother.first_name || ''} onChange={e => set('mother', { ...data.mother, first_name: e.target.value })} className={ic} /></div>
-                                        <div><label className={lc}>Last Name</label><input value={data.mother.last_name || ''} onChange={e => set('mother', { ...data.mother, last_name: e.target.value })} className={ic} /></div>
-                                        <div><label className={lc}>Age</label><input type="number" value={data.mother.age || ''} onChange={e => set('mother', { ...data.mother, age: e.target.value })} className={ic} /></div>
-                                        <div><label className={lc}>Occupation</label><input value={data.mother.occupational_status || ''} onChange={e => set('mother', { ...data.mother, occupational_status: e.target.value })} className={ic} /></div>
+
+                                <div className="pt-4 border-t border-slate-100">
+                                    <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-4">Form 1B — Mother's Profile</h2>
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">1. Personal Information</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        <div><label className={lc}>Last Name</label><input value={mother.last_name} onChange={e => setM('last_name', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>First Name</label><input value={mother.first_name} onChange={e => setM('first_name', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Middle Initial</label><input value={mother.middle_initial} onChange={e => setM('middle_initial', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Date of Birth</label><input type="date" value={mother.date_of_birth} onChange={e => setM('date_of_birth', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                        <div><label className={lc}>Age</label><input type="number" value={mother.age} onChange={e => setM('age', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Occupation</label><input value={mother.occupation} onChange={e => setM('occupation', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Address</label><input value={mother.address} onChange={e => setM('address', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                        <div><label className={lc}>Home Number</label><input value={mother.contact_home} onChange={e => setM('contact_home', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Work Number</label><input value={mother.contact_work} onChange={e => setM('contact_work', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>District</label><input value={mother.district} onChange={e => setM('district', e.target.value)} className={ic} /></div>
+                                        <div><label className={lc}>Purok/Zone</label><input value={mother.purok_zone} onChange={e => setM('purok_zone', e.target.value)} className={ic} /></div>
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">2. Pregnant?</p>
+                                        <RadioGroup options={['Yes','No']} value={mother.pregnant ? 'Yes' : 'No'} onChange={v => setM('pregnant', v === 'Yes')} />
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">3. Civil Status</p>
+                                        <RadioGroup options={['Single','Married','Separated','Widow','Live-in']} value={mother.civil_status} onChange={v => setM('civil_status', v)} />
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">4. Mother Tongue</p>
+                                        <RadioGroup options={['Tagalog','Visayan','Ilocano','Bicolnon','Others']} value={mother.mother_tongue} onChange={v => setM('mother_tongue', v)} />
+                                    </div>
+                                    <div className="mt-4"><label className={lc}>5. Other Dialects</label><input value={mother.other_dialects} onChange={e => setM('other_dialects', e.target.value)} className={ic} /></div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">6. Educational Attainment</p>
+                                        <RadioGroup options={['Elementary','High School','College','Tech-Voc','Masteral','Doctoral']} value={mother.educational_attainment} onChange={v => setM('educational_attainment', v)} />
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">7. Occupational Status</p>
+                                        <RadioGroup options={['Employed','Unemployed','Retired','OFW','Others']} value={mother.occupational_status} onChange={v => setM('occupational_status', v)} />
+                                    </div>
+                                    <div className="mt-4">
+                                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">At what age are you interested to put your child in a Day Care Center?</p>
+                                        <RadioGroup options={['Below 1yr','1yr','2yr','3yr','4yr']} value={mother.age_interest_daycare} onChange={v => setM('age_interest_daycare', v)} />
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Family Tab */}
+                        {/* Family Tab - Form 1C */}
                         {activeTab === 'family' && (
-                            <div className="space-y-4">
-                                <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Family Profile</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className={lc}>Home Ownership</label>
-                                        <select value={data.family.home_ownership || ''} onChange={e => set('family', { ...data.family, home_ownership: e.target.value })} className={ic}>
-                                            <option value="">Select...</option>
-                                            <option value="Owned">Owned</option>
-                                            <option value="Rented">Rented</option>
-                                            <option value="Living with relatives">Living with relatives</option>
-                                        </select>
+                            <div className="space-y-5">
+                                <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Form 1C — Family Profile</h2>
+                                <div>
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">A. Home Ownership</p>
+                                    <RadioGroup options={['Owned','Rented','With Parents','With Relatives']} value={family.ownership} onChange={v => setFam('ownership', v)} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Materials</p>
+                                    <RadioGroup options={['Nipa','Wood','Concrete','Make Shift']} value={family.materials} onChange={v => setFam('materials', v)} />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Nature of Home</p>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        {[['one_room','One Room'],['multiple_rooms','Multiple Rooms'],['has_toilet','With Toilet'],['has_bedroom','With Bedroom'],['has_dining','With Dining Room'],['has_sala','With Sala'],['has_kitchen','With Kitchen'],['open_play_area','Open Play Area']]
+                                            .map(([k,l]) => <CheckGroup key={k} label={l} checked={(family as any)[k]} onChange={(v: boolean) => setFam(k, v)} />)}
                                     </div>
-                                    <div>
-                                        <label className={lc}>Zone/Purok</label>
-                                        <select value={data.family.purok_zone || ''} onChange={e => set('family', { ...data.family, purok_zone: e.target.value })} className={ic}>
-                                            <option value="">Select Purok...</option>
-                                            {puroks?.map((p: string) => <option key={p} value={p}>{p}</option>)}
-                                        </select>
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Utilities & Appliances</p>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        {[['running_water','Running Water'],['electricity','Electricity'],['aircon','Aircon'],['mobile_phone','Mobile Phone'],['computer','Computer'],['internet','Internet'],['cd_dvd','CD/DVD Player'],['tv','Television'],['radio','Radio']]
+                                            .map(([k,l]) => <CheckGroup key={k} label={l} checked={(family as any)[k]} onChange={(v: boolean) => setFam(k, v)} />)}
                                     </div>
-                                    <div><label className={lc}>Home Materials</label><input value={data.family.home_materials || ''} onChange={e => set('family', { ...data.family, home_materials: e.target.value })} className={ic} /></div>
-                                    <div className="flex items-center gap-6 pt-6">
-                                        {[['electricity', 'Electricity'], ['running_water', 'Running Water'], ['internet', 'Internet']].map(([key, label]) => (
-                                            <label key={key} className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
-                                                <input type="checkbox" checked={data.family[key] || false} onChange={e => set('family', { ...data.family, [key]: e.target.checked })} className="w-4 h-4 rounded border-slate-300 text-blue-500" />
-                                                {label}
-                                            </label>
-                                        ))}
+                                </div>
+                                <div>
+                                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Learning & Recreation</p>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        {[['magazines','Magazines/Comics'],['books','Books'],['newspapers','Newspaper'],['storybooks','Story/Picture Books'],['board_games','Board Games'],['puzzles','Puzzle'],['pets','Pets'],['toys','Toys']]
+                                            .map(([k,l]) => <CheckGroup key={k} label={l} checked={(family as any)[k]} onChange={(v: boolean) => setFam(k, v)} />)}
                                     </div>
                                 </div>
                             </div>
