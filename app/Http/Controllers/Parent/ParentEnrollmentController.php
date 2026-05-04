@@ -24,7 +24,7 @@ class ParentEnrollmentController extends Controller
             'child_middle_name'        => 'nullable|string|max:255',
             'child_sex'                => 'required|in:Male,Female',
             'child_birthdate'          => 'required|date',
-            'child_age'                => 'required|integer|min:0|max:10',
+            'child_age'                => 'required|integer|min:0|max:20',
             'child_address'            => 'required|string',
             'child_first_language'     => 'required|string|max:255',
             'child_second_language'    => 'nullable|string|max:255',
@@ -171,7 +171,7 @@ class ParentEnrollmentController extends Controller
 
         EnrollmentRequest::create($validated);
 
-        return redirect()->route('parent.enrollment.index')->with('success', 'Enrollment request submitted successfully! Waiting for admin approval.');
+        return redirect()->route('parent.children.index')->with('success', 'Enrollment request submitted successfully! Waiting for admin approval.');
     }
 
     public function index()

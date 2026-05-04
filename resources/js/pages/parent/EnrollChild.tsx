@@ -168,7 +168,6 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        if (!confirm('Submit this enrollment request?')) return;
         post(route('parent.enroll.store'), { forceFormData: true });
     };
 
