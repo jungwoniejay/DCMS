@@ -273,3 +273,50 @@
 }
 .animate-slide-up { animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .animate-fade-in  { animation: fade-in-up 0.3s ease-out; }
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    /* Hide sidebar, topbar, buttons, modals */
+    aside,
+    .no-print,
+    .fixed {
+        display: none !important;
+    }
+
+    /* Reset body */
+    body, html {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Main content fills full width */
+    main {
+        width: 100% !important;
+        padding: 16px !important;
+        overflow: visible !important;
+    }
+
+    /* Remove visual effects */
+    * {
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Cards become plain boxes */
+    [class*="rounded"] {
+        border-radius: 6px !important;
+    }
+
+    /* Keep text dark */
+    p, span, dt, dd, h1, h2, h3, h4 {
+        color: #1e293b !important;
+    }
+
+    /* Page break helper */
+    .page-break {
+        page-break-before: always;
+    }
+}

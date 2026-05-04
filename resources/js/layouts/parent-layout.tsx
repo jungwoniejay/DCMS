@@ -183,7 +183,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
             )}
 
             <aside
-                className={`hidden lg:flex flex-col shrink-0 relative transition-all duration-300 ease-in-out ${collapsed ? 'w-16' : 'w-60'}`}
+                className={`hidden lg:flex flex-col shrink-0 relative transition-all duration-300 ease-in-out no-print ${collapsed ? 'w-16' : 'w-60'}`}
                 style={{
                     background: 'rgba(255,255,255,0.70)',
                     backdropFilter: 'blur(20px)',
@@ -204,7 +204,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
             </aside>
 
             <aside
-                className={`fixed lg:hidden inset-y-0 left-0 z-30 w-60 flex flex-col transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed lg:hidden inset-y-0 left-0 z-30 w-60 flex flex-col transform transition-transform duration-300 ease-in-out no-print ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
                 style={{
                     background: 'rgba(255,255,255,0.92)',
                     backdropFilter: 'blur(20px)',
@@ -220,7 +220,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
 
             <main className="flex-1 overflow-y-auto min-w-0">
                 <div
-                    className="lg:hidden sticky top-0 z-10 px-4 py-3 flex items-center gap-3"
+                    className="lg:hidden sticky top-0 z-10 px-4 py-3 flex items-center gap-3 no-print"
                     style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.8)' }}
                 >
                     <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-xl text-slate-500 hover:bg-white/80 transition-colors">
