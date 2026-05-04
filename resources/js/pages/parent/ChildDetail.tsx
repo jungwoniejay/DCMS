@@ -306,6 +306,34 @@ export default function ChildDetail({ child, nutritionHistory, medicalAssessment
           </div>
         </div>
 
+        {/* Forms Section */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+          <h2 className="text-base font-bold text-gray-800 mb-4">Child Forms</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <Link
+              href={route('parent.children.profile.edit', child.id)}
+              className="flex flex-col gap-1 p-4 rounded-xl border border-purple-100 bg-purple-50 hover:bg-purple-100 transition-all"
+            >
+              <span className="text-sm font-bold text-purple-700">Form 2 — Children's Profile</span>
+              <span className="text-xs text-purple-500">Birth order, vaccinations, siblings, logistics & more</span>
+            </Link>
+            <Link
+              href={route('parent.children.health.edit', child.id)}
+              className="flex flex-col gap-1 p-4 rounded-xl border border-red-100 bg-red-50 hover:bg-red-100 transition-all"
+            >
+              <span className="text-sm font-bold text-red-700">Form 2 — Health Assessment</span>
+              <span className="text-xs text-red-500">Routine care, health problems, immunizations</span>
+            </Link>
+            <Link
+              href={route('parent.children.nutrition.edit', child.id)}
+              className="flex flex-col gap-1 p-4 rounded-xl border border-green-100 bg-green-50 hover:bg-green-100 transition-all"
+            >
+              <span className="text-sm font-bold text-green-700">Form 3 — Nutrition Status</span>
+              <span className="text-xs text-green-500">Height, weight, feeding habits & meal times</span>
+            </Link>
+          </div>
+        </div>
+
         <div className="mt-5 flex flex-wrap gap-3">
           <button onClick={() => window.print()} className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">Download Portfolio</button>
           <button onClick={() => window.print()} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium">Print Health Form</button>
