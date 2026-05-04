@@ -167,6 +167,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('enrollments/{id}/approve', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'approve'])->name('enrollments.approve');
     Route::post('enrollments/{id}/reject', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'reject'])->name('enrollments.reject');
     Route::delete('enrollments/pending', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'clearPending'])->name('enrollments.clear-pending');
+    Route::post('enrollments/cleanup-duplicates', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'cleanupDuplicates'])->name('enrollments.cleanup-duplicates');
     
     // Appointment Management
     Route::get('appointments', [\App\Http\Controllers\Admin\AdminAppointmentController::class, 'index'])->name('appointments');

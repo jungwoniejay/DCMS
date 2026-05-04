@@ -108,6 +108,17 @@ export default function Enrollments({ requests, stats }: Props) {
                             Clear All Pending
                         </button>
                     )}
+                    <button
+                        onClick={() => {
+                            if (confirm('Remove duplicate child records created from failed approval attempts?')) {
+                                router.post(route('admin.enrollments.cleanup-duplicates'));
+                            }
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all shadow-sm"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Clean Duplicates
+                    </button>
                 </div>
 
                 {/* Stats */}

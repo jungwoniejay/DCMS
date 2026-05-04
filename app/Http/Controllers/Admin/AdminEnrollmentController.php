@@ -88,6 +88,34 @@ class AdminEnrollmentController extends Controller
         return null;
     }
 
+    public function cleanupDuplicates()
+    {
+        // Keep only the latest child per guardian+name combo, delete the rest
+        $deleted = 0;
+        $groups = Child::withTrashed()
+            ->select('guardian_id', 'first_name', 'last_name')
+            ->groupBy('guardian_id', 'first_name', 'last_name')
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
+
+        foreach ($groups as $group) {
+            $dupes = Child::withTrashed()
+                ->where('guardian_id', $group->guardian_id)
+                ->where('first_name', $group->first_name)
+                ->where('last_name', $group->last_name)
+                ->orderBy('id', 'desc')
+                ->get();
+
+            // Keep the first (latest), force-delete the rest
+            foreach ($dupes->skip(1) as $dupe) {
+                $dupe->forceDelete();
+                $deleted++;
+            }
+        }
+
+        return back()->with('success', "Cleaned up {$deleted} duplicate child record(s).");
+    }
+
     public function approve($id)
     {
         $enrollment = EnrollmentRequest::findOrFail($id);
@@ -98,6 +126,12 @@ class AdminEnrollmentController extends Controller
 
         \DB::beginTransaction();
         try {
+            // Re-check inside transaction with a lock to prevent double-submit
+            $enrollment = EnrollmentRequest::lockForUpdate()->findOrFail($id);
+            if ($enrollment->status !== 'Pending') {
+                \DB::rollBack();
+                return back()->with('error', 'This request has already been processed.');
+            }
 
         // Create child
         $child = Child::create([
