@@ -59,6 +59,7 @@ class ParentEnrollmentController extends Controller
 
         return Inertia::render('parent/EnrollmentRequests', [
             'requests' => $requests,
+            'puroks'   => \App\Models\Purok::orderBy('name')->pluck('name'),
         ]);
     }
 }
