@@ -19,15 +19,19 @@ class EnrollmentRequest extends Model
         'accomplished_by', 'accomplished_date', 'reviewed_by_name', 'reviewed_date',
         'father_name', 'father_occupation', 'mother_name', 'mother_occupation',
         'father_data', 'mother_data', 'family_data',
+        'child_profile_data', 'health_data', 'nutrition_data',
         'status', 'rejection_reason', 'reviewed_by', 'reviewed_at', 'child_id',
     ];
 
     protected $casts = [
         'child_birthdate' => 'date',
         'reviewed_at'     => 'datetime',
-        'father_data'     => 'array',
-        'mother_data'     => 'array',
-        'family_data'     => 'array',
+        'father_data'       => 'array',
+        'mother_data'       => 'array',
+        'family_data'       => 'array',
+        'child_profile_data'=> 'array',
+        'health_data'       => 'array',
+        'nutrition_data'    => 'array',
     ];
 
     public function getChildPhotoUrlAttribute(): ?string

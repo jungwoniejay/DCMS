@@ -96,6 +96,76 @@ class ParentEnrollmentController extends Controller
             'no_of_siblings'        => $request->no_of_siblings,
         ]);
 
+        // Pack Form 2 child profile into child_profile_data JSON
+        $validated['child_profile_data'] = array_filter([
+            'birth_order'          => $request->birth_order,
+            'registered'           => $request->registered,
+            'born_at'              => $request->born_at,
+            'mother_tongue'        => $request->child2_mother_tongue,
+            'other_dialects'       => $request->other_dialects,
+            'height_cm'            => $request->height_cm,
+            'weight_kg'            => $request->weight_kg,
+            'eccd_card'            => $request->eccd_card,
+            'mother_child_book'    => $request->mother_child_book,
+            'vaccinations'         => $request->vaccinations,
+            'physical_deformity'   => $request->physical_deformity,
+            'problems_with'        => $request->problems_with,
+            'left_handed'          => $request->left_handed,
+            'siblings'             => $request->siblings,
+            'prior_experiences'    => $request->prior_experiences,
+            'learns_at_home_with'  => $request->learns_at_home_with,
+            'plays_older_siblings' => $request->plays_older_siblings,
+            'plays_younger_siblings'=> $request->plays_younger_siblings,
+            'plays_neighbors'      => $request->plays_neighbors,
+            'meal_before_school'   => $request->meal_before_school,
+            'food_normally_eaten'  => $request->food_normally_eaten,
+            'has_baon'             => $request->has_baon,
+            'travel_time_dcc'      => $request->travel_time_dcc,
+            'travel_mode_dcc'      => $request->travel_mode_dcc,
+            'travel_time_ncdc'     => $request->travel_time_ncdc,
+            'travel_mode_ncdc'     => $request->travel_mode_ncdc,
+            'transport_type'       => $request->transport_type,
+            'goes_to_school_with'  => $request->goes_to_school_with,
+        ]);
+
+        // Pack Form 2 health into health_data JSON
+        $validated['health_data'] = array_filter([
+            'routine_hospital'      => $request->routine_hospital,
+            'routine_address'       => $request->routine_address,
+            'routine_phone'         => $request->routine_phone,
+            'last_checkup_date'     => $request->last_checkup_date,
+            'last_checkup_hospital' => $request->last_checkup_hospital,
+            'health_problems'       => $request->health_problems,
+            'takes_medication'      => $request->takes_medication,
+            'medication_description'=> $request->medication_description,
+            'special_treatment'     => $request->special_treatment,
+            'treatment_type'        => $request->treatment_type,
+            'serious_accident'      => $request->serious_accident,
+            'accident_description'  => $request->accident_description,
+            'immunizations'         => $request->immunizations,
+            'on_medication'         => $request->on_medication,
+            'medication_nature'     => $request->medication_nature,
+        ]);
+
+        // Pack Form 3 nutrition into nutrition_data JSON
+        $validated['nutrition_data'] = array_filter([
+            'height_1'             => $request->height_1,
+            'height_2'             => $request->height_2,
+            'weight_1'             => $request->weight_1,
+            'weight_2'             => $request->weight_2,
+            'nutritional_status_1' => $request->nutritional_status_1,
+            'nutritional_status_2' => $request->nutritional_status_2,
+            'date_1'               => $request->date_1,
+            'date_2'               => $request->date_2,
+            'food_allergies'       => $request->food_allergies,
+            'usual_food'           => $request->usual_food,
+            'eating_habit'         => $request->eating_habit,
+            'uses_bottle'          => $request->uses_bottle,
+            'bottle_frequency'     => $request->bottle_frequency,
+            'breakfast_time'       => $request->breakfast_time,
+            'lunch_time'           => $request->lunch_time,
+        ]);
+
         $validated['parent_id'] = auth()->id();
         $validated['status']    = 'Pending';
 

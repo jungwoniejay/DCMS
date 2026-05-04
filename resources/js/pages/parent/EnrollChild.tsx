@@ -6,7 +6,7 @@ import { Baby, User, Users, Phone, ArrowLeft, ArrowRight, Send, Camera, CheckCir
 const ic = 'w-full px-3 py-2 border border-sky-100 rounded-xl bg-white/80 text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent transition-all';
 const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
-const STEPS = ['Child Info', 'Father', 'Mother', 'Family & Contact', 'Review'];
+const STEPS = ['Child Info', 'Father', 'Mother', 'Family', 'Child Profile', 'Health', 'Nutrition', 'Review'];
 
 function StepIndicator({ current }: { current: number }) {
     return (
@@ -116,6 +116,42 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
         home_learning: [] as string[],
         home_household_members: [] as string[],
         monthly_income: '', no_of_siblings: '',
+        // Form 2 — Child Profile
+        birth_order: '', registered: '', born_at: '',
+        child2_mother_tongue: '', other_dialects: '',
+        height_cm: '', weight_kg: '',
+        eccd_card: false, mother_child_book: false,
+        vaccinations: {} as Record<string, string>,
+        physical_deformity: [] as string[],
+        problems_with: [] as string[],
+        left_handed: '',
+        siblings: [{ age: '', sex: '', in_school: '' }] as any[],
+        prior_experiences: {} as Record<string, string>,
+        learns_at_home_with: [] as string[],
+        plays_older_siblings: '', plays_younger_siblings: '', plays_neighbors: '',
+        meal_before_school: '',
+        food_normally_eaten: [] as string[],
+        has_baon: '',
+        travel_time_dcc: '', travel_mode_dcc: '',
+        travel_time_ncdc: '', travel_mode_ncdc: '',
+        transport_type: [] as string[],
+        goes_to_school_with: [] as string[],
+        // Form 2 Health
+        routine_hospital: '', routine_address: '', routine_phone: '',
+        last_checkup_date: '', last_checkup_hospital: '',
+        health_problems: {} as Record<string, any>,
+        takes_medication: '', medication_description: '',
+        special_treatment: '', treatment_type: '',
+        serious_accident: '', accident_description: '',
+        immunizations: {} as Record<string, string>,
+        on_medication: '', medication_nature: '',
+        // Form 3 — Nutrition
+        height_1: '', height_2: '', weight_1: '', weight_2: '',
+        nutritional_status_1: '', nutritional_status_2: '',
+        date_1: '', date_2: '',
+        food_allergies: '', usual_food: '', eating_habit: '',
+        uses_bottle: '', bottle_frequency: '',
+        breakfast_time: '', lunch_time: '',
     });
 
     const calcAge = (birthdate: string) =>
@@ -135,6 +171,33 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
         if (!confirm('Submit this enrollment request?')) return;
         post(route('parent.enroll.store'), { forceFormData: true });
     };
+
+    // Form 2 helpers
+    const VACCINES = ['ECG','DPT','Oral Polio','Hepa B','Measles','Others'];
+    const DEFORMITIES = ['Hare Lip','Cross-Eyed','Deaf','Blind','Disabled Leg','Disabled Arm/Hand','Deformity in Fingers/Toes'];
+    const PROBLEMS = ['Behavior','Speaking','Hearing','Vision'];
+    const PRIOR_TYPES = ['Nursery','Kindergarten','Preparatory'];
+    const PRIOR_OPTIONS = ['Private Pre-School','Public Pre-School','Private Day Care','Public Day Care','Church Based','Home Based','Others'];
+    const LEARNS_WITH = ['Nobody','Mother/Father/Both','Siblings','Relatives','Househelp/Maid','Tutor','Others'];
+    const FREQ = ['Always','Sometimes','Rarely','Never'];
+    const FOODS = ['Vegetable','Pork','Chicken','Beef','Fish','Rice','Noodle','Soup','Bread','Fruits','Cereals','Fruit Juice','Milk'];
+    const BAON = ['Money','Food','Both','None',"Don't Know"];
+    const TRANSPORT = ['School Bus','Tricycle','Father','Relatives','Bus','Habal-Habal','Banca','Calesa','Others'];
+    const GOES_WITH = ['Mother','Father','Both Parents','Grandparents','Relatives','Maid','None'];
+    const HEALTH_PROBLEMS = ['Allergies','Asthma','Bleeding','Bowels','Coughing','Diabetes','Ears or Deafness','Eyes or Vision','Other'];
+    const IMMUNIZATIONS = ['DPT','BCG','Polio','MMR','Hepa B','Measles','Others'];
+
+    const addSibling = () => setData('siblings', [...data.siblings, { age: '', sex: '', in_school: '' }]);
+    const updateSibling = (i: number, key: string, val: string) => {
+        const updated = [...data.siblings];
+        updated[i] = { ...updated[i], [key]: val };
+        setData('siblings', updated);
+    };
+    const setVaccine = (v: string, val: string) => setData('vaccinations', { ...data.vaccinations, [v]: val });
+    const setPrior = (type: string, val: string) => setData('prior_experiences', { ...data.prior_experiences, [type]: val });
+    const setHealthProblem = (p: string, key: string, val: string) =>
+        setData('health_problems', { ...data.health_problems, [p]: { ...(data.health_problems[p] ?? {}), [key]: val } });
+    const setImmunization = (v: string, val: string) => setData('immunizations', { ...data.immunizations, [v]: val });
 
     const card = 'bg-white/70 backdrop-blur-sm rounded-2xl border border-white/80 shadow-sm p-5 space-y-4';
     const nav = (
@@ -421,8 +484,195 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                         </div>
                     )}
 
-                    {/* Step 4 — Review */}
+                    {/* Step 4 — Form 2: Child Profile */}
                     {step === 4 && (
+                        <div className={card}>
+                            <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
+                                <Baby className="w-4 h-4" /> Form 2 — Children's Profile
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <Field label="Birth Order"><input type="number" value={data.birth_order} onChange={e => setData('birth_order', e.target.value)} className={ic} /></Field>
+                                <Field label="Height (cm)"><input type="number" value={data.height_cm} onChange={e => setData('height_cm', e.target.value)} className={ic} /></Field>
+                                <Field label="Weight (kg)"><input type="number" value={data.weight_kg} onChange={e => setData('weight_kg', e.target.value)} className={ic} /></Field>
+                            </div>
+                            <CheckGroup label="Registered" options={['Yes','No']} value={data.registered} onChange={v => setData('registered', v)} />
+                            <CheckGroup label="Born At" options={['Hospital','Health Center','Home']} value={data.born_at} onChange={v => setData('born_at', v)} />
+                            <CheckGroup label="Mother Tongue" options={['Tagalog','Visayan','Ilocano','Bicolnon','Others']} value={data.child2_mother_tongue} onChange={v => setData('child2_mother_tongue', v)} />
+                            <Field label="Other Dialects"><input type="text" value={data.other_dialects} onChange={e => setData('other_dialects', e.target.value)} className={ic} /></Field>
+                            <div className="flex gap-6">
+                                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                                    <input type="checkbox" checked={data.eccd_card} onChange={e => setData('eccd_card', e.target.checked)} className="accent-teal-500" /> ECCD Card
+                                </label>
+                                <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                                    <input type="checkbox" checked={data.mother_child_book} onChange={e => setData('mother_child_book', e.target.checked)} className="accent-teal-500" /> Mother & Child Book
+                                </label>
+                            </div>
+                            <CheckGroup label="Left Handed" options={['Yes','No']} value={data.left_handed} onChange={v => setData('left_handed', v)} />
+                            {/* Vaccinations */}
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Vaccination & Health Data</h3>
+                            <div className="space-y-2">
+                                {VACCINES.map(v => (
+                                    <div key={v} className="flex items-center gap-4">
+                                        <span className="text-sm text-slate-600 w-24">{v}</span>
+                                        {['Yes','No',"Don't Know"].map(opt => (
+                                            <label key={opt} className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer">
+                                                <input type="radio" checked={data.vaccinations[v] === opt} onChange={() => setVaccine(v, opt)} className="accent-teal-500" /> {opt}
+                                            </label>
+                                        ))}
+                                    </div>
+                                ))}
+                            </div>
+                            {/* Physical */}
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Physical Attributes</h3>
+                            <MultiCheck label="Physical Deformity" options={DEFORMITIES} value={data.physical_deformity} onChange={v => setData('physical_deformity', v)} />
+                            <MultiCheck label="Problems With" options={PROBLEMS} value={data.problems_with} onChange={v => setData('problems_with', v)} />
+                            {/* Siblings */}
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Siblings</h3>
+                            {data.siblings.map((s: any, i: number) => (
+                                <div key={i} className="grid grid-cols-3 gap-3">
+                                    <Field label="Age"><input type="number" value={s.age} onChange={e => updateSibling(i,'age',e.target.value)} className={ic} /></Field>
+                                    <Field label="Sex"><select value={s.sex} onChange={e => updateSibling(i,'sex',e.target.value)} className={ic}><option value="">—</option><option>Male</option><option>Female</option></select></Field>
+                                    <Field label="In School"><select value={s.in_school} onChange={e => updateSibling(i,'in_school',e.target.value)} className={ic}><option value="">—</option><option>In School</option><option>Out of School</option></select></Field>
+                                </div>
+                            ))}
+                            <button type="button" onClick={addSibling} className="text-sm text-teal-600 hover:underline">+ Add sibling</button>
+                            {/* Prior Experiences */}
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Prior Early Childhood Experiences</h3>
+                            {PRIOR_TYPES.map(type => (
+                                <div key={type}>
+                                    <p className="text-xs font-semibold text-slate-500 mb-1">{type}</p>
+                                    <div className="flex flex-wrap gap-x-4 gap-y-1">
+                                        {PRIOR_OPTIONS.map(o => (
+                                            <label key={o} className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer">
+                                                <input type="radio" checked={data.prior_experiences[type] === o} onChange={() => setPrior(type, o)} className="accent-teal-500" /> {o}
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                            {/* Performance */}
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Performance & Logistics</h3>
+                            <MultiCheck label="Learns at Home With" options={LEARNS_WITH} value={data.learns_at_home_with} onChange={v => setData('learns_at_home_with', v)} />
+                            <CheckGroup label="Plays with Older Siblings" options={FREQ} value={data.plays_older_siblings} onChange={v => setData('plays_older_siblings', v)} />
+                            <CheckGroup label="Plays with Younger Siblings" options={FREQ} value={data.plays_younger_siblings} onChange={v => setData('plays_younger_siblings', v)} />
+                            <CheckGroup label="Plays with Neighbors" options={FREQ} value={data.plays_neighbors} onChange={v => setData('plays_neighbors', v)} />
+                            <CheckGroup label="Meal Before School" options={FREQ} value={data.meal_before_school} onChange={v => setData('meal_before_school', v)} />
+                            <MultiCheck label="Food Normally Eaten" options={FOODS} value={data.food_normally_eaten} onChange={v => setData('food_normally_eaten', v)} />
+                            <CheckGroup label="Has Baon" options={BAON} value={data.has_baon} onChange={v => setData('has_baon', v)} />
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <Field label="Travel Time to DCC (mins)"><input type="text" value={data.travel_time_dcc} onChange={e => setData('travel_time_dcc', e.target.value)} className={ic} /></Field>
+                                <Field label="Mode to DCC"><select value={data.travel_mode_dcc} onChange={e => setData('travel_mode_dcc', e.target.value)} className={ic}><option value="">—</option><option>Walking</option><option>Private Vehicle</option><option>Public Transportation</option></select></Field>
+                                <Field label="Travel Time to NCDC (mins)"><input type="text" value={data.travel_time_ncdc} onChange={e => setData('travel_time_ncdc', e.target.value)} className={ic} /></Field>
+                                <Field label="Mode to NCDC"><select value={data.travel_mode_ncdc} onChange={e => setData('travel_mode_ncdc', e.target.value)} className={ic}><option value="">—</option><option>Walking</option><option>Private Vehicle</option><option>Public Transportation</option></select></Field>
+                            </div>
+                            <MultiCheck label="Transport Type" options={TRANSPORT} value={data.transport_type} onChange={v => setData('transport_type', v)} />
+                            <MultiCheck label="Goes to School With" options={GOES_WITH} value={data.goes_to_school_with} onChange={v => setData('goes_to_school_with', v)} />
+                        </div>
+                    )}
+
+                    {/* Step 5 — Form 2 Health Assessment */}
+                    {step === 5 && (
+                        <div className={card}>
+                            <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
+                                <User className="w-4 h-4" /> Form 2 — Health Assessment
+                            </h2>
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide">Routine Care</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <Field label="Hospital / Center" span="md:col-span-2"><input type="text" value={data.routine_hospital} onChange={e => setData('routine_hospital', e.target.value)} className={ic} /></Field>
+                                <Field label="Phone"><input type="text" value={data.routine_phone} onChange={e => setData('routine_phone', e.target.value)} className={ic} /></Field>
+                                <Field label="Address" span="md:col-span-3"><input type="text" value={data.routine_address} onChange={e => setData('routine_address', e.target.value)} className={ic} /></Field>
+                                <Field label="Last Check-up Date"><input type="date" value={data.last_checkup_date} onChange={e => setData('last_checkup_date', e.target.value)} className={ic} /></Field>
+                                <Field label="Last Check-up Hospital" span="md:col-span-2"><input type="text" value={data.last_checkup_hospital} onChange={e => setData('last_checkup_hospital', e.target.value)} className={ic} /></Field>
+                            </div>
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Health Problems</h3>
+                            <div className="space-y-2">
+                                {HEALTH_PROBLEMS.map(p => (
+                                    <div key={p} className="grid grid-cols-3 gap-3 items-start">
+                                        <span className="text-sm text-slate-600">{p}</span>
+                                        <div className="flex gap-4">
+                                            {['Yes','No'].map(opt => (
+                                                <label key={opt} className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer">
+                                                    <input type="radio" checked={data.health_problems[p]?.answer === opt} onChange={() => setHealthProblem(p,'answer',opt)} className="accent-teal-500" /> {opt}
+                                                </label>
+                                            ))}
+                                        </div>
+                                        <input type="text" placeholder="Comments" value={data.health_problems[p]?.comment ?? ''} onChange={e => setHealthProblem(p,'comment',e.target.value)} className={ic} />
+                                    </div>
+                                ))}
+                            </div>
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Medication & Treatment</h3>
+                            <CheckGroup label="Takes medication?" options={['Yes','No']} value={data.takes_medication} onChange={v => setData('takes_medication', v)} />
+                            {data.takes_medication === 'Yes' && <Field label="Describe"><input type="text" value={data.medication_description} onChange={e => setData('medication_description', e.target.value)} className={ic} /></Field>}
+                            <CheckGroup label="Special treatment? (nebulizer, etc.)" options={['Yes','No']} value={data.special_treatment} onChange={v => setData('special_treatment', v)} />
+                            {data.special_treatment === 'Yes' && <Field label="Type"><input type="text" value={data.treatment_type} onChange={e => setData('treatment_type', e.target.value)} className={ic} /></Field>}
+                            <CheckGroup label="Serious accident?" options={['Yes','No']} value={data.serious_accident} onChange={v => setData('serious_accident', v)} />
+                            {data.serious_accident === 'Yes' && <Field label="Describe"><input type="text" value={data.accident_description} onChange={e => setData('accident_description', e.target.value)} className={ic} /></Field>}
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Immunizations</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {IMMUNIZATIONS.map(v => (
+                                    <Field key={v} label={v}><input type="text" placeholder="Date" value={data.immunizations[v] ?? ''} onChange={e => setImmunization(v, e.target.value)} className={ic} /></Field>
+                                ))}
+                            </div>
+                            <CheckGroup label="On medication?" options={['Yes','No']} value={data.on_medication} onChange={v => setData('on_medication', v)} />
+                            {data.on_medication === 'Yes' && <Field label="Nature and duration"><input type="text" value={data.medication_nature} onChange={e => setData('medication_nature', e.target.value)} className={ic} /></Field>}
+                        </div>
+                    )}
+
+                    {/* Step 6 — Form 3: Nutrition */}
+                    {step === 6 && (
+                        <div className={card}>
+                            <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
+                                <Users className="w-4 h-4" /> Form 3 — Nutrition Status
+                            </h2>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm text-slate-600">
+                                    <thead><tr className="text-xs text-slate-400 uppercase">
+                                        <th className="text-left pb-2">Measurement</th>
+                                        <th className="pb-2">1st Result</th><th className="pb-2">2nd Result</th>
+                                        <th className="pb-2">1st Date</th><th className="pb-2">2nd Date</th>
+                                    </tr></thead>
+                                    <tbody>
+                                        <tr>
+                                            <td className="pr-4 py-1 font-medium">Height (cm)</td>
+                                            <td className="px-2 py-1"><input type="number" value={data.height_1} onChange={e => setData('height_1', e.target.value)} className={ic} /></td>
+                                            <td className="px-2 py-1"><input type="number" value={data.height_2} onChange={e => setData('height_2', e.target.value)} className={ic} /></td>
+                                            <td className="px-2 py-1"><input type="date" value={data.date_1} onChange={e => setData('date_1', e.target.value)} className={ic} /></td>
+                                            <td className="px-2 py-1"><input type="date" value={data.date_2} onChange={e => setData('date_2', e.target.value)} className={ic} /></td>
+                                        </tr>
+                                        <tr>
+                                            <td className="pr-4 py-1 font-medium">Weight (kg)</td>
+                                            <td className="px-2 py-1"><input type="number" value={data.weight_1} onChange={e => setData('weight_1', e.target.value)} className={ic} /></td>
+                                            <td className="px-2 py-1"><input type="number" value={data.weight_2} onChange={e => setData('weight_2', e.target.value)} className={ic} /></td>
+                                            <td></td><td></td>
+                                        </tr>
+                                        <tr>
+                                            <td className="pr-4 py-1 font-medium">Nutritional Status</td>
+                                            <td className="px-2 py-1"><input type="text" value={data.nutritional_status_1} onChange={e => setData('nutritional_status_1', e.target.value)} className={ic} /></td>
+                                            <td className="px-2 py-1"><input type="text" value={data.nutritional_status_2} onChange={e => setData('nutritional_status_2', e.target.value)} className={ic} /></td>
+                                            <td></td><td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wide pt-2">Feeding / Eating</h3>
+                            <Field label="Food allergies?"><input type="text" value={data.food_allergies} onChange={e => setData('food_allergies', e.target.value)} className={ic} placeholder="Describe if any" /></Field>
+                            <Field label="Usual food given"><input type="text" value={data.usual_food} onChange={e => setData('usual_food', e.target.value)} className={ic} /></Field>
+                            <Field label="Eating habit (bottle food, finger food, etc.)"><input type="text" value={data.eating_habit} onChange={e => setData('eating_habit', e.target.value)} className={ic} /></Field>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Field label="Uses bottle?">
+                                    <select value={data.uses_bottle} onChange={e => setData('uses_bottle', e.target.value)} className={ic}>
+                                        <option value="">—</option><option>Yes</option><option>No</option>
+                                    </select>
+                                </Field>
+                                {data.uses_bottle === 'Yes' && <Field label="How often?"><input type="text" value={data.bottle_frequency} onChange={e => setData('bottle_frequency', e.target.value)} className={ic} /></Field>}
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Field label="Breakfast Time"><input type="time" value={data.breakfast_time} onChange={e => setData('breakfast_time', e.target.value)} className={ic} /></Field>
+                                <Field label="Lunch Time"><input type="time" value={data.lunch_time} onChange={e => setData('lunch_time', e.target.value)} className={ic} /></Field>
+                            </div>
+                        </div>
+                    )}
+                    {step === 7 && (
                         <div className="space-y-4">
                             {[
                                 {
