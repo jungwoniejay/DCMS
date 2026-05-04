@@ -34,13 +34,13 @@ class AdminChildrenController extends Controller
             $ageExpr = $this->ageRawExpr('birthdate');
             switch ($request->age_group) {
                 case '0-2':
-                    $query->whereRaw("{$ageExpr} <= 2");
+                    $query->whereRaw("{$ageExpr} <= ?", [2]);
                     break;
                 case '3-4':
-                    $query->whereRaw("{$ageExpr} BETWEEN 3 AND 4");
+                    $query->whereRaw("{$ageExpr} BETWEEN ? AND ?", [3, 4]);
                     break;
                 case '5-6':
-                    $query->whereRaw("{$ageExpr} BETWEEN 5 AND 6");
+                    $query->whereRaw("{$ageExpr} BETWEEN ? AND ?", [5, 6]);
                     break;
             }
         }
