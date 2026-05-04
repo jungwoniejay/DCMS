@@ -44,6 +44,9 @@ class AdminEnrollmentController extends Controller
             return back()->with('error', 'This request has already been processed.');
         }
 
+        \DB::beginTransaction();
+        try {
+
         // Create child
         $child = Child::create([
             'guardian_id'         => $enrollment->parent_id,
@@ -156,6 +159,13 @@ class AdminEnrollmentController extends Controller
             $this->logActivity('update', "Approved enrollment for {$enrollment->child_first_name} {$enrollment->child_last_name}", 'enrollment', EnrollmentRequest::class, $enrollment->id);
         } catch (\Exception $e) {
             \Log::warning('logActivity failed: ' . $e->getMessage());
+        }
+
+        \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Enrollment approve failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to approve enrollment: ' . $e->getMessage());
         }
 
         return redirect()->route('admin.enrollments')->with('success', 'Enrollment approved! Parent has been notified.');
