@@ -25,17 +25,38 @@ interface ActionItem {
 
 function ActionDropdown({ child }: { child: Child }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            if (
+                dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+                buttonRef.current && !buttonRef.current.contains(event.target as Node)
+            ) {
                 setIsOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const handleOpen = () => {
+        if (!isOpen && buttonRef.current) {
+            const rect = buttonRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const dropdownHeight = 280;
+            const top = spaceBelow < dropdownHeight
+                ? rect.top + window.scrollY - dropdownHeight
+                : rect.bottom + window.scrollY + 4;
+            setDropdownPos({
+                top,
+                right: window.innerWidth - rect.right,
+            });
+        }
+        setIsOpen(!isOpen);
+    };
 
     const actionItems: (ActionItem | { type: 'divider' })[] = [
         {
@@ -84,9 +105,10 @@ function ActionDropdown({ child }: { child: Child }) {
     ];
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative">
             <button
-                onClick={() => setIsOpen(!isOpen)}
+                ref={buttonRef}
+                onClick={handleOpen}
                 className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors duration-150"
                 aria-expanded={isOpen}
                 aria-haspopup="true"
@@ -95,7 +117,11 @@ function ActionDropdown({ child }: { child: Child }) {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-1 w-52 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div
+                    ref={dropdownRef}
+                    style={{ top: dropdownPos.top, right: dropdownPos.right }}
+                    className="fixed w-52 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-[9999]"
+                >
                     {actionItems.map((item, index) => {
                         if ('type' in item && item.type === 'divider') {
                             return <div key={index} className="border-t border-gray-100 my-1" />;
