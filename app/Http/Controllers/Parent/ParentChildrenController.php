@@ -96,11 +96,14 @@ class ParentChildrenController extends Controller
             ->get();
 
         return Inertia::render('parent/ChildDetail', [
-            'child'            => array_merge($child->toArray(), ['profile_picture' => $child->profile_picture]),
-            'nutritionHistory' => $nutritionHistory,
-            'medicalAssessment'=> $medicalAssessment,
-            'healthProblems'   => $healthProblems,
-            'medications'      => $medications,
+            'child'             => array_merge($child->toArray(), ['profile_picture' => $child->profile_picture]),
+            'nutritionHistory'  => $nutritionHistory,
+            'medicalAssessment' => $medicalAssessment,
+            'healthProblems'    => $healthProblems,
+            'medications'       => $medications,
+            'childDetail'       => $child->childDetails,
+            'healthAssessment'  => $child->healthAssessment,
+            'nutritionRecord'   => $child->nutritionRecord,
         ]);
     }
 }
