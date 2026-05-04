@@ -34,12 +34,14 @@ export default function ChildObservationsIndex({ child, observations }: any) {
                         </div>
                     </div>
 
-                    <Link href={route('admin.children.observations.create', child.id)}>
-                        <Button className="bg-green-600 hover:bg-green-700">
-                            <Plus className="w-4 h-4 mr-2" />
-                            Add Observation
-                        </Button>
-                    </Link>
+                    {observations.length === 0 && (
+                        <Link href={route('admin.children.observations.create', child.id)}>
+                            <Button className="bg-green-600 hover:bg-green-700">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Add Observation
+                            </Button>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Observations Table */}
