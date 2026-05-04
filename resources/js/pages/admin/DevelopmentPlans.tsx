@@ -1,4 +1,5 @@
 import AdminLayout from '@/layouts/admin-layout';
+import Modal from '@/components/Modal';
 import { Brain, Heart, Users, MessageCircle, Languages, Plus } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
@@ -159,99 +160,29 @@ export default function DevelopmentPlans({ child, plans }: Props) {
           )}
         </div>
 
-        {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h3 className="text-xl font-bold mb-4">Create Development Plan</h3>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Plan Type</label>
-                  <select
-                    value={formData.plan_type}
-                    onChange={(e) => setFormData({ ...formData, plan_type: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  >
-                    <option value="cognitive">Cognitive Development</option>
-                    <option value="physical">Physical Development</option>
-                    <option value="social">Social Development</option>
-                    <option value="emotional">Emotional Development</option>
-                    <option value="language">Language Development</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
-                  <textarea
-                    value={formData.current_status}
-                    onChange={(e) => setFormData({ ...formData, current_status: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    rows={3}
-                    placeholder="Describe the child's current developmental status..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Goals</label>
-                  <textarea
-                    value={formData.goals}
-                    onChange={(e) => setFormData({ ...formData, goals: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    rows={3}
-                    placeholder="What are the developmental goals?"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Activities</label>
-                  <textarea
-                    value={formData.activities}
-                    onChange={(e) => setFormData({ ...formData, activities: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    rows={3}
-                    placeholder="What activities will help achieve these goals?"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Resources Needed (Optional)</label>
-                  <textarea
-                    value={formData.resources_needed}
-                    onChange={(e) => setFormData({ ...formData, resources_needed: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    rows={2}
-                    placeholder="Materials, tools, or support needed..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Target Date (Optional)</label>
-                  <input
-                    type="date"
-                    value={formData.target_date}
-                    onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={submitPlan}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Create Plan
-                </button>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-              </div>
+        <Modal show={showModal} onClose={() => setShowModal(false)} title="Create Development Plan" maxWidth="xl">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Plan Type</label>
+              <select value={formData.plan_type} onChange={(e) => setFormData({ ...formData, plan_type: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                <option value="cognitive">Cognitive Development</option>
+                <option value="physical">Physical Development</option>
+                <option value="social">Social Development</option>
+                <option value="emotional">Emotional Development</option>
+                <option value="language">Language Development</option>
+              </select>
+            </div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Current Status</label><textarea value={formData.current_status} onChange={(e) => setFormData({ ...formData, current_status: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={3} placeholder="Describe the child's current developmental status..." /></div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Goals</label><textarea value={formData.goals} onChange={(e) => setFormData({ ...formData, goals: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={3} placeholder="What are the developmental goals?" /></div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Activities</label><textarea value={formData.activities} onChange={(e) => setFormData({ ...formData, activities: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={3} placeholder="What activities will help achieve these goals?" /></div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Resources Needed (Optional)</label><textarea value={formData.resources_needed} onChange={(e) => setFormData({ ...formData, resources_needed: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={2} /></div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Target Date (Optional)</label><input type="date" value={formData.target_date} onChange={(e) => setFormData({ ...formData, target_date: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" /></div>
+            <div className="flex gap-3 pt-2">
+              <button onClick={submitPlan} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 text-sm font-semibold">Create Plan</button>
+              <button onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 text-sm font-semibold">Cancel</button>
             </div>
           </div>
-        )}
+        </Modal>
       </div>
     </AdminLayout>
   );

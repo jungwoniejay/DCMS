@@ -16,7 +16,7 @@ class AdminGrowthDataController extends Controller
         
         $records = DB::table('nutrition_records')
             ->where('child_id', $childId)
-            ->orderBy('date_taken', 'desc')
+            ->orderBy('assessment_date', 'desc')
             ->get();
 
         return Inertia::render('admin/AddGrowthData', [
@@ -30,20 +30,20 @@ class AdminGrowthDataController extends Controller
         Child::findOrFail($childId);
 
         $validated = $request->validate([
-            'date_taken' => 'required|date',
-            'height' => 'required|numeric|min:0',
-            'weight' => 'required|numeric|min:0',
-            'nutritional_status' => 'required|string',
+            'date_taken'          => 'required|date',
+            'height'              => 'required|numeric|min:0',
+            'weight'              => 'required|numeric|min:0',
+            'nutritional_status'  => 'required|string',
         ]);
 
         DB::table('nutrition_records')->insert([
-            'child_id' => $childId,
-            'date_taken' => $validated['date_taken'],
-            'height' => $validated['height'],
-            'weight' => $validated['weight'],
-            'nutritional_status' => $validated['nutritional_status'],
-            'created_at' => now(),
-            'updated_at' => now(),
+            'child_id'                 => $childId,
+            'assessment_date'          => $validated['date_taken'],
+            'height_first'             => $validated['height'],
+            'weight_first'             => $validated['weight'],
+            'nutritional_status_result'=> $validated['nutritional_status'],
+            'created_at'               => now(),
+            'updated_at'               => now(),
         ]);
 
         return back()->with('success', 'Growth measurement added successfully!');
