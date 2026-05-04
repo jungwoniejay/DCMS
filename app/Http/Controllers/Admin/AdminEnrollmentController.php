@@ -38,74 +38,102 @@ class AdminEnrollmentController extends Controller
 
     public function approve($id)
     {
-        $request = EnrollmentRequest::findOrFail($id);
+        $enrollment = EnrollmentRequest::findOrFail($id);
 
-        if ($request->status !== 'Pending') {
+        if ($enrollment->status !== 'Pending') {
             return back()->with('error', 'This request has already been processed.');
         }
 
+        // Create child
         $child = Child::create([
-            'guardian_id'         => $request->parent_id,
-            'last_name'           => $request->child_last_name,
-            'first_name'          => $request->child_first_name,
-            'middle_name'         => $request->child_middle_name,
-            'sex'                 => $request->child_sex,
-            'birthdate'           => $request->child_birthdate,
-            'age'                 => $request->child_age,
-            'address'             => $request->child_address,
-            'first_language'      => $request->child_first_language,
-            'second_language'     => $request->child_second_language,
-            'profile_picture'     => $request->child_photo,
+            'guardian_id'         => $enrollment->parent_id,
+            'last_name'           => $enrollment->child_last_name,
+            'first_name'          => $enrollment->child_first_name,
+            'middle_name'         => $enrollment->child_middle_name,
+            'sex'                 => $enrollment->child_sex,
+            'birthdate'           => $enrollment->child_birthdate,
+            'age'                 => $enrollment->child_age,
+            'address'             => $enrollment->child_address,
+            'first_language'      => $enrollment->child_first_language,
+            'second_language'     => $enrollment->child_second_language,
+            'profile_picture'     => $enrollment->child_photo,
             'registration_status' => 'Approved',
-            'accomplished_by'     => $request->parent->name,
+            'accomplished_by'     => $enrollment->parent->name ?? null,
             'reviewed_by'         => auth()->user()->name,
             'reviewed_at'         => now(),
         ]);
 
-        $child->familyProfile()->create(['purok_zone' => $request->purok_zone]);
+        // Family profile
+        $child->familyProfile()->create([
+            'purok_zone' => $enrollment->purok_zone,
+        ]);
 
-        // Save father profile from enrollment data
-        if (!empty($request->father_name)) {
-            $fatherParts = explode(' ', trim($request->father_name), 2);
+        // Father profile from father_data JSON
+        $father = $enrollment->father_data ?? [];
+        if (!empty($father['first_name']) || !empty($father['last_name'])) {
             FatherProfile::create([
-                'child_id'           => $child->id,
-                'first_name'         => $fatherParts[0],
-                'last_name'          => $fatherParts[1] ?? '',
-                'occupational_status' => $request->father_occupation,
+                'child_id'              => $child->id,
+                'first_name'            => $father['first_name'] ?? '',
+                'last_name'             => $father['last_name'] ?? '',
+                'middle_initial'        => $father['middle_name'] ?? null,
+                'date_of_birth'         => $father['birthdate'] ?? null,
+                'age'                   => $father['age'] ?? null,
+                'civil_status'          => $father['civil_status'] ?? null,
+                'district'              => $father['district'] ?? null,
+                'purok_zone'            => $father['purok'] ?? null,
+                'mother_tongue'         => $father['mother_tongue'] ?? null,
+                'other_dialects'        => $father['other_dialects'] ?? null,
+                'educational_attainment'=> $father['education'] ?? null,
+                'occupational_status'   => $father['occupation'] ?? null,
             ]);
         }
 
-        // Save mother profile from enrollment data
-        if (!empty($request->mother_name)) {
-            $motherParts = explode(' ', trim($request->mother_name), 2);
+        // Mother profile from mother_data JSON
+        $mother = $enrollment->mother_data ?? [];
+        if (!empty($mother['first_name']) || !empty($mother['last_name'])) {
             MotherProfile::create([
-                'child_id'           => $child->id,
-                'first_name'         => $motherParts[0],
-                'last_name'          => $motherParts[1] ?? '',
-                'occupational_status' => $request->mother_occupation,
+                'child_id'              => $child->id,
+                'first_name'            => $mother['first_name'] ?? '',
+                'last_name'             => $mother['last_name'] ?? '',
+                'middle_initial'        => $mother['middle_name'] ?? null,
+                'date_of_birth'         => $mother['birthdate'] ?? null,
+                'age'                   => $mother['age'] ?? null,
+                'civil_status'          => $mother['civil_status'] ?? null,
+                'district'              => $mother['district'] ?? null,
+                'purok_zone'            => $mother['purok'] ?? null,
+                'mother_tongue'         => $mother['mother_tongue'] ?? null,
+                'other_dialects'        => $mother['other_dialects'] ?? null,
+                'educational_attainment'=> $mother['education'] ?? null,
+                'occupational_status'   => $mother['occupation'] ?? null,
+                'pregnant'              => $mother['pregnant'] ?? null,
+                'age_interest_daycare'  => $mother['daycare_age_interest'] ?? null,
             ]);
         }
 
-        // Save guardian contact from enrollment data
-        if (!empty($request->guardian_contact)) {
+        // Guardian
+        if (!empty($enrollment->guardian_contact) || !empty($enrollment->guardian_name)) {
             Guardian::create([
                 'child_id'     => $child->id,
-                'name'         => $request->parent->name,
-                'relationship' => 'Guardian',
-                'mobile_phone' => $request->guardian_contact,
+                'name'         => $enrollment->guardian_name ?? $enrollment->parent->name ?? '',
+                'relationship' => $enrollment->guardian_relationship ?? 'Guardian',
+                'email'        => $enrollment->guardian_email ?? null,
+                'mobile_phone' => $enrollment->guardian_contact ?? null,
             ]);
         }
 
-        // Save emergency contact from enrollment data
-        if (!empty($request->emergency_contact_name)) {
+        // Emergency contact
+        if (!empty($enrollment->emergency_contact_name)) {
             EmergencyContact::create([
                 'child_id'     => $child->id,
-                'name'         => $request->emergency_contact_name,
-                'mobile_phone' => $request->emergency_contact_phone,
+                'name'         => $enrollment->emergency_contact_name,
+                'relationship' => null,
+                'home_phone'   => $enrollment->emergency_home ?? null,
+                'work_phone'   => $enrollment->emergency_work ?? null,
+                'mobile_phone' => $enrollment->emergency_contact_phone ?? null,
             ]);
         }
 
-        $request->update([
+        $enrollment->update([
             'status'      => 'Approved',
             'reviewed_by' => auth()->id(),
             'reviewed_at' => now(),
@@ -113,15 +141,15 @@ class AdminEnrollmentController extends Controller
         ]);
 
         Notification::send(
-            $request->parent_id,
+            $enrollment->parent_id,
             'enrollment_approved',
             '🎉 Enrollment Approved!',
-            "Your enrollment request for {$request->child_first_name} {$request->child_last_name} has been approved. Your child has been added to the system.",
-            ['child_id' => $child->id, 'child_name' => "{$request->child_first_name} {$request->child_last_name}"]
+            "Your enrollment request for {$enrollment->child_first_name} {$enrollment->child_last_name} has been approved.",
+            ['child_id' => $child->id, 'child_name' => "{$enrollment->child_first_name} {$enrollment->child_last_name}"]
         );
 
         try {
-            $this->logActivity('update', "Approved enrollment for {$request->child_first_name} {$request->child_last_name}", 'enrollment', EnrollmentRequest::class, $request->id);
+            $this->logActivity('update', "Approved enrollment for {$enrollment->child_first_name} {$enrollment->child_last_name}", 'enrollment', EnrollmentRequest::class, $enrollment->id);
         } catch (\Exception $e) {
             \Log::warning('logActivity failed: ' . $e->getMessage());
         }
