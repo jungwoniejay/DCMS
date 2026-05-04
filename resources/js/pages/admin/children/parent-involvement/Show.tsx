@@ -92,9 +92,7 @@ export default function ParentInvolvementShow({ child, parentInvolvement }: any)
                         {parentInvolvement.additional_notes && (
                             <div className="lg:col-span-2">
                                 <Section icon={<Users />} title="Additional Notes">
-                                    <div className="p-4 bg-gray-50 rounded-lg">
-                                        <p className="text-sm text-gray-700">{parentInvolvement.additional_notes}</p>
-                                    </div>
+                                    <p className="text-sm text-gray-700 leading-relaxed">{parentInvolvement.additional_notes}</p>
                                 </Section>
                             </div>
                         )}
@@ -118,12 +116,12 @@ export default function ParentInvolvementShow({ child, parentInvolvement }: any)
 
 function Section({ icon, title, children }: any) {
     return (
-        <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex items-center gap-2 mb-4">
-                <div className="text-green-600">{icon}</div>
-                <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+                <div className="p-2 bg-green-50 rounded-lg text-green-600">{icon}</div>
+                <h2 className="text-base font-semibold text-gray-900">{title}</h2>
             </div>
-            {children}
+            <div className="p-6">{children}</div>
         </div>
     );
 }
@@ -134,9 +132,9 @@ function InfoGrid({ children }: any) {
 
 function InfoItem({ label, value }: any) {
     return (
-        <div>
-            <span className="text-sm font-medium text-gray-500">{label}:</span>
-            <p className="text-sm text-gray-900 mt-1">{value || 'N/A'}</p>
+        <div className="bg-gray-50 rounded-lg px-4 py-3">
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">{label}</span>
+            <p className="text-sm font-medium text-gray-900 mt-1">{value || 'N/A'}</p>
         </div>
     );
 }
