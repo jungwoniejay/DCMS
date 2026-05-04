@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\EnrollmentRequest;
 use App\Models\Child;
+use App\Models\FatherProfile;
+use App\Models\MotherProfile;
+use App\Models\Guardian;
+use App\Models\EmergencyContact;
 use App\Models\Notification;
 use App\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -59,6 +63,47 @@ class AdminEnrollmentController extends Controller
         ]);
 
         $child->familyProfile()->create(['purok_zone' => $request->purok_zone]);
+
+        // Save father profile from enrollment data
+        if (!empty($request->father_name)) {
+            $fatherParts = explode(' ', trim($request->father_name), 2);
+            FatherProfile::create([
+                'child_id'           => $child->id,
+                'first_name'         => $fatherParts[0],
+                'last_name'          => $fatherParts[1] ?? '',
+                'occupational_status' => $request->father_occupation,
+            ]);
+        }
+
+        // Save mother profile from enrollment data
+        if (!empty($request->mother_name)) {
+            $motherParts = explode(' ', trim($request->mother_name), 2);
+            MotherProfile::create([
+                'child_id'           => $child->id,
+                'first_name'         => $motherParts[0],
+                'last_name'          => $motherParts[1] ?? '',
+                'occupational_status' => $request->mother_occupation,
+            ]);
+        }
+
+        // Save guardian contact from enrollment data
+        if (!empty($request->guardian_contact)) {
+            Guardian::create([
+                'child_id'     => $child->id,
+                'name'         => $request->parent->name,
+                'relationship' => 'Guardian',
+                'mobile_phone' => $request->guardian_contact,
+            ]);
+        }
+
+        // Save emergency contact from enrollment data
+        if (!empty($request->emergency_contact_name)) {
+            EmergencyContact::create([
+                'child_id'     => $child->id,
+                'name'         => $request->emergency_contact_name,
+                'mobile_phone' => $request->emergency_contact_phone,
+            ]);
+        }
 
         $request->update([
             'status'      => 'Approved',
