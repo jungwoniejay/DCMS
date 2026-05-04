@@ -13,7 +13,7 @@ class HealthAssessmentController extends Controller
     public function edit(int $childId)
     {
         $child = Child::where('id', $childId)
-            ->where('parent_id', auth()->id())
+            ->where('guardian_id', auth()->id())
             ->firstOrFail();
 
         $assessment = HealthAssessment::where('child_id', $childId)->first();
@@ -27,7 +27,7 @@ class HealthAssessmentController extends Controller
     public function store(Request $request, int $childId)
     {
         Child::where('id', $childId)
-            ->where('parent_id', auth()->id())
+            ->where('guardian_id', auth()->id())
             ->firstOrFail();
 
         $data = $request->validate([

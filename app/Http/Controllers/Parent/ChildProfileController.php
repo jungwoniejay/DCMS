@@ -13,7 +13,7 @@ class ChildProfileController extends Controller
     public function edit(int $childId)
     {
         $child = Child::where('id', $childId)
-            ->where('parent_id', auth()->id())
+            ->where('guardian_id', auth()->id())
             ->firstOrFail();
 
         $detail = ChildDetail::where('child_id', $childId)->first();
@@ -27,7 +27,7 @@ class ChildProfileController extends Controller
     public function store(Request $request, int $childId)
     {
         $child = Child::where('id', $childId)
-            ->where('parent_id', auth()->id())
+            ->where('guardian_id', auth()->id())
             ->firstOrFail();
 
         $data = $request->validate([
