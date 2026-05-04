@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
 
     return (
         <>
-            <Head title="Privacy Policy & Terms — Brgy2DMS" />
+            <Head title="Privacy Policy & Terms — KidCare Hinoba-an" />
             <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%)' }}>
 
                 {/* Top Nav */}
@@ -31,7 +31,7 @@ export default function PrivacyPolicy() {
                     style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.8)' }}>
                     <div className="flex items-center gap-3">
                         <DaycareLogo className="w-8 h-8" />
-                        <span className="font-bold text-slate-800">Brgy2DMS</span>
+                        <span className="font-bold text-slate-800">KidCare Hinoba-an</span>
                     </div>
                     <Link href="/" className="flex items-center gap-2 text-sm text-slate-500 hover:text-blue-600 transition-colors font-medium">
                         <ArrowLeft className="w-4 h-4" /> Back to Home
@@ -89,8 +89,8 @@ export default function PrivacyPolicy() {
 
                         {/* Section: Overview */}
                         <Section id="overview" icon={FileText} title="Overview" color="blue">
-                            <p>Brgy2DMS (Barangay Child Development Data Management System) is committed to protecting the personal information of children, parents, and guardians registered in our system.</p>
-                            <p className="mt-3">This Privacy Policy applies to all users of the Brgy2DMS platform, including administrators, parents, and guardians. By using our system, you agree to the collection and use of information in accordance with this policy.</p>
+                            <p>KidCare Hinoba-an (Barangay Child Development Data Management System) is committed to protecting the personal information of children, parents, and guardians registered in our system.</p>
+                            <p className="mt-3">This Privacy Policy applies to all users of the KidCare Hinoba-an platform, including administrators, parents, and guardians. By using our system, you agree to the collection and use of information in accordance with this policy.</p>
                             <InfoBox color="blue" text="This system is operated by the Barangay Child Development Center (CDC) and is intended solely for the management of child development records within the barangay." />
                         </Section>
 
@@ -111,21 +111,37 @@ export default function PrivacyPolicy() {
                         {/* Section: Cookies */}
                         <Section id="cookies" icon={Cookie} title="Cookie Policy" color="pink">
                             <p>We use cookies to improve your experience on our platform. Here is a breakdown of the cookies we use:</p>
-                            <div className="mt-4 space-y-3">
-                                {[
-                                    { name: 'Essential Cookies', desc: 'Required for authentication, session management, and basic site functionality. These cannot be disabled.', badge: 'Always Active', badgeColor: 'bg-blue-100 text-blue-700' },
-                                    { name: 'Analytics Cookies', desc: 'Help us understand how users interact with the system so we can improve performance and usability.', badge: 'Optional', badgeColor: 'bg-purple-100 text-purple-700' },
-                                    { name: 'Optional Cookies', desc: 'Used for personalization features and enhanced user experience settings.', badge: 'Optional', badgeColor: 'bg-pink-100 text-pink-700' },
-                                ].map((c) => (
-                                    <div key={c.name} className="p-4 rounded-2xl bg-white/60 border border-white/80">
-                                        <div className="flex items-center justify-between mb-1.5">
-                                            <p className="text-sm font-semibold text-slate-800">{c.name}</p>
-                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.badgeColor}`}>{c.badge}</span>
-                                        </div>
-                                        <p className="text-sm text-slate-500">{c.desc}</p>
-                                    </div>
-                                ))}
+                            <div className="mt-4 overflow-x-auto">
+                                <table className="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr className="bg-pink-50">
+                                            <th className="text-left px-4 py-3 font-semibold text-slate-700 border border-pink-100 rounded-tl-xl">Cookie Name</th>
+                                            <th className="text-left px-4 py-3 font-semibold text-slate-700 border border-pink-100">Purpose</th>
+                                            <th className="text-left px-4 py-3 font-semibold text-slate-700 border border-pink-100">Duration</th>
+                                            <th className="text-left px-4 py-3 font-semibold text-slate-700 border border-pink-100 rounded-tr-xl">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {[
+                                            { name: 'brgy2dms_session', purpose: 'Maintains your login session and authentication state', duration: '2 hours', status: 'Essential', statusColor: 'bg-blue-100 text-blue-700' },
+                                            { name: 'XSRF-TOKEN', purpose: 'Protects against cross-site request forgery attacks', duration: '2 hours', status: 'Essential', statusColor: 'bg-blue-100 text-blue-700' },
+                                            { name: 'cookie_consent', purpose: 'Remembers your cookie consent preferences', duration: '1 year', status: 'Essential', statusColor: 'bg-blue-100 text-blue-700' },
+                                            { name: 'analytics_cookies', purpose: 'Helps us understand how users interact with the system', duration: '30 days', status: 'Optional', statusColor: 'bg-purple-100 text-purple-700' },
+                                            { name: 'optional_cookies', purpose: 'Used for personalization and enhanced user experience', duration: '30 days', status: 'Optional', statusColor: 'bg-pink-100 text-pink-700' },
+                                        ].map((c, i) => (
+                                            <tr key={c.name} className={i % 2 === 0 ? 'bg-white' : 'bg-pink-50/30'}>
+                                                <td className="px-4 py-3 border border-pink-100 font-mono text-xs text-slate-700">{c.name}</td>
+                                                <td className="px-4 py-3 border border-pink-100 text-slate-600">{c.purpose}</td>
+                                                <td className="px-4 py-3 border border-pink-100 text-slate-500 whitespace-nowrap">{c.duration}</td>
+                                                <td className="px-4 py-3 border border-pink-100">
+                                                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.statusColor}`}>{c.status}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
+                            <InfoBox color="pink" text="You can control optional cookies through the cookie consent banner. Essential cookies cannot be disabled as they are required for the system to function." />
                         </Section>
 
                         {/* Section: Data Use */}
@@ -155,7 +171,7 @@ export default function PrivacyPolicy() {
 
                         {/* Section: Rights */}
                         <Section id="your-rights" icon={Bell} title="Your Rights" color="pink">
-                            <p>As a user of Brgy2DMS, you have the following rights regarding your personal data:</p>
+                            <p>As a user of KidCare Hinoba-an, you have the following rights regarding your personal data:</p>
                             <BulletList items={[
                                 'Right to access: Request a copy of the data we hold about you',
                                 'Right to correction: Request correction of inaccurate information',
@@ -182,7 +198,7 @@ export default function PrivacyPolicy() {
 
                         {/* Footer note */}
                         <div className="text-center py-6 text-sm text-slate-400">
-                            <p>© 2026 Brgy2DMS — Barangay Child Development Data Management System</p>
+                            <p>© 2026 KidCare Hinoba-an — Barangay Child Development Data Management System</p>
                             <p className="mt-1">For questions, contact your Barangay CDC Administrator</p>
                         </div>
                     </main>
