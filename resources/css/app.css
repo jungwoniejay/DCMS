@@ -275,6 +275,11 @@
 .animate-fade-in  { animation: fade-in-up 0.3s ease-out; }
 
 /* ===== PRINT STYLES ===== */
+@page {
+    margin: 0.5in;
+    size: A4;
+}
+
 @media print {
     /* Hide sidebar, topbar, buttons, modals */
     aside,
