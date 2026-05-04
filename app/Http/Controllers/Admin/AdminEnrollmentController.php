@@ -112,10 +112,14 @@ class AdminEnrollmentController extends Controller
 
         // Guardian
         if (!empty($enrollment->guardian_contact) || !empty($enrollment->guardian_name)) {
+            $allowedRelationships = ['Father', 'Mother', 'Guardian', 'Other'];
+            $relationship = in_array($enrollment->guardian_relationship, $allowedRelationships)
+                ? $enrollment->guardian_relationship
+                : 'Guardian';
             Guardian::create([
                 'child_id'     => $child->id,
                 'name'         => $enrollment->guardian_name ?? $enrollment->parent->name ?? '',
-                'relationship' => $enrollment->guardian_relationship ?? 'Guardian',
+                'relationship' => $relationship,
                 'email'        => $enrollment->guardian_email ?? null,
                 'mobile_phone' => $enrollment->guardian_contact ?? null,
             ]);
@@ -126,7 +130,7 @@ class AdminEnrollmentController extends Controller
             EmergencyContact::create([
                 'child_id'     => $child->id,
                 'name'         => $enrollment->emergency_contact_name,
-                'relationship' => null,
+                'relationship' => $enrollment->emergency_contact_name,
                 'home_phone'   => $enrollment->emergency_home ?? null,
                 'work_phone'   => $enrollment->emergency_work ?? null,
                 'mobile_phone' => $enrollment->emergency_contact_phone ?? null,

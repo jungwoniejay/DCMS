@@ -23,6 +23,8 @@ interface EnrollmentRequest {
     father_occupation: string;
     mother_name: string;
     mother_occupation: string;
+    father_data: { first_name?: string; last_name?: string } | null;
+    mother_data: { first_name?: string; last_name?: string } | null;
     guardian_contact: string;
     emergency_contact_name: string;
     emergency_contact_phone: string;
@@ -202,8 +204,8 @@ export default function Enrollments({ requests, stats }: Props) {
                                                 </div>
 
                                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pt-3 border-t border-slate-50">
-                                                    <InfoRow label="Father" value={req.father_name ? `${req.father_name}${req.father_occupation ? ` · ${req.father_occupation}` : ''}` : '—'} />
-                                                    <InfoRow label="Mother" value={req.mother_name ? `${req.mother_name}${req.mother_occupation ? ` · ${req.mother_occupation}` : ''}` : '—'} />
+                                                    <InfoRow label="Father" value={req.father_data?.first_name ? `${req.father_data.first_name} ${req.father_data.last_name ?? ''}`.trim() : (req.father_name || '—')} />
+                                                    <InfoRow label="Mother" value={req.mother_data?.first_name ? `${req.mother_data.first_name} ${req.mother_data.last_name ?? ''}`.trim() : (req.mother_name || '—')} />
                                                     <InfoRow label="Guardian Contact" value={req.guardian_contact} />
                                                     <InfoRow label="Emergency Contact" value={`${req.emergency_contact_name} · ${req.emergency_contact_phone}`} />
                                                 </div>
