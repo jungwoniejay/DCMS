@@ -3,7 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 import { Baby, User, Users, Phone, ArrowLeft, ArrowRight, Send, Camera, CheckCircle } from 'lucide-react';
 
-const ic = 'w-full px-3 py-2 border border-purple-100 rounded-xl bg-white/80 text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all';
+const ic = 'w-full px-3 py-2 border border-sky-100 rounded-xl bg-white/80 text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent transition-all';
 const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
 const STEPS = ['Child Info', 'Father', 'Mother', 'Family & Contact', 'Review'];
@@ -15,12 +15,12 @@ function StepIndicator({ current }: { current: number }) {
                 <div key={i} className="flex items-center gap-1 flex-1 last:flex-none">
                     <div className={`flex flex-col items-center`}>
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all
-                            ${i < current ? 'bg-purple-600 text-white' : i === current ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md' : 'bg-purple-100 text-purple-400'}`}>
+                            ${i < current ? 'bg-teal-600 text-white' : i === current ? 'bg-gradient-to-r from-sky-500 to-teal-600 text-white shadow-md' : 'bg-sky-100 text-sky-400'}`}>
                             {i < current ? <CheckCircle className="w-4 h-4" /> : i + 1}
                         </div>
-                        <span className={`text-[10px] mt-0.5 font-medium ${i === current ? 'text-purple-600' : 'text-slate-400'}`}>{label}</span>
+                        <span className={`text-[10px] mt-0.5 font-medium ${i === current ? 'text-teal-600' : 'text-slate-400'}`}>{label}</span>
                     </div>
-                    {i < STEPS.length - 1 && <div className={`h-0.5 flex-1 mb-3 rounded ${i < current ? 'bg-purple-600' : 'bg-purple-100'}`} />}
+                    {i < STEPS.length - 1 && <div className={`h-0.5 flex-1 mb-3 rounded ${i < current ? 'bg-teal-600' : 'bg-sky-100'}`} />}
                 </div>
             ))}
         </div>
@@ -46,7 +46,7 @@ function CheckGroup({ label, options, value, onChange, span }: {
             <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
                 {options.map(o => (
                     <label key={o} className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer">
-                        <input type="radio" name={label} value={o} checked={value === o} onChange={() => onChange(o)} className="accent-purple-500" />
+                        <input type="radio" name={label} value={o} checked={value === o} onChange={() => onChange(o)} className="accent-teal-500" />
                         {o}
                     </label>
                 ))}
@@ -65,7 +65,7 @@ function MultiCheck({ label, options, value, onChange, span }: {
             <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
                 {options.map(o => (
                     <label key={o} className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer">
-                        <input type="checkbox" checked={value.includes(o)} onChange={() => toggle(o)} className="accent-purple-500" />
+                        <input type="checkbox" checked={value.includes(o)} onChange={() => toggle(o)} className="accent-teal-500" />
                         {o}
                     </label>
                 ))}
@@ -141,23 +141,23 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
         <div className="flex items-center gap-3 pt-2">
             {step > 0 && (
                 <button type="button" onClick={() => setStep(s => s - 1)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/80 border border-purple-100 text-slate-600 text-sm font-semibold hover:bg-white transition-all">
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/80 border border-sky-100 text-slate-600 text-sm font-semibold hover:bg-white transition-all">
                     <ArrowLeft className="w-4 h-4" /> Back
                 </button>
             )}
             {step < STEPS.length - 1 ? (
                 <button type="button" onClick={() => setStep(s => s + 1)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all">
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-teal-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all">
                     Next <ArrowRight className="w-4 h-4" />
                 </button>
             ) : (
                 <button type="submit" disabled={processing}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50">
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-teal-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50">
                     <Send className="w-4 h-4" /> {processing ? 'Submitting...' : 'Submit Enrollment'}
                 </button>
             )}
             <Link href={route('parent.enrollment.index')}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/80 border border-purple-100 text-slate-600 text-sm font-semibold hover:bg-white transition-all">
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/80 border border-sky-100 text-slate-600 text-sm font-semibold hover:bg-white transition-all">
                 Cancel
             </Link>
         </div>
@@ -168,7 +168,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
             <Head title="Enroll New Child" />
             <div className="space-y-6 max-w-3xl">
                 <div className="flex items-center gap-4">
-                    <Link href={route('parent.enrollment.index')} className="text-slate-400 hover:text-purple-600 transition-colors">
+                    <Link href={route('parent.enrollment.index')} className="text-slate-400 hover:text-teal-600 transition-colors">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
@@ -184,7 +184,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                     {/* Step 0 — Form 1: Child Info */}
                     {step === 0 && (
                         <div className={card}>
-                            <h2 className="text-sm font-bold text-purple-600 uppercase tracking-wide flex items-center gap-2">
+                            <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
                                 <Baby className="w-4 h-4" /> Form 1 — Child Information
                             </h2>
                             {/* Photo */}
@@ -193,10 +193,10 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                                 <div className="flex items-center gap-4">
                                     <div className="relative shrink-0">
                                         {previewUrl
-                                            ? <img src={previewUrl} alt="Preview" className="w-20 h-20 rounded-2xl object-cover border-2 border-purple-100 shadow" />
-                                            : <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center border-2 border-dashed border-purple-200"><Camera className="w-7 h-7 text-purple-300" /></div>
+                                            ? <img src={previewUrl} alt="Preview" className="w-20 h-20 rounded-2xl object-cover border-2 border-sky-100 shadow" />
+                                            : <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-sky-100 to-teal-100 flex items-center justify-center border-2 border-dashed border-sky-200"><Camera className="w-7 h-7 text-sky-300" /></div>
                                         }
-                                        <label htmlFor="child_photo" className="absolute -bottom-1 -right-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white p-1.5 rounded-full cursor-pointer hover:shadow-md transition-all">
+                                        <label htmlFor="child_photo" className="absolute -bottom-1 -right-1 bg-gradient-to-r from-sky-500 to-teal-600 text-white p-1.5 rounded-full cursor-pointer hover:shadow-md transition-all">
                                             <Camera className="w-3 h-3" />
                                         </label>
                                         <input id="child_photo" type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
@@ -230,7 +230,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                                     <input type="date" value={data.child_birthdate} onChange={e => setData((p: any) => ({ ...p, child_birthdate: e.target.value, child_age: calcAge(e.target.value) }))} className={ic} required />
                                 </Field>
                                 <Field label="Age">
-                                    <input type="number" value={data.child_age} readOnly className={`${ic} bg-purple-50 cursor-not-allowed`} placeholder="Auto-calculated" />
+                                    <input type="number" value={data.child_age} readOnly className={`${ic} bg-sky-50 cursor-not-allowed`} placeholder="Auto-calculated" />
                                 </Field>
                                 <Field label="Address *" error={errors.child_address} span="md:col-span-3">
                                     <textarea value={data.child_address} onChange={e => setData('child_address', e.target.value)} className={`${ic} resize-none`} rows={2} required />
@@ -288,7 +288,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                     {/* Step 1 — Form 1A: Father */}
                     {step === 1 && (
                         <div className={card}>
-                            <h2 className="text-sm font-bold text-purple-600 uppercase tracking-wide flex items-center gap-2">
+                            <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
                                 <User className="w-4 h-4" /> Form 1A — Father's Profile
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -305,7 +305,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                                     <input type="date" value={data.father_birthdate} onChange={e => setData((p: any) => ({ ...p, father_birthdate: e.target.value, father_age: calcAge(e.target.value) }))} className={ic} />
                                 </Field>
                                 <Field label="Age">
-                                    <input type="number" value={data.father_age} readOnly className={`${ic} bg-purple-50 cursor-not-allowed`} placeholder="Auto-calculated" />
+                                    <input type="number" value={data.father_age} readOnly className={`${ic} bg-sky-50 cursor-not-allowed`} placeholder="Auto-calculated" />
                                 </Field>
                                 <Field label="District">
                                     <input type="text" value={data.father_district} onChange={e => setData('father_district', e.target.value)} className={ic} />
@@ -336,7 +336,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                     {/* Step 2 — Form 1B: Mother */}
                     {step === 2 && (
                         <div className={card}>
-                            <h2 className="text-sm font-bold text-purple-600 uppercase tracking-wide flex items-center gap-2">
+                            <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
                                 <User className="w-4 h-4" /> Form 1B — Mother's Profile
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -353,7 +353,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                                     <input type="date" value={data.mother_birthdate} onChange={e => setData((p: any) => ({ ...p, mother_birthdate: e.target.value, mother_age: calcAge(e.target.value) }))} className={ic} />
                                 </Field>
                                 <Field label="Age">
-                                    <input type="number" value={data.mother_age} readOnly className={`${ic} bg-purple-50 cursor-not-allowed`} placeholder="Auto-calculated" />
+                                    <input type="number" value={data.mother_age} readOnly className={`${ic} bg-sky-50 cursor-not-allowed`} placeholder="Auto-calculated" />
                                 </Field>
                                 <Field label="District">
                                     <input type="text" value={data.mother_district} onChange={e => setData('mother_district', e.target.value)} className={ic} />
@@ -386,7 +386,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                     {/* Step 3 — Form 1C: Family & Contact */}
                     {step === 3 && (
                         <div className={card}>
-                            <h2 className="text-sm font-bold text-purple-600 uppercase tracking-wide flex items-center gap-2">
+                            <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
                                 <Users className="w-4 h-4" /> Form 1C — Family Profile
                             </h2>
                             <CheckGroup label="Home Ownership" options={['Owned','Rented','With Parents','With Relatives']} value={data.home_ownership} onChange={v => setData('home_ownership', v)} />
@@ -482,7 +482,7 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                                 },
                             ].map(section => (
                                 <div key={section.title} className={card}>
-                                    <h2 className="text-sm font-bold text-purple-600 uppercase tracking-wide flex items-center gap-2">
+                                    <h2 className="text-sm font-bold text-teal-600 uppercase tracking-wide flex items-center gap-2">
                                         {section.icon} {section.title}
                                     </h2>
                                     <dl className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2">
