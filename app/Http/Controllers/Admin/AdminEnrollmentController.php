@@ -36,6 +36,58 @@ class AdminEnrollmentController extends Controller
         ]);
     }
 
+    private function mapDaycareAge(?string $val): ?string
+    {
+        if (!$val) return null;
+        $map = [
+            'Below 1 year old' => 'Below 1yr',
+            '1 year old'       => '1yr',
+            '2 years old'      => '2yr',
+            '3 years old'      => '3yr',
+            '4 years old'      => '4yr',
+        ];
+        return $map[$val] ?? (in_array($val, ['Below 1yr','1yr','2yr','3yr','4yr']) ? $val : null);
+    }
+
+    private function mapOccupationalStatus(?string $val): ?string
+    {
+        if (!$val) return null;
+        return in_array($val, ['Employed','Unemployed','Retired','OFW','Others']) ? $val : 'Others';
+    }
+
+    private function mapEducation(?string $val): ?string
+    {
+        if (!$val) return null;
+        $map = [
+            'Elem./Graduate'         => 'Elementary',
+            'Highschool/Graduate'    => 'High School',
+            'College/Graduate'       => 'College',
+            'Technical/Vocational'   => 'Tech-Voc',
+            'Masteral Unit/Degree'   => 'Masteral',
+            'Doctoral Unit/Degree'   => 'Doctoral',
+        ];
+        return $map[$val] ?? (in_array($val, ['Elementary','High School','College','Tech-Voc','Masteral','Doctoral']) ? $val : null);
+    }
+
+    private function mapMotherTongue(?string $val): ?string
+    {
+        if (!$val) return null;
+        return in_array($val, ['Tagalog','Visayan','Ilocano','Bicolnon','Others']) ? $val : 'Others';
+    }
+
+    private function mapCivilStatus(?string $val, string $gender = 'father'): ?string
+    {
+        if (!$val) return null;
+        $fatherAllowed = ['Single','Married','Separated','Widower','Live-in'];
+        $motherAllowed = ['Single','Married','Separated','Widow','Live-in'];
+        $allowed = $gender === 'mother' ? $motherAllowed : $fatherAllowed;
+        if (in_array($val, $allowed)) return $val;
+        // cross-map Widower <-> Widow
+        if ($gender === 'mother' && $val === 'Widower') return 'Widow';
+        if ($gender === 'father' && $val === 'Widow') return 'Widower';
+        return null;
+    }
+
     public function approve($id)
     {
         $enrollment = EnrollmentRequest::findOrFail($id);
@@ -75,19 +127,19 @@ class AdminEnrollmentController extends Controller
         $father = $enrollment->father_data ?? [];
         if (!empty($father['first_name']) || !empty($father['last_name'])) {
             FatherProfile::create([
-                'child_id'              => $child->id,
-                'first_name'            => $father['first_name'] ?? '',
-                'last_name'             => $father['last_name'] ?? '',
-                'middle_initial'        => $father['middle_name'] ?? null,
-                'date_of_birth'         => $father['birthdate'] ?? null,
-                'age'                   => $father['age'] ?? null,
-                'civil_status'          => $father['civil_status'] ?? null,
-                'district'              => $father['district'] ?? null,
-                'purok_zone'            => $father['purok'] ?? null,
-                'mother_tongue'         => $father['mother_tongue'] ?? null,
-                'other_dialects'        => $father['other_dialects'] ?? null,
-                'educational_attainment'=> $father['education'] ?? null,
-                'occupational_status'   => $father['occupation'] ?? null,
+                'child_id'               => $child->id,
+                'first_name'             => $father['first_name'] ?? '',
+                'last_name'              => $father['last_name'] ?? '',
+                'middle_initial'         => $father['middle_name'] ?? null,
+                'date_of_birth'          => $father['birthdate'] ?? null,
+                'age'                    => $father['age'] ?? null,
+                'civil_status'           => $this->mapCivilStatus($father['civil_status'] ?? null, 'father'),
+                'district'               => $father['district'] ?? null,
+                'purok_zone'             => $father['purok'] ?? null,
+                'mother_tongue'          => $this->mapMotherTongue($father['mother_tongue'] ?? null),
+                'other_dialects'         => $father['other_dialects'] ?? null,
+                'educational_attainment' => $this->mapEducation($father['education'] ?? null),
+                'occupational_status'    => $this->mapOccupationalStatus($father['occupation_status'] ?? null),
             ]);
         }
 
@@ -95,21 +147,21 @@ class AdminEnrollmentController extends Controller
         $mother = $enrollment->mother_data ?? [];
         if (!empty($mother['first_name']) || !empty($mother['last_name'])) {
             MotherProfile::create([
-                'child_id'              => $child->id,
-                'first_name'            => $mother['first_name'] ?? '',
-                'last_name'             => $mother['last_name'] ?? '',
-                'middle_initial'        => $mother['middle_name'] ?? null,
-                'date_of_birth'         => $mother['birthdate'] ?? null,
-                'age'                   => $mother['age'] ?? null,
-                'civil_status'          => $mother['civil_status'] ?? null,
-                'district'              => $mother['district'] ?? null,
-                'purok_zone'            => $mother['purok'] ?? null,
-                'mother_tongue'         => $mother['mother_tongue'] ?? null,
-                'other_dialects'        => $mother['other_dialects'] ?? null,
-                'educational_attainment'=> $mother['education'] ?? null,
-                'occupational_status'   => $mother['occupation'] ?? null,
-                'pregnant'              => $mother['pregnant'] ?? null,
-                'age_interest_daycare'  => $mother['daycare_age_interest'] ?? null,
+                'child_id'               => $child->id,
+                'first_name'             => $mother['first_name'] ?? '',
+                'last_name'              => $mother['last_name'] ?? '',
+                'middle_initial'         => $mother['middle_name'] ?? null,
+                'date_of_birth'          => $mother['birthdate'] ?? null,
+                'age'                    => $mother['age'] ?? null,
+                'civil_status'           => $this->mapCivilStatus($mother['civil_status'] ?? null, 'mother'),
+                'district'               => $mother['district'] ?? null,
+                'purok_zone'             => $mother['purok'] ?? null,
+                'mother_tongue'          => $this->mapMotherTongue($mother['mother_tongue'] ?? null),
+                'other_dialects'         => $mother['other_dialects'] ?? null,
+                'educational_attainment' => $this->mapEducation($mother['education'] ?? null),
+                'occupational_status'    => $this->mapOccupationalStatus($mother['occupation_status'] ?? null),
+                'pregnant'               => $mother['pregnant'] === 'Yes' ? true : ($mother['pregnant'] === 'No' ? false : null),
+                'age_interest_daycare'   => $this->mapDaycareAge($mother['daycare_age_interest'] ?? null),
             ]);
         }
 
