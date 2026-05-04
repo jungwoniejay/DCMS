@@ -59,7 +59,7 @@ const menuGroups = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { auth } = usePage().props as any;
     const barangay = (usePage().props as any).barangay ?? {};
-    const systemName = barangay.system_name || 'Brgy2DMS';
+    const systemName = barangay.system_name || 'KidCare Hinoba-an';
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);

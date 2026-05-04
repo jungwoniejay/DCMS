@@ -44,7 +44,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         {/* Logo */}
                         <Link href={route('welcome')} className="flex items-center gap-3 mb-8">
                             <DaycareLogo className="w-12 h-12" />
-                            <span className="text-2xl font-bold text-gray-900">Brgy2DMS</span>
+                            <span className="text-2xl font-bold text-gray-900">KidCare Hinoba-an</span>
                         </Link>
 
                         {/* Header */}

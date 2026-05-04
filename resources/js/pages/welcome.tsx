@@ -26,10 +26,10 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="Welcome to Brgy2DMS">
+            <Head title="Welcome to KidCare Hinoba-an">
                 <meta name="description" content="Barangay Child Development Data Management System — digitizing CDC records for better child care in your barangay." />
                 <meta name="keywords" content="barangay, child development, CDC, daycare, health monitoring, nutrition tracking" />
-                <meta property="og:title" content="Brgy2DMS — Child Development Management" />
+                <meta property="og:title" content="KidCare Hinoba-an — Child Development Management" />
                 <meta property="og:description" content="A comprehensive digital platform for managing Child Development Center records, health monitoring, and family profiles." />
             </Head>
             <div className="min-h-screen bg-white">
@@ -38,7 +38,7 @@ export default function Welcome() {
                     <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <DaycareLogo className="w-10 h-10" />
-                            <span className="text-2xl font-display font-bold text-gray-900">Brgy2DMS</span>
+                            <span className="text-2xl font-display font-bold text-gray-900">KidCare Hinoba-an</span>
                         </div>
                         <div className="flex items-center gap-4">
                             {auth.user ? (
@@ -185,7 +185,7 @@ export default function Welcome() {
                                     Why Choose Us
                                 </div>
                                 <h2 className="text-4xl font-display font-bold text-gray-900 mb-6">
-                                    Why Choose Brgy2DMS?
+                                    Why Choose KidCare Hinoba-an?
                                 </h2>
                                 <div className="space-y-4">
                                     {[
@@ -244,7 +244,7 @@ export default function Welcome() {
                             <div className="lg:col-span-1">
                                 <div className="flex items-center gap-3 mb-4">
                                     <DaycareLogo className="w-10 h-10" />
-                                    <span className="text-xl font-bold text-white">Brgy2DMS</span>
+                                    <span className="text-xl font-bold text-white">KidCare Hinoba-an</span>
                                 </div>
                                 <p className="text-gray-400 text-sm leading-relaxed">
                                     {getContent('footer_tagline', 'Barangay Child Development Data Management System — digitizing CDC records for better child care.')}
@@ -311,7 +311,7 @@ export default function Welcome() {
                         {/* Bottom bar */}
                         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <p className="text-sm text-gray-500">
-                                {getContent('footer_copyright', `© ${new Date().getFullYear()} Brgy2DMS. All rights reserved.`)}
+                                {getContent('footer_copyright', `© ${new Date().getFullYear()} KidCare Hinoba-an. All rights reserved.`)}
                             </p>
                             <div className="flex items-center gap-6">
                                 <Link href="/privacy-policy" className="text-xs text-gray-500 hover:text-white transition-colors duration-200">Privacy Policy</Link>

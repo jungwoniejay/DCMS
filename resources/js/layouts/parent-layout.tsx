@@ -46,6 +46,8 @@ interface ParentLayoutProps {
 export default function ParentLayout({ children }: ParentLayoutProps) {
     const { auth } = usePage().props as any;
     const { url } = usePage();
+    const barangay = (usePage().props as any).barangay ?? {};
+    const systemName = barangay.system_name || 'KidCare Hinoba-an';
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
 
@@ -121,7 +123,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                     {!mini && (
                         <div>
                             <h1 className="text-base font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent leading-tight">
-                                Brgy2DMS
+                                {systemName}
                             </h1>
                             <p className="text-[10px] text-slate-400 font-semibold tracking-[0.15em] uppercase">Parent Portal</p>
                         </div>
@@ -244,7 +246,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                     </button>
                     <div className="flex items-center gap-2 flex-1">
                         <DaycareLogo className="w-7 h-7" />
-                        <span className="font-bold text-sm bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">Brgy2DMS</span>
+                        <span className="font-bold text-sm bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">{systemName}</span>
                     </div>
                     <NotificationBell />
                 </div>

@@ -70,13 +70,13 @@ export default function Register() {
                         {/* Logo */}
                         <Link href={route('welcome')} className="flex items-center gap-3 mb-8">
                             <DaycareLogo className="w-12 h-12" />
-                            <span className="text-2xl font-bold text-gray-900">Brgy2DMS</span>
+                            <span className="text-2xl font-bold text-gray-900">KidCare Hinoba-an</span>
                         </Link>
 
                         {/* Header */}
                         <div className="mb-8">
                             <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
-                            <p className="text-gray-600">Sign up to get started with Brgy2DMS</p>
+                            <p className="text-gray-600">Sign up to get started with KidCare Hinoba-an</p>
                         </div>
 
                         {/* Form */}
