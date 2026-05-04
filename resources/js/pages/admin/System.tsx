@@ -1,5 +1,6 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
+import Modal from '@/components/Modal';
 import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -449,233 +450,120 @@ export default function System({ users, stats, barangay_settings, provinces, cit
             </div>
 
             {/* Create User Modal */}
-            {showCreateModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-                        <h3 className="text-lg font-bold mb-4">Create New User</h3>
-                        <form onSubmit={handleCreateUser} className="space-y-4">
-                            <div><label className={lc}>Name</label><input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className={ic} required /></div>
-                            <div><label className={lc}>Email</label><input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className={ic} required /></div>
-                            <div><label className={lc}>Password</label><input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className={ic} required /></div>
-                            <div>
-                                <label className={lc}>Role</label>
-                                <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={ic}>
-                                    <option value="parent">Parent</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <div className="flex gap-2 justify-end pt-2">
-                                <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
-                                <button type="submit" disabled={userForm.processing} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">{userForm.processing ? 'Creating...' : 'Create'}</button>
-                            </div>
-                        </form>
+            <Modal show={showCreateModal} onClose={() => setShowCreateModal(false)} title="Create New User">
+                <form onSubmit={handleCreateUser} className="space-y-4">
+                    <div><label className={lc}>Name</label><input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className={ic} required /></div>
+                    <div><label className={lc}>Email</label><input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className={ic} required /></div>
+                    <div><label className={lc}>Password</label><input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className={ic} required /></div>
+                    <div>
+                        <label className={lc}>Role</label>
+                        <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={ic}>
+                            <option value="parent">Parent</option>
+                            <option value="admin">Admin</option>
+                        </select>
                     </div>
-                </div>
-            )}
+                    <div className="flex gap-2 justify-end pt-2">
+                        <button type="button" onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
+                        <button type="submit" disabled={userForm.processing} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">{userForm.processing ? 'Creating...' : 'Create'}</button>
+                    </div>
+                </form>
+            </Modal>
 
             {/* Edit User Modal */}
-            {editingUser && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-                        <h3 className="text-lg font-bold mb-4">Edit User</h3>
-                        <form onSubmit={handleUpdateUser} className="space-y-4">
-                            <div><label className={lc}>Name</label><input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className={ic} required /></div>
-                            <div><label className={lc}>Email</label><input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className={ic} required /></div>
-                            <div><label className={lc}>Password <span className="text-slate-400 font-normal">(leave blank to keep)</span></label><input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className={ic} /></div>
-                            <div>
-                                <label className={lc}>Role</label>
-                                <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={ic}>
-                                    <option value="parent">Parent</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <div className="flex gap-2 justify-end pt-2">
-                                <button type="button" onClick={() => setEditingUser(null)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
-                                <button type="submit" disabled={userForm.processing} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">{userForm.processing ? 'Updating...' : 'Update'}</button>
-                            </div>
-                        </form>
+            <Modal show={!!editingUser} onClose={() => setEditingUser(null)} title="Edit User">
+                <form onSubmit={handleUpdateUser} className="space-y-4">
+                    <div><label className={lc}>Name</label><input value={userForm.data.name} onChange={e => userForm.setData('name', e.target.value)} className={ic} required /></div>
+                    <div><label className={lc}>Email</label><input type="email" value={userForm.data.email} onChange={e => userForm.setData('email', e.target.value)} className={ic} required /></div>
+                    <div><label className={lc}>Password <span className="text-slate-400 font-normal">(leave blank to keep)</span></label><input type="password" value={userForm.data.password} onChange={e => userForm.setData('password', e.target.value)} className={ic} /></div>
+                    <div>
+                        <label className={lc}>Role</label>
+                        <select value={userForm.data.role} onChange={e => userForm.setData('role', e.target.value)} className={ic}>
+                            <option value="parent">Parent</option>
+                            <option value="admin">Admin</option>
+                        </select>
                     </div>
-                </div>
-            )}
+                    <div className="flex gap-2 justify-end pt-2">
+                        <button type="button" onClick={() => setEditingUser(null)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
+                        <button type="submit" disabled={userForm.processing} className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">{userForm.processing ? 'Updating...' : 'Update'}</button>
+                    </div>
+                </form>
+            </Modal>
 
             {/* Export Database Modal */}
-            {showExportModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold flex items-center gap-2">
-                                <Download className="w-5 h-5 text-blue-500" />
-                                Export Database
-                            </h3>
-                            <button onClick={() => setShowExportModal(false)} className="text-slate-400 hover:text-slate-600">
-                                <X className="w-5 h-5" />
+            <Modal show={showExportModal} onClose={() => setShowExportModal(false)} title="Export Database" maxWidth="2xl">
+                <form onSubmit={handleExport} className="space-y-5">
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">Export Format</label>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
+                            {(['csv', 'sql', 'json'] as const).map(format => {
+                                const Icon = getFormatIcon(format);
+                                return (
+                                    <button key={format} type="button" onClick={() => setExportFormat(format)}
+                                        className={`p-4 rounded-xl border-2 transition-all text-left ${
+                                            exportFormat === format ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                                        }`}>
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                                exportFormat === format ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-600'
+                                            }`}><Icon className="w-5 h-5" /></div>
+                                            <p className={`font-semibold text-sm uppercase ${exportFormat === format ? 'text-blue-700' : 'text-gray-700'}`}>{format}</p>
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-2">{getFormatDescription(format)}</p>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    <div>
+                        <div className="flex items-center justify-between mb-3">
+                            <label className="block text-sm font-semibold text-slate-700">Select Tables</label>
+                            <button type="button" onClick={handleSelectAllTables} className="text-sm text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1">
+                                {selectAllTables ? <><CheckSquare className="w-4 h-4" /> Deselect All</> : <><Square className="w-4 h-4" /> Select All</>}
                             </button>
                         </div>
-
-                        <form onSubmit={handleExport} className="space-y-5">
-                            {/* Format Selection */}
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-700 mb-2">Export Format</label>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-2">
-                                    {(['csv', 'sql', 'json'] as const).map(format => {
-                                        const Icon = getFormatIcon(format);
-                                        return (
-                                            <button
-                                                key={format}
-                                                type="button"
-                                                onClick={() => setExportFormat(format)}
-                                                className={`p-4 rounded-xl border-2 transition-all text-left ${
-                                                    exportFormat === format
-                                                        ? 'border-blue-500 bg-blue-50'
-                                                        : 'border-gray-200 hover:border-gray-300'
-                                                }`}
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                                        exportFormat === format
-                                                            ? 'bg-blue-500 text-white'
-                                                            : 'bg-gray-100 text-gray-600'
-                                                    }`}>
-                                                        <Icon className="w-5 h-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className={`font-semibold text-sm uppercase ${
-                                                            exportFormat === format ? 'text-blue-700' : 'text-gray-700'
-                                                        }`}>
-                                                            {format}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <p className="text-xs text-gray-500 mt-2">
-                                                    {getFormatDescription(format)}
-                                                </p>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            {/* Table Selection */}
-                            <div>
-                                <div className="flex items-center justify-between mb-3">
-                                    <label className="block text-sm font-semibold text-slate-700">Select Tables</label>
-                                    <button
-                                        type="button"
-                                        onClick={handleSelectAllTables}
-                                        className="text-sm text-blue-500 hover:text-blue-700 font-medium flex items-center gap-1"
-                                    >
-                                        {selectAllTables ? (
-                                            <><CheckSquare className="w-4 h-4" /> Deselect All</>
-                                        ) : (
-                                            <><Square className="w-4 h-4" /> Select All</>
-                                        )}
-                                    </button>
-                                </div>
-                                <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
-                                    {tables?.map((table: string) => (
-                                        <label
-                                            key={table}
-                                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0"
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedTables.includes(table)}
-                                                onChange={() => handleToggleTable(table)}
-                                                className="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
-                                            />
-                                            <span className="text-sm font-mono text-gray-700">{table}</span>
-                                            <span className="ml-auto text-xs text-gray-400">
-                                                {/* Could show record count here if available */}
-                                            </span>
-                                        </label>
-                                    ))}
-                                    {!tables || tables.length === 0 ? (
-                                        <div className="px-4 py-8 text-center text-gray-500 text-sm">
-                                            No tables found in database
-                                        </div>
-                                    ) : null}
-                                </div>
-                                <p className="text-xs text-gray-500 mt-2">
-                                    {selectedTables.length} table(s) selected
-                                </p>
-                            </div>
-
-                            {/* Warning */}
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-3">
-                                <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-                                <div>
-                                    <p className="text-sm font-medium text-amber-800">Export Notice</p>
-                                    <p className="text-xs text-amber-700 mt-1">
-                                        The export will include all data from the selected tables. 
-                                        Please store the exported file securely as it contains sensitive information.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex gap-2 justify-end pt-2">
-                                <button type="button" onClick={() => setShowExportModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
-                                    Cancel
-                                </button>
-                                <button type="submit" disabled={selectedTables.length === 0} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">
-                                    <Download className="w-4 h-4" />
-                                    Export
-                                </button>
-                            </div>
-                        </form>
+                        <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
+                            {tables?.map((table: string) => (
+                                <label key={table} className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0">
+                                    <input type="checkbox" checked={selectedTables.includes(table)} onChange={() => handleToggleTable(table)} className="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500" />
+                                    <span className="text-sm font-mono text-gray-700">{table}</span>
+                                </label>
+                            ))}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">{selectedTables.length} table(s) selected</p>
                     </div>
-                </div>
-            )}
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-3">
+                        <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                        <div>
+                            <p className="text-sm font-medium text-amber-800">Export Notice</p>
+                            <p className="text-xs text-amber-700 mt-1">The export will include all data from the selected tables. Please store the exported file securely as it contains sensitive information.</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-2 justify-end pt-2">
+                        <button type="button" onClick={() => setShowExportModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
+                        <button type="submit" disabled={selectedTables.length === 0} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold disabled:opacity-50 transition-all">
+                            <Download className="w-4 h-4" /> Export
+                        </button>
+                    </div>
+                </form>
+            </Modal>
 
             {/* Clear Cache Confirmation Modal */}
-            {showCacheConfirmModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                                <AlertTriangle className="w-6 h-6 text-amber-500" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold text-gray-900">Clear System Cache?</h3>
-                                <p className="text-sm text-gray-500">This action cannot be undone</p>
-                            </div>
+            <Modal show={showCacheConfirmModal} onClose={() => setShowCacheConfirmModal(false)} title="Clear System Cache?">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                            <AlertTriangle className="w-6 h-6 text-amber-500" />
                         </div>
-
-                        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                            <p className="text-sm text-gray-600">
-                                This will clear the following caches:
-                            </p>
-                            <ul className="mt-2 space-y-1">
-                                <li className="text-sm text-gray-500 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                                    Application Cache
-                                </li>
-                                <li className="text-sm text-gray-500 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                                    Configuration Cache
-                                </li>
-                                <li className="text-sm text-gray-500 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                                    Route Cache
-                                </li>
-                                <li className="text-sm text-gray-500 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                                    View Cache
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="flex gap-2 justify-end">
-                            <button type="button" onClick={() => setShowCacheConfirmModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
-                                Cancel
-                            </button>
-                            <button type="button" onClick={handleClearCache} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold hover:shadow-md transition-all">
-                                <RefreshCw className="w-4 h-4" />
-                                Yes, Clear Cache
-                            </button>
-                        </div>
+                        <p className="text-sm text-gray-600">This will clear application, configuration, route, and view caches. This action cannot be undone.</p>
+                    </div>
+                    <div className="flex gap-2 justify-end pt-2">
+                        <button type="button" onClick={() => setShowCacheConfirmModal(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">Cancel</button>
+                        <button type="button" onClick={handleClearCache} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white text-sm font-semibold hover:shadow-md transition-all">
+                            <RefreshCw className="w-4 h-4" /> Yes, Clear Cache
+                        </button>
                     </div>
                 </div>
-            )}
+            </Modal>
         </AdminLayout>
     );
 }
