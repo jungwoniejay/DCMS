@@ -12,12 +12,12 @@ class EnrollmentPolicy
         return $user->role === 'admin' || $enrollment->parent_id === $user->id;
     }
 
-    public function approve(User $user): bool
+    public function approve(User $user, EnrollmentRequest $enrollment): bool
     {
         return $user->role === 'admin';
     }
 
-    public function reject(User $user): bool
+    public function reject(User $user, EnrollmentRequest $enrollment): bool
     {
         return $user->role === 'admin';
     }
