@@ -40,7 +40,12 @@ class ObservationController extends Controller
     public function create($childId)
     {
         $child = Child::findOrFail($childId);
-        
+
+        if (ChildObservation::where('child_id', $childId)->exists()) {
+            return redirect()->route('admin.children.observations.index', $childId)
+                ->with('info', 'An observation already exists for this child. Edit the existing one instead.');
+        }
+
         return Inertia::render('admin/children/observations/Create', [
             'child' => $child,
         ]);
@@ -49,7 +54,12 @@ class ObservationController extends Controller
     public function store(ChildObservationRequest $request, $childId)
     {
         $child = Child::findOrFail($childId);
-        
+
+        if (ChildObservation::where('child_id', $childId)->exists()) {
+            return redirect()->route('admin.children.observations.index', $childId)
+                ->with('info', 'An observation already exists for this child.');
+        }
+
         $validated = $request->validated();
         
         ChildObservation::create([
