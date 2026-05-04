@@ -3,6 +3,9 @@ import AdminLayout from '@/layouts/admin-layout';
 import { useState, useRef, useEffect } from 'react';
 import { Search, Filter, Download, Eye, User, Plus, MoreVertical, TrendingUp, Brain, Utensils, ClipboardList, Users, Edit, GraduationCap, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Child, PaginatedData } from '@/types';
+import ChildActionsModal from '@/components/ChildActionsModal';
+
+type ModalType = 'growth' | 'development' | 'care' | 'observations' | 'parent-involvement' | null;
 
 interface Filters {
     search?: string;
@@ -15,15 +18,7 @@ interface Filters {
     sort_dir?: string;
 }
 
-interface ActionItem {
-    label: string;
-    icon: React.ReactNode;
-    href: string;
-    color: string;
-    type?: string;
-}
-
-function ActionDropdown({ child }: { child: Child }) {
+function ActionDropdown({ child, onAction }: { child: Child; onAction: (type: ModalType, child: Child) => void }) {
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -58,50 +53,15 @@ function ActionDropdown({ child }: { child: Child }) {
         setIsOpen(!isOpen);
     };
 
-    const actionItems: (ActionItem | { type: 'divider' })[] = [
-        {
-            label: 'Add Growth Data',
-            icon: <TrendingUp className="w-4 h-4" />,
-            href: route('admin.growth-data', child.id),
-            color: 'text-green-600 hover:bg-green-50'
-        },
-        {
-            label: 'Development Plans',
-            icon: <Brain className="w-4 h-4" />,
-            href: route('admin.development-plans', child.id),
-            color: 'text-purple-600 hover:bg-purple-50'
-        },
-        {
-            label: 'Care Info',
-            icon: <Utensils className="w-4 h-4" />,
-            href: route('admin.children.care.show', child.id),
-            color: 'text-blue-600 hover:bg-blue-50'
-        },
-        {
-            label: 'Observations',
-            icon: <ClipboardList className="w-4 h-4" />,
-            href: route('admin.children.observations.index', child.id),
-            color: 'text-indigo-600 hover:bg-indigo-50'
-        },
-        {
-            label: 'Parent Involvement',
-            icon: <Users className="w-4 h-4" />,
-            href: route('admin.children.parent-involvement.show', child.id),
-            color: 'text-orange-600 hover:bg-orange-50'
-        },
-        { type: 'divider' } as const,
-        {
-            label: 'View Profile',
-            icon: <Eye className="w-4 h-4" />,
-            href: route('admin.children.show', child.id),
-            color: 'text-gray-700 hover:bg-gray-50'
-        },
-        {
-            label: 'Edit',
-            icon: <Edit className="w-4 h-4" />,
-            href: route('admin.children.edit', child.id),
-            color: 'text-blue-600 hover:bg-blue-50'
-        },
+    const actionItems = [
+        { label: 'Add Growth Data',     icon: <TrendingUp className="w-4 h-4" />,   color: 'text-green-600 hover:bg-green-50',  modal: 'growth' as ModalType },
+        { label: 'Development Plans',   icon: <Brain className="w-4 h-4" />,        color: 'text-purple-600 hover:bg-purple-50', modal: 'development' as ModalType },
+        { label: 'Care Info',           icon: <Utensils className="w-4 h-4" />,     color: 'text-blue-600 hover:bg-blue-50',    modal: 'care' as ModalType },
+        { label: 'Observations',        icon: <ClipboardList className="w-4 h-4" />, color: 'text-indigo-600 hover:bg-indigo-50', modal: 'observations' as ModalType },
+        { label: 'Parent Involvement',  icon: <Users className="w-4 h-4" />,        color: 'text-orange-600 hover:bg-orange-50', modal: 'parent-involvement' as ModalType },
+        { type: 'divider' },
+        { label: 'View Profile', icon: <Eye className="w-4 h-4" />,  color: 'text-gray-700 hover:bg-gray-50', href: route('admin.children.show', child.id) },
+        { label: 'Edit',         icon: <Edit className="w-4 h-4" />, color: 'text-blue-600 hover:bg-blue-50', href: route('admin.children.edit', child.id) },
     ];
 
     return (
@@ -110,12 +70,9 @@ function ActionDropdown({ child }: { child: Child }) {
                 ref={buttonRef}
                 onClick={handleOpen}
                 className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors duration-150"
-                aria-expanded={isOpen}
-                aria-haspopup="true"
             >
                 <MoreVertical className="w-4 h-4" />
             </button>
-
             {isOpen && (
                 <div
                     ref={dropdownRef}
@@ -123,21 +80,21 @@ function ActionDropdown({ child }: { child: Child }) {
                     className="fixed w-52 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-[9999]"
                 >
                     {actionItems.map((item, index) => {
-                        if ('type' in item && item.type === 'divider') {
-                            return <div key={index} className="border-t border-gray-100 my-1" />;
-                        }
-                        const actionItem = item as ActionItem;
-                        return (
-                            <Link
-                                key={index}
-                                href={actionItem.href}
-                                className={`flex items-center gap-3 px-4 py-2.5 text-sm ${actionItem.color} transition-colors duration-150`}
-                                onClick={() => setIsOpen(false)}
-                            >
-                                {actionItem.icon}
-                                {actionItem.label}
+                        if ('type' in item && item.type === 'divider') return <div key={index} className="border-t border-gray-100 my-1" />;
+                        if ('modal' in item && item.modal) return (
+                            <button key={index} onClick={() => { setIsOpen(false); onAction(item.modal!, child); }}
+                                className={`flex items-center gap-3 px-4 py-2.5 text-sm w-full text-left ${item.color} transition-colors duration-150`}>
+                                {item.icon}{item.label}
+                            </button>
+                        );
+                        if ('href' in item && item.href) return (
+                            <Link key={index} href={item.href!}
+                                className={`flex items-center gap-3 px-4 py-2.5 text-sm ${item.color} transition-colors duration-150`}
+                                onClick={() => setIsOpen(false)}>
+                                {item.icon}{item.label}
                             </Link>
                         );
+                        return null;
                     })}
                 </div>
             )}
@@ -172,6 +129,11 @@ function ClassroomBadge({ classroom }: { classroom: string | null }) {
 export default function ChildrenIndex({ children, filters, zones }: { children: PaginatedData<Child>; filters: Filters; zones: string[] }) {
     const [search, setSearch] = useState(filters.search || '');
     const [activeFilters, setActiveFilters] = useState<Filters>(filters);
+    const [activeModal, setActiveModal] = useState<ModalType>(null);
+    const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+
+    const openModal = (type: ModalType, child: Child) => { setActiveModal(type); setSelectedChild(child); };
+    const closeModal = () => { setActiveModal(null); setSelectedChild(null); };
 
     const applyFilter = (key: string, value: string | null) => {
         const newFilters = { ...activeFilters, [key]: value };
@@ -401,7 +363,7 @@ export default function ChildrenIndex({ children, filters, zones }: { children: 
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right">
                                                     <div className="flex items-center justify-end">
-                                                        <ActionDropdown child={child} />
+                                                        <ActionDropdown child={child} onAction={openModal} />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -446,7 +408,7 @@ export default function ChildrenIndex({ children, filters, zones }: { children: 
                                                     <ClassroomBadge classroom={child.classroom} />
                                                 </td>
                                                 <td className="px-4 py-3 whitespace-nowrap text-right">
-                                                    <ActionDropdown child={child} />
+                                                    <ActionDropdown child={child} onAction={openModal} />
                                                 </td>
                                             </tr>
                                         ))}
@@ -476,7 +438,7 @@ export default function ChildrenIndex({ children, filters, zones }: { children: 
                                                 <ClassroomBadge classroom={child.classroom} />
                                             </div>
                                         </div>
-                                        <ActionDropdown child={child} />
+                                        <ActionDropdown child={child} onAction={openModal} />
                                     </div>
                                 ))}
                             </div>
@@ -529,6 +491,8 @@ export default function ChildrenIndex({ children, filters, zones }: { children: 
                     )}
                 </div>
             </div>
+
+            <ChildActionsModal child={selectedChild} type={activeModal} onClose={closeModal} />
         </AdminLayout>
     );
 }
