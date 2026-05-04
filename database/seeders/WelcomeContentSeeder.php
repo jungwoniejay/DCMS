@@ -18,6 +18,13 @@ class WelcomeContentSeeder extends Seeder
             ['key' => 'feature_2_description', 'value' => 'Comprehensive health assessments and medical records', 'type' => 'text'],
             ['key' => 'feature_3_title',       'value' => 'Nutrition Monitoring', 'type' => 'text'],
             ['key' => 'feature_3_description', 'value' => 'Track growth, nutrition status, and feeding habits', 'type' => 'text'],
+            // Footer
+            ['key' => 'footer_tagline',   'value' => 'Barangay Child Development Data Management System — digitizing CDC records for better child care.', 'type' => 'text'],
+            ['key' => 'footer_address',   'value' => 'Barangay 2, Hinoba-an, Negros Occidental', 'type' => 'text'],
+            ['key' => 'footer_phone',     'value' => '', 'type' => 'text'],
+            ['key' => 'footer_email',     'value' => '', 'type' => 'text'],
+            ['key' => 'footer_hours',     'value' => 'Monday - Friday, 8:00 AM - 5:00 PM', 'type' => 'text'],
+            ['key' => 'footer_copyright', 'value' => '© ' . date('Y') . ' KidCare Hinoba-an. All rights reserved.', 'type' => 'text'],
             // Privacy Policy
             ['key' => 'privacy_overview', 'value' => 'KidCare Hinoba-an (Barangay Child Development Data Management System) is committed to protecting the personal information of children, parents, and guardians registered in our system. This Privacy Policy applies to all users of the platform, including administrators, parents, and guardians. By using our system, you agree to the collection and use of information in accordance with this policy.', 'type' => 'text'],
             ['key' => 'privacy_data_collection', 'value' => 'We collect the following types of information to provide our services: child information (name, birthdate, sex, address, languages spoken), parent/guardian information (names, contact details, occupations), health records (vaccinations, medical assessments, health conditions), nutrition data (height, weight, nutritional status measurements), family profile (home ownership, utilities, household composition), and account credentials (email address and encrypted password).', 'type' => 'text'],
