@@ -37,17 +37,6 @@ class ParentEnrollmentController extends Controller
             'emergency_contact_phone'  => 'nullable|string|max:255',
             'emergency_home'           => 'nullable|string|max:255',
             'emergency_work'           => 'nullable|string|max:255',
-            'accomplished_by'          => 'nullable|string|max:255',
-            'accomplished_date'        => 'nullable|date',
-            'reviewed_by_name'         => 'nullable|string|max:255',
-            'reviewed_date'            => 'nullable|date',
-            'father_name'              => 'nullable|string|max:255',
-            'father_occupation'        => 'nullable|string|max:255',
-            'mother_name'              => 'nullable|string|max:255',
-            'mother_occupation'        => 'nullable|string|max:255',
-            'father_data'              => 'nullable|string',
-            'mother_data'              => 'nullable|string',
-            'family_data'              => 'nullable|string',
             'child_photo'              => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -55,11 +44,57 @@ class ParentEnrollmentController extends Controller
             $validated['child_photo'] = $request->file('child_photo')->store('enrollment_photos', 'public');
         }
 
-        foreach (['father_data', 'mother_data', 'family_data'] as $key) {
-            if (isset($validated[$key]) && is_string($validated[$key])) {
-                $validated[$key] = json_decode($validated[$key], true);
-            }
-        }
+        // Pack father fields into father_data JSON
+        $validated['father_data'] = array_filter([
+            'last_name'        => $request->father_last_name,
+            'first_name'       => $request->father_first_name,
+            'middle_name'      => $request->father_middle_name,
+            'birthdate'        => $request->father_birthdate,
+            'age'              => $request->father_age,
+            'civil_status'     => $request->father_civil_status,
+            'district'         => $request->father_district,
+            'purok'            => $request->father_purok,
+            'mother_tongue'    => $request->father_mother_tongue,
+            'other_dialects'   => $request->father_other_dialects,
+            'education'        => $request->father_education,
+            'occupation_status'=> $request->father_occupation_status,
+            'occupation'       => $request->father_occupation,
+            'contact_home'     => $request->father_contact_home,
+            'contact_work'     => $request->father_contact_work,
+        ]);
+
+        // Pack mother fields into mother_data JSON
+        $validated['mother_data'] = array_filter([
+            'last_name'           => $request->mother_last_name,
+            'first_name'          => $request->mother_first_name,
+            'middle_name'         => $request->mother_middle_name,
+            'birthdate'           => $request->mother_birthdate,
+            'age'                 => $request->mother_age,
+            'pregnant'            => $request->mother_pregnant,
+            'civil_status'        => $request->mother_civil_status,
+            'district'            => $request->mother_district,
+            'purok'               => $request->mother_purok,
+            'mother_tongue'       => $request->mother_mother_tongue,
+            'other_dialects'      => $request->mother_other_dialects,
+            'education'           => $request->mother_education,
+            'occupation_status'   => $request->mother_occupation_status,
+            'occupation'          => $request->mother_occupation,
+            'contact_home'        => $request->mother_contact_home,
+            'contact_work'        => $request->mother_contact_work,
+            'daycare_age_interest'=> $request->mother_daycare_age_interest,
+        ]);
+
+        // Pack family fields into family_data JSON
+        $validated['family_data'] = array_filter([
+            'home_ownership'        => $request->home_ownership,
+            'home_material'         => $request->home_material,
+            'home_nature'           => $request->home_nature,
+            'home_utilities'        => $request->home_utilities,
+            'home_learning'         => $request->home_learning,
+            'home_household_members'=> $request->home_household_members,
+            'monthly_income'        => $request->monthly_income,
+            'no_of_siblings'        => $request->no_of_siblings,
+        ]);
 
         $validated['parent_id'] = auth()->id();
         $validated['status']    = 'Pending';
