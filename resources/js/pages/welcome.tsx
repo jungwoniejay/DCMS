@@ -243,8 +243,10 @@ export default function Welcome() {
                             {/* Brand */}
                             <div className="lg:col-span-1">
                                 <div className="flex items-center gap-3 mb-4">
+                                    <a href="#" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                                     <DaycareLogo className="w-10 h-10" />
                                     <span className="text-xl font-bold text-white">KidCare Hinoba-an</span>
+                                    </a>
                                 </div>
                                 <p className="text-gray-400 text-sm leading-relaxed">
                                     {getContent('footer_tagline', 'Barangay Child Development Data Management System — digitizing CDC records for better child care.')}
