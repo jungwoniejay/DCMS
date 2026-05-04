@@ -11,7 +11,7 @@ echo "All caches cleared"
 
 # Always regenerate .env from Railway environment variables
 cat > /app/.env << EOF
-APP_NAME=${APP_NAME:-Brgy2DMS}
+APP_NAME=${APP_NAME:-KidCare Hinoba-an}
 APP_ENV=production
 APP_KEY=${APP_KEY}
 APP_DEBUG=false
