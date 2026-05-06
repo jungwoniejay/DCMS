@@ -284,6 +284,7 @@ class AdminChildrenController extends Controller
             'first_language'      => 'required|string|max:255',
             'second_language'     => 'nullable|string|max:255',
             'registration_status' => 'nullable|in:Pending,Approved,Rejected,pending,approved,rejected',
+            'classroom'           => 'nullable|in:Nursery,Kindergarten,Prep,Toddlers,Infants',
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -308,6 +309,7 @@ class AdminChildrenController extends Controller
             'registration_status' => $validated['registration_status']
                 ? ucfirst(strtolower($validated['registration_status']))
                 : null,
+            'classroom'           => $validated['classroom'] ?? null,
         ];
 
         if (isset($validated['profile_picture'])) {

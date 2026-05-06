@@ -51,6 +51,7 @@ export default function ChildEdit({ child, puroks, cities }: any) {
         first_language: child.first_language || '',
         second_language: child.second_language || '',
         registration_status: child.registration_status || 'Pending',
+        classroom: child.classroom || '',
         purok_zone: child.purok_zone || '',
         guardian_name: g.name || '',
         guardian_relationship: g.relationship || 'Guardian',
@@ -211,7 +212,7 @@ export default function ChildEdit({ child, puroks, cities }: any) {
                                         <div><label className={lc}>First Name *</label><input value={data.first_name} onChange={e => set('first_name', e.target.value)} required className={ic} /></div>
                                         <div><label className={lc}>Middle Name</label><input value={data.middle_name} onChange={e => set('middle_name', e.target.value)} className={ic} /></div>
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
                                         <div>
                                             <label className={lc}>Sex *</label>
                                             <select value={data.sex} onChange={e => set('sex', e.target.value)} className={ic}>
@@ -226,6 +227,13 @@ export default function ChildEdit({ child, puroks, cities }: any) {
                                                 <option value="Approved">Approved</option>
                                                 <option value="Pending">Pending</option>
                                                 <option value="Rejected">Rejected</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className={lc}>Classroom</label>
+                                            <select value={data.classroom} onChange={e => set('classroom', e.target.value)} className={ic}>
+                                                <option value="">— Not assigned —</option>
+                                                {['Nursery','Kindergarten','Prep','Toddlers','Infants'].map(c => <option key={c}>{c}</option>)}
                                             </select>
                                         </div>
                                     </div>
