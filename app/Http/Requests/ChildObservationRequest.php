@@ -14,10 +14,9 @@ class ChildObservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'child_id' => 'required|exists:children,id',
-            'behavior_name' => 'required|string|max:255',
+            'behavior_name'     => 'required|string|max:255',
             'observation_count' => 'required|in:1st,2nd,3rd,4th',
-            'comment' => 'nullable|string|max:1000',
+            'comment'           => 'nullable|string|max:1000',
         ];
     }
 

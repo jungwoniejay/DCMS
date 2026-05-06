@@ -40,38 +40,24 @@ class ObservationController extends Controller
     public function create($childId)
     {
         $child = Child::findOrFail($childId);
-
-        if (ChildObservation::where('child_id', $childId)->exists()) {
-            return redirect()->route('admin.children.observations.index', $childId)
-                ->with('info', 'An observation already exists for this child. Edit the existing one instead.');
-        }
-
-        return Inertia::render('admin/children/observations/Create', [
-            'child' => $child,
-        ]);
+        return Inertia::render('admin/children/observations/Create', ['child' => $child]);
     }
 
     public function store(ChildObservationRequest $request, $childId)
     {
-        $child = Child::findOrFail($childId);
-
-        if (ChildObservation::where('child_id', $childId)->exists()) {
-            return redirect()->route('admin.children.observations.index', $childId)
-                ->with('info', 'An observation already exists for this child.');
-        }
-
+        Child::findOrFail($childId);
         $validated = $request->validated();
-        
+
         ChildObservation::create([
-            'child_id' => $childId,
-            'user_id' => auth()->id(),
-            'behavior_name' => $validated['behavior_name'],
+            'child_id'          => $childId,
+            'user_id'           => auth()->id(),
+            'behavior_name'     => $validated['behavior_name'],
             'observation_count' => $validated['observation_count'],
-            'comment' => $validated['comment'] ?? null,
+            'comment'           => $validated['comment'] ?? null,
         ]);
-        
+
         return redirect()->route('admin.children.observations.index', $childId)
-            ->with('success', 'Child observation recorded successfully!');
+            ->with('success', 'Observation recorded successfully!');
     }
 
     public function edit($childId, $observationId)
