@@ -1,7 +1,9 @@
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, useForm, router } from '@inertiajs/react';
-import { Send, MessageCircle, Search } from 'lucide-react';
+import { Send, MessageCircle, Search, Paperclip, Image, X, FileText, Smile } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+
+const EMOJIS = ['😊','😂','❤️','👍','🙏','😢','😮','🎉','🔥','👏','😍','🤔','😅','💪','✅','🙌','😭','💯','🥰','😁'];
 
 function initials(name: string) {
     return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
@@ -26,17 +28,68 @@ function DateSeparator({ date }: { date: string }) {
 
 export default function Messages({ conversations, messages, activeParent }: any) {
     const bottomRef = useRef<HTMLDivElement>(null);
-    const { data, setData, post, processing, reset } = useForm({ body: '' });
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [search, setSearch] = useState('');
+    const [showEmoji, setShowEmoji] = useState(false);
+    const [preview, setPreview] = useState<{ url: string; type: 'image' | 'file'; name: string } | null>(null);
+    const [dragging, setDragging] = useState(false);
+
+    const { data, setData, post, processing, reset } = useForm<any>({ body: '', attachment: null as File | null });
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    useEffect(() => {
+        if (!showEmoji) return;
+        const handler = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('#admin-emoji-panel') && !target.closest('#admin-emoji-btn')) setShowEmoji(false);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, [showEmoji]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!data.body.trim() || !activeParent) return;
-        post(route('admin.messages.send', activeParent.id), { onSuccess: () => reset() });
+        if ((!data.body.trim() && !data.attachment) || !activeParent) return;
+        post(route('admin.messages.send', activeParent.id), {
+            forceFormData: true,
+            onSuccess: () => { reset(); setPreview(null); },
+        });
+    };
+
+    const attachFile = (file: File) => {
+        setData('attachment', file);
+        const isImage = file.type.startsWith('image/');
+        if (isImage) {
+            const reader = new FileReader();
+            reader.onloadend = () => setPreview({ url: reader.result as string, type: 'image', name: file.name });
+            reader.readAsDataURL(file);
+        } else {
+            setPreview({ url: '', type: 'file', name: file.name });
+        }
+    };
+
+    const removeAttachment = () => { setData('attachment', null); setPreview(null); };
+
+    const onDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setDragging(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) attachFile(file);
+    };
+
+    const insertEmoji = (emoji: string) => {
+        const ta = textareaRef.current;
+        if (!ta) { setData('body', data.body + emoji); return; }
+        const start = ta.selectionStart ?? data.body.length;
+        const end = ta.selectionEnd ?? data.body.length;
+        const newVal = data.body.slice(0, start) + emoji + data.body.slice(end);
+        setData('body', newVal);
+        setTimeout(() => { ta.focus(); ta.setSelectionRange(start + emoji.length, start + emoji.length); }, 0);
     };
 
     const fmt = (d: string) => new Date(d).toLocaleString('en-PH', { hour: '2-digit', minute: '2-digit' });
@@ -49,7 +102,6 @@ export default function Messages({ conversations, messages, activeParent }: any)
 
     const filtered = conversations.filter((c: any) => c.name.toLowerCase().includes(search.toLowerCase()));
 
-    // Group messages by date
     const grouped: { date: string; msgs: any[] }[] = [];
     (messages ?? []).forEach((msg: any) => {
         const day = new Date(msg.created_at).toDateString();
@@ -118,7 +170,12 @@ export default function Messages({ conversations, messages, activeParent }: any)
                 </div>
 
                 {/* Chat Panel */}
-                <div className="flex-1 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col overflow-hidden">
+                <div
+                    className={`flex-1 bg-white rounded-2xl border shadow-sm flex flex-col overflow-hidden transition-colors ${dragging ? 'border-blue-400 bg-blue-50/30' : 'border-slate-100'}`}
+                    onDragOver={e => { e.preventDefault(); setDragging(true); }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={onDrop}
+                >
                     {!activeParent ? (
                         <div className="flex flex-col items-center justify-center h-full text-center gap-3">
                             <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center">
@@ -132,7 +189,7 @@ export default function Messages({ conversations, messages, activeParent }: any)
                     ) : (
                         <>
                             {/* Header */}
-                            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3 bg-white">
+                            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-3 bg-white shrink-0">
                                 <div className="relative">
                                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow text-sm font-bold text-white">
                                         {initials(activeParent.name)}
@@ -144,6 +201,15 @@ export default function Messages({ conversations, messages, activeParent }: any)
                                     <p className="text-xs text-emerald-500 font-medium">Active</p>
                                 </div>
                             </div>
+
+                            {/* Drag overlay hint */}
+                            {dragging && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                    <div className="bg-blue-500/90 text-white px-6 py-3 rounded-2xl text-sm font-semibold shadow-lg flex items-center gap-2">
+                                        <Paperclip className="w-4 h-4" /> Drop file to attach
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Messages */}
                             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-1 bg-slate-50/40">
@@ -166,13 +232,21 @@ export default function Messages({ conversations, messages, activeParent }: any)
                                                                     {initials(activeParent.name)}
                                                                 </div>
                                                             )}
-                                                            <div className={`max-w-[70%] group`}>
-                                                                <div className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm ${
-                                                                    isMe
-                                                                        ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-br-none'
-                                                                        : 'bg-white border border-slate-100 text-slate-700 rounded-bl-none'
-                                                                }`}>
-                                                                    <p className="leading-relaxed whitespace-pre-wrap">{msg.body}</p>
+                                                            <div className="max-w-[70%]">
+                                                                <div className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm ${isMe ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-br-none' : 'bg-white border border-slate-100 text-slate-700 rounded-bl-none'}`}>
+                                                                    {msg.body && <p className="leading-relaxed whitespace-pre-wrap">{msg.body}</p>}
+                                                                    {msg.attachment_url && msg.attachment_type === 'image' && (
+                                                                        <a href={msg.attachment_url} target="_blank" rel="noreferrer" className={msg.body ? 'mt-2 block' : ''}>
+                                                                            <img src={msg.attachment_url} alt="attachment" className="max-w-[220px] rounded-xl border border-white/20 shadow" />
+                                                                        </a>
+                                                                    )}
+                                                                    {msg.attachment_url && msg.attachment_type === 'file' && (
+                                                                        <a href={msg.attachment_url} target="_blank" rel="noreferrer"
+                                                                            className={`flex items-center gap-2 mt-1 px-3 py-2 rounded-xl text-xs font-medium ${isMe ? 'bg-white/20 text-white hover:bg-white/30' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'} transition-colors`}>
+                                                                            <FileText className="w-4 h-4 shrink-0" />
+                                                                            <span className="truncate max-w-[160px]">{msg.attachment?.split('/').pop()}</span>
+                                                                        </a>
+                                                                    )}
                                                                 </div>
                                                                 <p className={`text-[10px] mt-1 px-1 ${isMe ? 'text-right text-slate-400' : 'text-slate-400'}`}>{fmt(msg.created_at)}</p>
                                                             </div>
@@ -186,20 +260,77 @@ export default function Messages({ conversations, messages, activeParent }: any)
                                 <div ref={bottomRef} />
                             </div>
 
+                            {/* Attachment preview */}
+                            {preview && (
+                                <div className="px-4 pt-2 pb-0 bg-white border-t border-slate-100 shrink-0">
+                                    <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200 w-fit max-w-full">
+                                        {preview.type === 'image'
+                                            ? <img src={preview.url} alt="preview" className="w-12 h-12 rounded-lg object-cover border border-slate-200" />
+                                            : <div className="w-12 h-12 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center"><FileText className="w-5 h-5 text-blue-500" /></div>
+                                        }
+                                        <span className="text-xs text-slate-600 font-medium truncate max-w-[180px]">{preview.name}</span>
+                                        <button type="button" onClick={removeAttachment} className="ml-1 p-1 rounded-full hover:bg-slate-200 text-slate-400 hover:text-red-500 transition-colors">
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Input */}
-                            <form onSubmit={handleSubmit} className="px-4 py-3 border-t border-slate-100 bg-white flex items-end gap-3">
-                                <textarea
-                                    value={data.body}
-                                    onChange={e => setData('body', e.target.value)}
-                                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(e as any); } }}
-                                    placeholder="Type a message… (Enter to send, Shift+Enter for new line)"
-                                    rows={1}
-                                    className="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white resize-none transition-colors"
-                                />
-                                <button type="submit" disabled={processing || !data.body.trim()}
-                                    className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white flex items-center justify-center shadow hover:shadow-md hover:scale-105 transition-all disabled:opacity-40 disabled:scale-100">
-                                    <Send className="w-4 h-4" />
-                                </button>
+                            <form onSubmit={handleSubmit} className="px-4 py-3 border-t border-slate-100 bg-white shrink-0">
+                                <div className="flex items-end gap-2">
+                                    {/* Action buttons */}
+                                    <div className="flex gap-1 pb-1">
+                                        <button type="button" onClick={() => imageInputRef.current?.click()}
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+                                            title="Send image">
+                                            <Image className="w-4 h-4" />
+                                        </button>
+                                        <button type="button" onClick={() => fileInputRef.current?.click()}
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-500 hover:bg-blue-50 transition-colors"
+                                            title="Attach file">
+                                            <Paperclip className="w-4 h-4" />
+                                        </button>
+                                        <div className="relative">
+                                            <button id="admin-emoji-btn" type="button" onClick={() => setShowEmoji(v => !v)}
+                                                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-yellow-500 hover:bg-yellow-50 transition-colors"
+                                                title="Emoji">
+                                                <Smile className="w-4 h-4" />
+                                            </button>
+                                            {showEmoji && (
+                                                <div id="admin-emoji-panel" className="absolute bottom-10 left-0 z-30 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 w-56">
+                                                    <div className="grid grid-cols-5 gap-1">
+                                                        {EMOJIS.map(e => (
+                                                            <button key={e} type="button" onClick={() => insertEmoji(e)}
+                                                                className="text-xl hover:bg-slate-100 rounded-lg p-1 transition-colors leading-none">
+                                                                {e}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <textarea
+                                        ref={textareaRef}
+                                        value={data.body}
+                                        onChange={e => setData('body', e.target.value)}
+                                        onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(e as any); } }}
+                                        placeholder="Type a message… (Enter to send)"
+                                        rows={1}
+                                        className="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl bg-slate-50 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white resize-none transition-colors"
+                                    />
+                                    <button type="submit" disabled={processing || (!data.body.trim() && !data.attachment)}
+                                        className="shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 text-white flex items-center justify-center shadow hover:shadow-md hover:scale-105 transition-all disabled:opacity-40 disabled:scale-100 pb-1">
+                                        <Send className="w-4 h-4" />
+                                    </button>
+                                </div>
+
+                                <input ref={imageInputRef} type="file" accept="image/*" className="hidden"
+                                    onChange={e => { const f = e.target.files?.[0]; if (f) attachFile(f); e.target.value = ''; }} />
+                                <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx" className="hidden"
+                                    onChange={e => { const f = e.target.files?.[0]; if (f) attachFile(f); e.target.value = ''; }} />
                             </form>
                         </>
                     )}
