@@ -39,8 +39,7 @@ class ObservationController extends Controller
 
     public function create($childId)
     {
-        $child = Child::findOrFail($childId);
-        return Inertia::render('admin/children/observations/Create', ['child' => $child]);
+        return redirect()->route('admin.children.observations.index', $childId);
     }
 
     public function store(ChildObservationRequest $request, $childId)
