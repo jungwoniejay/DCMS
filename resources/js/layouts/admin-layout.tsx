@@ -59,6 +59,7 @@ const menuGroups = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { auth } = usePage().props as any;
     const barangay = (usePage().props as any).barangay ?? {};
+    const { pending_enrollments, pending_appointments } = usePage().props as any;
     const systemName = barangay.system_name || 'KidCare Hinoba-an';
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
@@ -73,6 +74,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const NavItem = ({ item, mini }: { item: any; mini: boolean }) => {
         const active = isActive(item.route);
+        const badge = item.id === 'enrollments' ? pending_enrollments
+                    : item.id === 'appointments' ? pending_appointments
+                    : 0;
         return (
             <Link
                 href={route(item.route)}
@@ -105,6 +109,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {!mini && (
                     <span className={`text-sm font-medium truncate ${active ? 'text-blue-700' : ''}`}>
                         {item.label}
+                    </span>
+                )}
+                {!mini && badge > 0 && (
+                    <span className="ml-auto shrink-0 min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {badge > 99 ? '99+' : badge}
+                    </span>
+                )}
+                {mini && badge > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                        {badge > 9 ? '9+' : badge}
                     </span>
                 )}
 

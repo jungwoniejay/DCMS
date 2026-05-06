@@ -61,6 +61,8 @@ class HandleInertiaRequests extends Middleware
                     ->whereNull('read_at')
                     ->count()
                 : 0, 0),
+            'pending_enrollments' => rescue(fn() => \App\Models\EnrollmentRequest::where('status', 'Pending')->count(), 0),
+            'pending_appointments' => rescue(fn() => \App\Models\CheckupAppointment::where('status', 'Pending')->count(), 0),
             'barangay' => rescue(fn() => \App\Models\BarangaySetting::allKeyed(), []),
         ]);
     }
