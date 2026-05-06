@@ -29,29 +29,27 @@ class AdminDevelopmentPlanController extends Controller
     public function store(Request $request, $childId)
     {
         $validated = $request->validate([
-            'plan_type' => 'required|in:cognitive,physical,social,emotional,language',
-            'current_status' => 'required|string',
-            'goals' => 'required|string',
-            'activities' => 'required|string',
+            'plan_type'        => 'required|in:cognitive,physical,social,emotional,language',
+            'current_status'   => 'required|string',
+            'goals'            => 'required|string',
+            'activities'       => 'required|string',
             'resources_needed' => 'nullable|string',
-            'target_date' => 'nullable|date',
+            'target_date'      => 'nullable|date',
         ]);
 
-        $this->authorize('create', DevelopmentPlan::class);
-
-        DevelopmentPlan::create([
-            'child_id' => $childId,
-            'plan_type' => $validated['plan_type'],
-            'current_status' => $validated['current_status'],
-            'goals' => $validated['goals'],
-            'activities' => $validated['activities'],
-            'resources_needed' => $validated['resources_needed'],
-            'target_date' => $validated['target_date'],
-            'status' => 'active',
-            'created_by' => auth()->id(),
+        $plan = DevelopmentPlan::create([
+            'child_id'         => $childId,
+            'plan_type'        => $validated['plan_type'],
+            'current_status'   => $validated['current_status'],
+            'goals'            => $validated['goals'],
+            'activities'       => $validated['activities'],
+            'resources_needed' => $validated['resources_needed'] ?? null,
+            'target_date'      => $validated['target_date'] ?? null,
+            'status'           => 'active',
+            'created_by'       => auth()->id(),
         ]);
 
-        $this->logActivity('create', "Created development plan for child #{$childId}", 'development_plan', DevelopmentPlan::class, null);
+        $this->logActivity('create', "Created development plan for child #{$childId}", 'development_plan', DevelopmentPlan::class, $plan->id);
 
         return back()->with('success', 'Development plan created successfully!');
     }
@@ -60,10 +58,8 @@ class AdminDevelopmentPlanController extends Controller
     {
         $validated = $request->validate([
             'progress_notes' => 'nullable|string',
-            'status' => 'required|in:active,completed,on_hold',
+            'status'         => 'required|in:active,completed,on_hold',
         ]);
-
-        $this->authorize('update', DevelopmentPlan::class);
 
         $plan = DevelopmentPlan::findOrFail($id);
         $plan->update($validated);
@@ -74,7 +70,6 @@ class AdminDevelopmentPlanController extends Controller
 
     public function destroy($id)
     {
-        $this->authorize('delete', DevelopmentPlan::class);
         $plan = DevelopmentPlan::findOrFail($id);
         $this->logActivity('delete', "Deleted development plan #{$id}", 'development_plan', DevelopmentPlan::class, $id);
         $plan->delete();
