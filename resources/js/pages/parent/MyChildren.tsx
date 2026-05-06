@@ -93,7 +93,7 @@ export default function MyChildren({ children }: Props) {
                           { label: 'Zone', value: child.zone },
                           { label: 'Height', value: child.height ? `${child.height} cm` : 'Not recorded' },
                           { label: 'Weight', value: child.weight ? `${child.weight} kg` : 'Not recorded' },
-                          { label: 'Nutrition', value: child.nutritional_status },
+                          { label: 'Nutrition', value: child.nutritional_status === 'Not assessed' ? 'Not yet assessed' : child.nutritional_status },
                         ].map(({ label, value }) => (
                           <div key={label} className="flex justify-between">
                             <span className="text-gray-500">{label}:</span>
