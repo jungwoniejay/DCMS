@@ -7,6 +7,7 @@ use App\Models\Child;
 use App\Models\FamilyProfile;
 use App\Traits\LogsActivity;
 use App\Traits\DbCompatible;
+use App\Services\ClassroomClassifier;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -402,6 +403,7 @@ class AdminChildrenController extends Controller
             'reviewed_by'         => auth()->user()->name,
             'reviewed_at'         => now(),
         ]);
+        ClassroomClassifier::assign($child);
         $this->logActivity('update', "Approved child registration: {$child->first_name} {$child->last_name}", 'child', Child::class, $child->id);
 
         return back()->with('success', 'Child registration approved!');

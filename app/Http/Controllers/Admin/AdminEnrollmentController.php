@@ -11,6 +11,7 @@ use App\Models\Guardian;
 use App\Models\EmergencyContact;
 use App\Models\Notification;
 use App\Traits\LogsActivity;
+use App\Services\ClassroomClassifier;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -232,6 +233,9 @@ class AdminEnrollmentController extends Controller
             'reviewed_at' => now(),
             'child_id'    => $child->id,
         ]);
+
+        // Auto-assign classroom based on age
+        ClassroomClassifier::assign($child);
 
         // Save child profile data (Form 2) from enrollment
         $profileData = $enrollment->child_profile_data ?? [];

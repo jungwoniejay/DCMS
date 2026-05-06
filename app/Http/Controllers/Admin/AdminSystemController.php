@@ -9,6 +9,7 @@ use App\Models\BarangaySetting;
 use App\Models\FamilyProfile;
 use App\Models\HealthRecord;
 use App\Models\NutritionRecord;
+use App\Services\ClassroomClassifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -276,6 +277,12 @@ class AdminSystemController extends Controller
         return [];
     }
     
+    public function reclassifyClassrooms()
+    {
+        $count = ClassroomClassifier::reclassifyAll();
+        return back()->with('success', "{$count} children have been automatically classified into classrooms.");
+    }
+
     public function clearCache()
     {
         try {

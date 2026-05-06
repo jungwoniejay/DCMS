@@ -135,6 +135,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('system/export', [AdminSystemController::class, 'exportDatabase'])->name('system.export');
     Route::post('system/clear-cache', [AdminSystemController::class, 'clearCache'])->name('system.clear-cache');
     Route::post('system/barangay-settings', [AdminSystemController::class, 'saveBarangaySettings'])->name('system.barangay-settings');
+    Route::post('system/reclassify-classrooms', [AdminSystemController::class, 'reclassifyClassrooms'])->name('system.reclassify-classrooms');
 
     // Activity Monitoring & Anomaly Detection
     Route::get('activity-monitoring', [ActivityLogController::class, 'index'])->name('activity-monitoring');

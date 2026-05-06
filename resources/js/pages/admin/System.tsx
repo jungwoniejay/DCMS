@@ -1,7 +1,7 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
 import Modal from '@/components/Modal';
-import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle, X, Megaphone } from 'lucide-react';
+import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle, X, Megaphone, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
 
 const ic = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400';
@@ -441,6 +441,41 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                     <button onClick={handleOpenExportModal} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all w-full md:w-auto justify-center">
                                         <Download className="w-4 h-4" />
                                         Export Database
+                                    </button>
+                                </div>
+
+                                {/* Re-classify Classrooms */}
+                                <div className="bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl p-6 border border-teal-100">
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div>
+                                            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                                <GraduationCap className="w-5 h-5 text-teal-500" />
+                                                Auto-Classify Classrooms
+                                            </h2>
+                                            <p className="text-sm text-gray-500 mt-1">
+                                                Automatically assign all approved children to classrooms based on age
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white rounded-lg p-4 mb-4 space-y-2">
+                                        {[
+                                            { label: 'Infants',      range: '0 – 11 months' },
+                                            { label: 'Toddlers',     range: '1 – 2 years'   },
+                                            { label: 'Nursery',      range: '3 years'        },
+                                            { label: 'Kindergarten', range: '4 years'        },
+                                            { label: 'Prep',         range: '5 – 6 years'   },
+                                        ].map(({ label, range }) => (
+                                            <div key={label} className="flex items-center justify-between text-sm">
+                                                <span className="font-medium text-gray-700">{label}</span>
+                                                <span className="text-gray-400">{range}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button
+                                        onClick={() => router.post(route('admin.system.reclassify-classrooms'))}
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all w-full md:w-auto justify-center">
+                                        <GraduationCap className="w-4 h-4" />
+                                        Re-classify All Children
                                     </button>
                                 </div>
 
