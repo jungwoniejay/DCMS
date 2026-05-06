@@ -31,21 +31,20 @@ class NutritionFormController extends Controller
             ->firstOrFail();
 
         $data = $request->validate([
-            'height_1'          => 'nullable|numeric',
-            'height_2'          => 'nullable|numeric',
-            'weight_1'          => 'nullable|numeric',
-            'weight_2'          => 'nullable|numeric',
-            'nutritional_status_1' => 'nullable|string|max:255',
-            'nutritional_status_2' => 'nullable|string|max:255',
-            'date_1'            => 'nullable|date',
-            'date_2'            => 'nullable|date',
-            'food_allergies'    => 'nullable|string',
-            'usual_food'        => 'nullable|string',
-            'eating_habit'      => 'nullable|string',
-            'uses_bottle'       => 'nullable|string',
-            'bottle_frequency'  => 'nullable|string',
-            'breakfast_time'    => 'nullable|string',
-            'lunch_time'        => 'nullable|string',
+            'height_first'             => 'nullable|numeric',
+            'height_second'            => 'nullable|numeric',
+            'weight_first'             => 'nullable|numeric',
+            'weight_second'            => 'nullable|numeric',
+            'nutritional_status_result'=> 'nullable|string|max:255',
+            'date_first'               => 'nullable|date',
+            'date_second'              => 'nullable|date',
+            'food_allergies'           => 'nullable|string',
+            'usual_food'               => 'nullable|string',
+            'eating_habit'             => 'nullable|string',
+            'uses_bottle'              => 'nullable|string',
+            'bottle_frequency'         => 'nullable|string',
+            'breakfast_time'           => 'nullable|string',
+            'lunch_time'               => 'nullable|string',
         ]);
 
         $data['child_id'] = $childId;

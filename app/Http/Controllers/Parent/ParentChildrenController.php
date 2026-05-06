@@ -44,9 +44,9 @@ class ParentChildrenController extends Controller
                     'profile_picture'      => $child->profile_picture,
                     'emergency_alert'      => $latestMedical?->requires_emergency_action ?? false,
                     'emergency_description'=> $latestMedical?->emergency_action_description ?? null,
-                    'nutritional_status'   => $latestNutrition?->nutritional_status_1 ?? 'Not assessed',
-                    'height'               => $latestNutrition?->height_1 ?? $child->childDetails?->height_cm ?? null,
-                    'weight'               => $latestNutrition?->weight_1 ?? $child->childDetails?->weight_kg ?? null,
+                    'nutritional_status'   => $latestNutrition?->nutritional_status_result ?? 'Not assessed',
+                    'height'               => $latestNutrition?->height_first ?? $child->childDetails?->height_cm ?? null,
+                    'weight'               => $latestNutrition?->weight_first ?? $child->childDetails?->weight_kg ?? null,
                     'vaccinations'         => [
                         'bcg'     => $vaccinations?->bcg_status ?? 'Unknown',
                         'dpt'     => $vaccinations?->dpt_status ?? 'Unknown',

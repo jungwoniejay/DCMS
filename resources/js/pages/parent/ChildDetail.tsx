@@ -88,10 +88,10 @@ export default function ChildDetail({ child, nutritionHistory, medicalAssessment
 
     // Form 3 Nutrition
     const nutritionForm = useForm<any>({
-        height_1: nutritionRecord?.height_1 ?? '',
-        weight_1: nutritionRecord?.weight_1 ?? '',
-        nutritional_status_1: nutritionRecord?.nutritional_status_1 ?? '',
-        date_1: nutritionRecord?.date_1 ?? '',
+        height_first: nutritionRecord?.height_first ?? '',
+        weight_first: nutritionRecord?.weight_first ?? '',
+        nutritional_status_result: nutritionRecord?.nutritional_status_result ?? '',
+        date_first: nutritionRecord?.date_first ?? '',
         food_allergies: nutritionRecord?.food_allergies ?? '',
         usual_food: nutritionRecord?.usual_food ?? '',
         eating_habit: nutritionRecord?.eating_habit ?? '',
@@ -198,10 +198,10 @@ export default function ChildDetail({ child, nutritionHistory, medicalAssessment
                         <SectionCard title="Form 3 — Nutrition Status" icon={<Activity className="w-4 h-4 text-emerald-500" />} onEdit={() => setModal('nutrition')}>
                             {nutritionRecord ? (
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <InfoRow label="Height (cm)" value={nutritionRecord.height_1} />
-                                    <InfoRow label="Weight (kg)" value={nutritionRecord.weight_1} />
-                                    <InfoRow label="Nutritional Status" value={nutritionRecord.nutritional_status_1} />
-                                    <InfoRow label="Date Taken" value={nutritionRecord.date_1} />
+                                    <InfoRow label="Height (cm)" value={nutritionRecord.height_first} />
+                                    <InfoRow label="Weight (kg)" value={nutritionRecord.weight_first} />
+                                    <InfoRow label="Nutritional Status" value={nutritionRecord.nutritional_status_result} />
+                                    <InfoRow label="Date Taken" value={nutritionRecord.date_first} />
                                     <InfoRow label="Food Allergies" value={nutritionRecord.food_allergies} />
                                     <InfoRow label="Usual Food" value={nutritionRecord.usual_food} />
                                     <InfoRow label="Breakfast Time" value={nutritionRecord.breakfast_time} />
@@ -266,11 +266,11 @@ export default function ChildDetail({ child, nutritionHistory, medicalAssessment
                                     {nutritionHistory.map((r: any, i: number) => (
                                         <div key={i} className="flex items-center justify-between p-2.5 bg-teal-50 rounded-xl border border-teal-100">
                                             <div>
-                                                <p className="text-xs font-semibold text-slate-700">{r.date_taken}</p>
-                                                <p className="text-xs text-slate-500">{r.height}cm / {r.weight}kg</p>
+                                                <p className="text-xs font-semibold text-slate-700">{r.assessment_date ?? r.date_first}</p>
+                                                <p className="text-xs text-slate-500">{r.height_first}cm / {r.weight_first}kg</p>
                                             </div>
-                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${r.nutritional_status === 'Normal' ? 'bg-teal-100 text-teal-700' : 'bg-amber-100 text-amber-700'}`}>
-                                                {r.nutritional_status}
+                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${r.nutritional_status_result === 'Normal' ? 'bg-teal-100 text-teal-700' : 'bg-amber-100 text-amber-700'}`}>
+                                                {r.nutritional_status_result}
                                             </span>
                                         </div>
                                     ))}
@@ -349,10 +349,10 @@ export default function ChildDetail({ child, nutritionHistory, medicalAssessment
             <Modal title="Edit Form 3 — Nutrition Status" open={modal === 'nutrition'} onClose={() => setModal(null)}>
                 <form onSubmit={e => { e.preventDefault(); nutritionForm.post(route('parent.children.nutrition.store', child.id), { onSuccess: () => setModal(null) }); }}>
                     <div className="grid grid-cols-2 gap-4">
-                        <Field label="Height (cm)"><input type="number" value={nutritionForm.data.height_1} onChange={e => nutritionForm.setData('height_1', e.target.value)} className={ic} /></Field>
-                        <Field label="Weight (kg)"><input type="number" value={nutritionForm.data.weight_1} onChange={e => nutritionForm.setData('weight_1', e.target.value)} className={ic} /></Field>
-                        <Field label="Nutritional Status"><input type="text" value={nutritionForm.data.nutritional_status_1} onChange={e => nutritionForm.setData('nutritional_status_1', e.target.value)} className={ic} /></Field>
-                        <Field label="Date Taken"><input type="date" value={nutritionForm.data.date_1} onChange={e => nutritionForm.setData('date_1', e.target.value)} className={ic} /></Field>
+                        <Field label="Height (cm)"><input type="number" value={nutritionForm.data.height_first} onChange={e => nutritionForm.setData('height_first', e.target.value)} className={ic} /></Field>
+                        <Field label="Weight (kg)"><input type="number" value={nutritionForm.data.weight_first} onChange={e => nutritionForm.setData('weight_first', e.target.value)} className={ic} /></Field>
+                        <Field label="Nutritional Status"><input type="text" value={nutritionForm.data.nutritional_status_result} onChange={e => nutritionForm.setData('nutritional_status_result', e.target.value)} className={ic} /></Field>
+                        <Field label="Date Taken"><input type="date" value={nutritionForm.data.date_first} onChange={e => nutritionForm.setData('date_first', e.target.value)} className={ic} /></Field>
                         <Field label="Food Allergies"><input type="text" value={nutritionForm.data.food_allergies} onChange={e => nutritionForm.setData('food_allergies', e.target.value)} className={ic} /></Field>
                         <Field label="Usual Food"><input type="text" value={nutritionForm.data.usual_food} onChange={e => nutritionForm.setData('usual_food', e.target.value)} className={ic} /></Field>
                         <Field label="Eating Habit"><input type="text" value={nutritionForm.data.eating_habit} onChange={e => nutritionForm.setData('eating_habit', e.target.value)} className={ic} /></Field>
