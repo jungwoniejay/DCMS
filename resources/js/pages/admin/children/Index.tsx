@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
 import { useState, useRef, useEffect } from 'react';
-import { Search, Filter, Download, Eye, User, Plus, MoreVertical, TrendingUp, Brain, Utensils, ClipboardList, Users, Edit, GraduationCap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Download, Eye, User, Plus, MoreVertical, TrendingUp, Brain, Utensils, ClipboardList, Users, Edit, GraduationCap, ChevronLeft, ChevronRight, X, SlidersHorizontal } from 'lucide-react';
 import type { Child, PaginatedData } from '@/types';
 import ChildActionsModal from '@/components/ChildActionsModal';
 
@@ -18,79 +18,87 @@ interface Filters {
     sort_dir?: string;
 }
 
+const statusStyle: Record<string, string> = {
+    approved: 'bg-emerald-100 text-emerald-700',
+    pending:  'bg-amber-100 text-amber-700',
+    rejected: 'bg-red-100 text-red-700',
+};
+
+const classroomColor: Record<string, string> = {
+    Nursery:     'bg-emerald-100 text-emerald-700',
+    Kindergarten:'bg-sky-100 text-sky-700',
+    Prep:        'bg-violet-100 text-violet-700',
+    Toddlers:    'bg-orange-100 text-orange-700',
+    Infants:     'bg-pink-100 text-pink-700',
+};
+
+function ClassroomBadge({ classroom }: { classroom: string | null }) {
+    if (!classroom) return <span className="text-slate-300 text-sm">—</span>;
+    return (
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${classroomColor[classroom] ?? 'bg-slate-100 text-slate-600'}`}>
+            <GraduationCap className="w-3 h-3" />{classroom}
+        </span>
+    );
+}
+
 function ActionDropdown({ child, onAction }: { child: Child; onAction: (type: ModalType, child: Child) => void }) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [open, setOpen] = useState(false);
+    const [pos, setPos] = useState({ top: 0, right: 0 });
+    const btnRef = useRef<HTMLButtonElement>(null);
+    const dropRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
-                buttonRef.current && !buttonRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false);
-            }
+        if (!open) return;
+        const handler = (e: MouseEvent) => {
+            if (!btnRef.current?.contains(e.target as Node) && !dropRef.current?.contains(e.target as Node)) setOpen(false);
         };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, [open]);
 
     const handleOpen = () => {
-        if (!isOpen && buttonRef.current) {
-            const rect = buttonRef.current.getBoundingClientRect();
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const dropdownHeight = 280;
-            const top = spaceBelow < dropdownHeight
-                ? rect.top + window.scrollY - dropdownHeight
-                : rect.bottom + window.scrollY + 4;
-            setDropdownPos({
-                top,
-                right: window.innerWidth - rect.right,
+        if (!open && btnRef.current) {
+            const r = btnRef.current.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - r.bottom;
+            setPos({
+                top: spaceBelow < 300 ? r.top + window.scrollY - 300 : r.bottom + window.scrollY + 4,
+                right: window.innerWidth - r.right,
             });
         }
-        setIsOpen(!isOpen);
+        setOpen(o => !o);
     };
 
-    const actionItems = [
-        { label: 'Add Growth Data',     icon: <TrendingUp className="w-4 h-4" />,   color: 'text-green-600 hover:bg-green-50',  modal: 'growth' as ModalType },
-        { label: 'Development Plans',   icon: <Brain className="w-4 h-4" />,        color: 'text-purple-600 hover:bg-purple-50', modal: 'development' as ModalType },
-        { label: 'Care Info',           icon: <Utensils className="w-4 h-4" />,     color: 'text-blue-600 hover:bg-blue-50',    modal: 'care' as ModalType },
-        { label: 'Observations',        icon: <ClipboardList className="w-4 h-4" />, color: 'text-indigo-600 hover:bg-indigo-50', modal: 'observations' as ModalType },
-        { label: 'Parent Involvement',  icon: <Users className="w-4 h-4" />,        color: 'text-orange-600 hover:bg-orange-50', modal: 'parent-involvement' as ModalType },
+    const items = [
+        { label: 'Add Growth Data',    icon: <TrendingUp className="w-3.5 h-3.5" />,   color: 'text-emerald-600 hover:bg-emerald-50', modal: 'growth' as ModalType },
+        { label: 'Development Plans',  icon: <Brain className="w-3.5 h-3.5" />,        color: 'text-violet-600 hover:bg-violet-50',   modal: 'development' as ModalType },
+        { label: 'Care Info',          icon: <Utensils className="w-3.5 h-3.5" />,     color: 'text-sky-600 hover:bg-sky-50',         modal: 'care' as ModalType },
+        { label: 'Observations',       icon: <ClipboardList className="w-3.5 h-3.5" />,color: 'text-indigo-600 hover:bg-indigo-50',   modal: 'observations' as ModalType },
+        { label: 'Parent Involvement', icon: <Users className="w-3.5 h-3.5" />,        color: 'text-orange-600 hover:bg-orange-50',   modal: 'parent-involvement' as ModalType },
         { type: 'divider' },
-        { label: 'View Profile', icon: <Eye className="w-4 h-4" />,  color: 'text-gray-700 hover:bg-gray-50', href: route('admin.children.show', child.id) },
-        { label: 'Edit',         icon: <Edit className="w-4 h-4" />, color: 'text-blue-600 hover:bg-blue-50', href: route('admin.children.edit', child.id) },
+        { label: 'View Profile', icon: <Eye className="w-3.5 h-3.5" />,  color: 'text-slate-700 hover:bg-slate-50', href: route('admin.children.show', child.id) },
+        { label: 'Edit',         icon: <Edit className="w-3.5 h-3.5" />, color: 'text-blue-600 hover:bg-blue-50',   href: route('admin.children.edit', child.id) },
     ];
 
     return (
-        <div className="relative">
-            <button
-                ref={buttonRef}
-                onClick={handleOpen}
-                className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors duration-150"
-            >
+        <>
+            <button ref={btnRef} onClick={handleOpen}
+                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                 <MoreVertical className="w-4 h-4" />
             </button>
-            {isOpen && (
-                <div
-                    ref={dropdownRef}
-                    style={{ top: dropdownPos.top, right: dropdownPos.right }}
-                    className="fixed w-52 bg-white rounded-xl shadow-xl border border-gray-200 py-1 z-[9999]"
-                >
-                    {actionItems.map((item, index) => {
-                        if ('type' in item && item.type === 'divider') return <div key={index} className="border-t border-gray-100 my-1" />;
+            {open && (
+                <div ref={dropRef} style={{ position: 'fixed', top: pos.top, right: pos.right, zIndex: 9999 }}
+                    className="w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1">
+                    {items.map((item, i) => {
+                        if ('type' in item) return <div key={i} className="border-t border-slate-100 my-1" />;
                         if ('modal' in item && item.modal) return (
-                            <button key={index} onClick={() => { setIsOpen(false); onAction(item.modal!, child); }}
-                                className={`flex items-center gap-3 px-4 py-2.5 text-sm w-full text-left ${item.color} transition-colors duration-150`}>
+                            <button key={i} onClick={() => { setOpen(false); onAction(item.modal!, child); }}
+                                className={`flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium w-full text-left ${item.color} transition-colors`}>
                                 {item.icon}{item.label}
                             </button>
                         );
                         if ('href' in item && item.href) return (
-                            <Link key={index} href={item.href!}
-                                className={`flex items-center gap-3 px-4 py-2.5 text-sm ${item.color} transition-colors duration-150`}
-                                onClick={() => setIsOpen(false)}>
+                            <Link key={i} href={item.href!} onClick={() => setOpen(false)}
+                                className={`flex items-center gap-2.5 px-3.5 py-2 text-xs font-medium ${item.color} transition-colors`}>
                                 {item.icon}{item.label}
                             </Link>
                         );
@@ -98,31 +106,7 @@ function ActionDropdown({ child, onAction }: { child: Child; onAction: (type: Mo
                     })}
                 </div>
             )}
-        </div>
-    );
-}
-
-// Classroom badge component
-function ClassroomBadge({ classroom }: { classroom: string | null }) {
-    if (!classroom) {
-        return <span className="text-gray-400 text-sm">—</span>;
-    }
-
-    const classroomColors: Record<string, string> = {
-        'Nursery': 'bg-green-100 text-green-700 border-green-200',
-        'Kindergarten': 'bg-blue-100 text-blue-700 border-blue-200',
-        'Prep': 'bg-purple-100 text-purple-700 border-purple-200',
-        'Toddlers': 'bg-orange-100 text-orange-700 border-orange-200',
-        'Infants': 'bg-pink-100 text-pink-700 border-pink-200',
-    };
-
-    const colorClass = classroomColors[classroom] || 'bg-gray-100 text-gray-700 border-gray-200';
-
-    return (
-        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${colorClass}`}>
-            <GraduationCap className="w-3 h-3 mr-1" />
-            {classroom}
-        </span>
+        </>
     );
 }
 
@@ -136,7 +120,7 @@ export default function ChildrenIndex({ children, filters, zones }: { children: 
     const closeModal = () => { setActiveModal(null); setSelectedChild(null); };
 
     const applyFilter = (key: string, value: string | null) => {
-        const newFilters = { ...activeFilters, [key]: value };
+        const newFilters = { ...activeFilters, [key]: value ?? undefined };
         setActiveFilters(newFilters);
         router.get(route('admin.children.index'), newFilters as Record<string, string>, { preserveState: true });
     };
@@ -147,267 +131,152 @@ export default function ChildrenIndex({ children, filters, zones }: { children: 
         router.get(route('admin.children.index'));
     };
 
-    const handleExport = () => {
-        window.location.href = route('admin.reports.export', 'children');
-    };
+    const hasActiveFilters = Object.values(activeFilters).some(v => v);
 
-    const classroomOptions = ['Nursery', 'Kindergarten', 'Prep', 'Toddlers', 'Infants'];
+    const sel = 'w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all';
 
     return (
         <AdminLayout>
             <Head title="Child Management" />
+            <div className="space-y-5">
 
-            <div className="space-y-6">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Child Management</h1>
-                        <p className="text-gray-600 mt-1 text-sm">Manage children's records, development, and care information</p>
+                        <h1 className="text-2xl font-bold text-slate-800">Child Management</h1>
+                        <p className="text-slate-500 text-sm mt-0.5">Manage children's records, development, and care information</p>
                     </div>
                     <div className="flex items-center gap-2 self-start sm:self-auto">
-                        <button
-                            onClick={handleExport}
-                            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium transition-colors duration-150 shadow-sm"
-                        >
-                            <Download className="w-4 h-4" />
-                            Export
+                        <button onClick={() => window.location.href = route('admin.reports.export', 'children')}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-all shadow-sm">
+                            <Download className="w-3.5 h-3.5" /> Export
                         </button>
-                        <Link
-                            href={route('admin.children.create')}
-                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 text-sm font-medium shadow-md transition-all duration-150"
-                        >
-                            <Plus className="w-4 h-4" />
-                            Add Child
+                        <Link href={route('admin.children.create')}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all">
+                            <Plus className="w-3.5 h-3.5" /> Add Child
                         </Link>
                     </div>
                 </div>
 
-                {/* Advanced Filter Panel */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                        <Filter className="w-5 h-5 text-gray-600" />
-                        <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+                {/* Filter bar */}
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <SlidersHorizontal className="w-4 h-4 text-slate-400" />
+                            <span className="text-sm font-semibold text-slate-600">Filters</span>
+                            {hasActiveFilters && (
+                                <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">Active</span>
+                            )}
+                        </div>
+                        {hasActiveFilters && (
+                            <button onClick={clearFilters}
+                                className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-red-500 font-medium transition-colors">
+                                <X className="w-3.5 h-3.5" /> Clear all
+                            </button>
+                        )}
                     </div>
 
-                    <div className="space-y-4">
-                        {/* Quick Status Filters */}
-                        <div>
-                            <label className="text-sm font-medium text-gray-700 mb-2 block">Status</label>
-                            <div className="flex flex-wrap gap-2">
-                                {['all', 'pending', 'approved', 'rejected'].map((status) => (
-                                    <button
-                                        key={status}
-                                        onClick={() => applyFilter('status', status === 'all' ? null : status)}
-                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 ${
-                                            activeFilters.status === status || (status === 'all' && !activeFilters.status)
-                                                ? 'bg-blue-600 text-white shadow-sm'
-                                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                        }`}
-                                    >
-                                        {status.charAt(0).toUpperCase() + status.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
+                    {/* Status pills */}
+                    <div className="flex flex-wrap gap-2">
+                        {['all', 'pending', 'approved', 'rejected'].map(s => {
+                            const active = s === 'all' ? !activeFilters.status : activeFilters.status === s;
+                            return (
+                                <button key={s} onClick={() => applyFilter('status', s === 'all' ? null : s)}
+                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                                        active ? 'bg-blue-500 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    }`}>
+                                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Dropdowns + search */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                        <select value={activeFilters.classroom || ''} onChange={e => applyFilter('classroom', e.target.value || null)} className={sel}>
+                            <option value="">All Classes</option>
+                            {['Nursery','Kindergarten','Prep','Toddlers','Infants'].map(o => <option key={o}>{o}</option>)}
+                        </select>
+                        <select value={activeFilters.gender || ''} onChange={e => applyFilter('gender', e.target.value || null)} className={sel}>
+                            <option value="">All Genders</option>
+                            <option>Male</option><option>Female</option>
+                        </select>
+                        <select value={activeFilters.age_group || ''} onChange={e => applyFilter('age_group', e.target.value || null)} className={sel}>
+                            <option value="">All Ages</option>
+                            <option value="0-2">0–2 yrs</option>
+                            <option value="3-4">3–4 yrs</option>
+                            <option value="5-6">5–6 yrs</option>
+                        </select>
+                        <select value={activeFilters.zone || ''} onChange={e => applyFilter('zone', e.target.value || null)} className={sel}>
+                            <option value="">All Zones</option>
+                            {zones?.map(z => <option key={z}>{z}</option>)}
+                        </select>
+                        <div className="relative col-span-2 md:col-span-4 lg:col-span-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            <input type="text" value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && applyFilter('search', search)}
+                                placeholder="Search name…"
+                                className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all" />
                         </div>
-
-                        {/* Filter Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {/* Classroom Filter */}
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 mb-2 block">Class</label>
-                                <select
-                                    value={activeFilters.classroom || ''}
-                                    onChange={(e) => applyFilter('classroom', e.target.value || null)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow duration-150"
-                                >
-                                    <option value="">All Classes</option>
-                                    {classroomOptions.map((option) => (
-                                        <option key={option} value={option}>{option}</option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Gender Filter */}
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 mb-2 block">Gender</label>
-                                <select
-                                    value={activeFilters.gender || ''}
-                                    onChange={(e) => applyFilter('gender', e.target.value || null)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow duration-150"
-                                >
-                                    <option value="">All</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                </select>
-                            </div>
-
-                            {/* Age Group Filter */}
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 mb-2 block">Age Group</label>
-                                <select
-                                    value={activeFilters.age_group || ''}
-                                    onChange={(e) => applyFilter('age_group', e.target.value || null)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow duration-150"
-                                >
-                                    <option value="">All</option>
-                                    <option value="0-2">0-2 years</option>
-                                    <option value="3-4">3-4 years</option>
-                                    <option value="5-6">5-6 years</option>
-                                </select>
-                            </div>
-
-                            {/* Zone Filter */}
-                            <div>
-                                <label className="text-sm font-medium text-gray-700 mb-2 block">Zone/Purok</label>
-                                <select
-                                    value={activeFilters.zone || ''}
-                                    onChange={(e) => applyFilter('zone', e.target.value || null)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow duration-150"
-                                >
-                                    <option value="">All Zones</option>
-                                    {zones?.map((zone: string) => (
-                                        <option key={zone} value={zone}>{zone}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Search Bar */}
-                        <div className="max-w-md">
-                            <label className="text-sm font-medium text-gray-700 mb-2 block">Search</label>
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    onKeyDown={(e) => e.key === 'Enter' && applyFilter('search', search)}
-                                    placeholder="Search by child's name..."
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow duration-150"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Clear Filters */}
-                        <button
-                            onClick={clearFilters}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-150"
-                        >
-                            Clear all filters
-                        </button>
                     </div>
                 </div>
 
-                {/* Results Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-200 bg-gray-50/50">
-                        <p className="text-sm text-gray-600">
-                            Showing <span className="font-semibold text-gray-900">{children.data?.length || 0}</span> of <span className="font-semibold text-gray-900">{children.total || 0}</span> children
+                {/* Table */}
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="px-5 py-3.5 border-b border-slate-50 flex items-center justify-between">
+                        <p className="text-xs text-slate-500">
+                            Showing <span className="font-semibold text-slate-700">{children.data?.length ?? 0}</span> of <span className="font-semibold text-slate-700">{children.total ?? 0}</span> children
                         </p>
                     </div>
 
                     {children.data?.length > 0 ? (
                         <>
-                            {/* Desktop Table */}
-                            <div className="hidden lg:block overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Child</th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Age</th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Class</th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Gender</th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-slate-50">
+                                    <thead>
+                                        <tr className="bg-slate-50">
+                                            {['Child', 'Age', 'Class', 'Gender', 'Status', ''].map(h => (
+                                                <th key={h} className="px-5 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider last:text-right">{h}</th>
+                                            ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
+                                    <tbody className="divide-y divide-slate-50">
                                         {children.data.map((child: any) => (
-                                            <tr key={child.id} className="hover:bg-gray-50 transition-colors duration-150">
-                                                <td className="px-6 py-4 whitespace-nowrap">
+                                            <tr key={child.id} className="hover:bg-slate-50/60 transition-colors">
+                                                <td className="px-5 py-3.5">
                                                     <div className="flex items-center gap-3">
                                                         {child.profile_picture ? (
-                                                            <img src={`/storage/${child.profile_picture}`} alt={`${child.first_name}`} className="w-10 h-10 rounded-full object-cover border-2 border-gray-200" />
+                                                            <img src={`/storage/${child.profile_picture}`} alt={child.first_name}
+                                                                className="w-9 h-9 rounded-full object-cover border-2 border-white shadow-sm shrink-0" />
                                                         ) : (
-                                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                                                                <User className="w-5 h-5 text-white" />
-                                                            </div>
-                                                        )}
-                                                        <div>
-                                                            <span className="font-semibold text-gray-900">{child.first_name} {child.last_name}</span>
-                                                            {child.family_profile?.purok_zone && (
-                                                                <p className="text-xs text-gray-500 mt-0.5">{child.family_profile.purok_zone}</p>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-600">{child.age} yrs</span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <ClassroomBadge classroom={child.classroom} />
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-600">{child.sex}</span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                                        child.registration_status?.toLowerCase() === 'approved' 
-                                                            ? 'bg-green-100 text-green-700' 
-                                                            : child.registration_status?.toLowerCase() === 'rejected'
-                                                            ? 'bg-red-100 text-red-700'
-                                                            : 'bg-yellow-100 text-yellow-700'
-                                                    }`}>
-                                                        {child.registration_status}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                    <div className="flex items-center justify-end">
-                                                        <ActionDropdown child={child} onAction={openModal} />
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            {/* Tablet/Mobile Table */}
-                            <div className="lg:hidden block overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Child</th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Age</th>
-                                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Class</th>
-                                            <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
-                                        {children.data.map((child: any) => (
-                                            <tr key={child.id} className="hover:bg-gray-50 transition-colors duration-150">
-                                                <td className="px-4 py-3 whitespace-nowrap">
-                                                    <div className="flex items-center gap-2">
-                                                        {child.profile_picture ? (
-                                                            <img src={`/storage/${child.profile_picture}`} alt={`${child.first_name}`} className="w-8 h-8 rounded-full object-cover border border-gray-200" />
-                                                        ) : (
-                                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                                                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center shrink-0 shadow-sm">
                                                                 <User className="w-4 h-4 text-white" />
                                                             </div>
                                                         )}
                                                         <div>
-                                                            <span className="font-medium text-gray-900 text-sm">{child.first_name} {child.last_name}</span>
-                                                            <p className="text-xs text-gray-500">{child.sex}</p>
+                                                            <p className="text-sm font-semibold text-slate-800">{child.first_name} {child.last_name}</p>
+                                                            {child.family_profile?.purok_zone && (
+                                                                <p className="text-[11px] text-slate-400 mt-0.5">{child.family_profile.purok_zone}</p>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-4 py-3 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-600">{child.age}y</span>
+                                                <td className="px-5 py-3.5 whitespace-nowrap">
+                                                    <span className="text-sm text-slate-600">{child.age} yrs</span>
                                                 </td>
-                                                <td className="px-4 py-3 whitespace-nowrap">
+                                                <td className="px-5 py-3.5 whitespace-nowrap">
                                                     <ClassroomBadge classroom={child.classroom} />
                                                 </td>
-                                                <td className="px-4 py-3 whitespace-nowrap text-right">
+                                                <td className="px-5 py-3.5 whitespace-nowrap">
+                                                    <span className="text-sm text-slate-600">{child.sex}</span>
+                                                </td>
+                                                <td className="px-5 py-3.5 whitespace-nowrap">
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${statusStyle[child.registration_status?.toLowerCase()] ?? 'bg-slate-100 text-slate-600'}`}>
+                                                        {child.registration_status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-5 py-3.5 whitespace-nowrap text-right">
                                                     <ActionDropdown child={child} onAction={openModal} />
                                                 </td>
                                             </tr>
@@ -416,77 +285,40 @@ export default function ChildrenIndex({ children, filters, zones }: { children: 
                                 </table>
                             </div>
 
-                            {/* Mobile Cards View */}
-                            <div className="md:hidden divide-y divide-gray-200">
-                                {children.data.map((child: any) => (
-                                    <div key={child.id} className="p-4 flex items-center gap-3 bg-white hover:bg-gray-50 transition-colors duration-150">
-                                        {child.profile_picture ? (
-                                            <img src={`/storage/${child.profile_picture}`} alt={child.first_name} className="w-12 h-12 rounded-full object-cover border-2 border-gray-200 shrink-0" />
-                                        ) : (
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shrink-0">
-                                                <User className="w-6 h-6 text-white" />
-                                            </div>
-                                        )}
-                                        <div className="flex-1 min-w-0">
-                                            <p className="font-semibold text-gray-900 truncate">{child.first_name} {child.last_name}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <span className="text-xs text-gray-500">{child.age} yrs</span>
-                                                <span className="text-gray-300">•</span>
-                                                <span className="text-xs text-gray-500">{child.sex}</span>
-                                            </div>
-                                            <div className="mt-1">
-                                                <ClassroomBadge classroom={child.classroom} />
-                                            </div>
-                                        </div>
-                                        <ActionDropdown child={child} onAction={openModal} />
+                            {/* Pagination */}
+                            {children.last_page > 1 && (
+                                <div className="px-5 py-3.5 border-t border-slate-100 flex items-center justify-between">
+                                    <p className="text-xs text-slate-500">
+                                        Page <span className="font-semibold text-slate-700">{children.current_page}</span> of <span className="font-semibold text-slate-700">{children.last_page}</span>
+                                    </p>
+                                    <div className="flex items-center gap-1">
+                                        <button onClick={() => router.get(route('admin.children.index'), { ...activeFilters, page: children.current_page - 1 } as any, { preserveState: true })}
+                                            disabled={children.current_page === 1}
+                                            className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                                            <ChevronLeft className="w-4 h-4" />
+                                        </button>
+                                        {children.links.slice(1, -1).map((link: any) => (
+                                            <button key={link.label}
+                                                onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
+                                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${link.active ? 'bg-blue-500 text-white' : 'border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                                                dangerouslySetInnerHTML={{ __html: link.label }} />
+                                        ))}
+                                        <button onClick={() => router.get(route('admin.children.index'), { ...activeFilters, page: children.current_page + 1 } as any, { preserveState: true })}
+                                            disabled={children.current_page === children.last_page}
+                                            className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                                            <ChevronRight className="w-4 h-4" />
+                                        </button>
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            )}
                         </>
                     ) : (
-                        <div className="text-center py-16 text-gray-500">
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                                <User className="w-8 h-8 text-gray-400" />
+                        <div className="text-center py-16">
+                            <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+                                <User className="w-7 h-7 text-slate-300" />
                             </div>
-                            <p className="text-lg font-medium text-gray-900">No children found</p>
-                            <p className="text-sm mt-1 text-gray-500">Try adjusting your filters or add a new child</p>
-                        </div>
-                    )}
-
-                    {/* Pagination */}
-                    {children.last_page > 1 && (
-                        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                            <p className="text-sm text-gray-600">
-                                Page <span className="font-semibold">{children.current_page}</span> of <span className="font-semibold">{children.last_page}</span>
-                            </p>
-                            <div className="flex items-center gap-1">
-                                <button
-                                    onClick={() => router.get(route('admin.children.index'), { ...activeFilters, page: children.current_page - 1 } as Record<string, unknown>, { preserveState: true })}
-                                    disabled={children.current_page === 1}
-                                    className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    <ChevronLeft className="w-4 h-4" />
-                                </button>
-                                {children.links.slice(1, -1).map((link) => (
-                                    <button
-                                        key={link.label}
-                                        onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                                            link.active
-                                                ? 'bg-blue-600 text-white'
-                                                : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
-                                        }`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                ))}
-                                <button
-                                    onClick={() => router.get(route('admin.children.index'), { ...activeFilters, page: children.current_page + 1 } as Record<string, unknown>, { preserveState: true })}
-                                    disabled={children.current_page === children.last_page}
-                                    className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    <ChevronRight className="w-4 h-4" />
-                                </button>
-                            </div>
+                            <p className="text-slate-600 font-semibold">No children found</p>
+                            <p className="text-slate-400 text-sm mt-1">Try adjusting your filters or add a new child</p>
                         </div>
                     )}
                 </div>
