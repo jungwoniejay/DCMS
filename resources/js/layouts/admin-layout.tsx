@@ -87,19 +87,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     transition-all duration-200 ease-in-out group
                     ${mini ? 'justify-center px-2' : ''}
                     ${active
-                        ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-700 shadow-sm shadow-blue-100'
+                        ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-700 shadow-sm shadow-blue-100'
                         : 'text-slate-500 hover:text-slate-700 hover:bg-white/60'
                     }
                 `}
             >
                 {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
                 )}
 
                 <div className={`
                     shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200
                     ${active
-                        ? 'bg-gradient-to-br from-blue-500 to-purple-500 shadow-md shadow-blue-200'
+                        ? 'bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md shadow-blue-200'
                         : 'bg-white/80 group-hover:bg-white group-hover:shadow-sm'
                     }
                 `}>
@@ -137,12 +137,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className={`shrink-0 p-4 ${mini ? 'px-2' : ''}`}>
                 <div className={`flex items-center gap-3 ${mini ? 'justify-center' : ''}`}>
                     <div className="relative shrink-0">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 blur-md opacity-30 rounded-full" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-cyan-400 blur-md opacity-30 rounded-full" />
                         <DaycareLogo className="w-10 h-10 relative z-10 drop-shadow" />
                     </div>
                     {!mini && (
                         <div>
-                            <h1 className="text-base font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
+                            <h1 className="text-base font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent leading-tight">
                                 {systemName}
                             </h1>
                             <p className="text-[10px] text-slate-400 font-semibold tracking-[0.15em] uppercase">{barangay.barangay_name || 'Admin Portal'}</p>
@@ -265,7 +265,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* User & Logout */}
             <div className={`p-3 shrink-0 ${mini ? 'px-2' : ''}`}>
                 <div className={`flex items-center gap-3 mb-2 p-2.5 rounded-xl bg-white/60 border border-white/80 shadow-sm ${mini ? 'justify-center' : ''}`}>
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-md shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center shadow-md shrink-0">
                         <User className="w-4 h-4 text-white" />
                     </div>
                     {!mini && (
@@ -360,7 +360,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </button>
                     <div className="flex items-center gap-2">
                         <DaycareLogo className="w-7 h-7" />
-                        <span className="font-bold text-sm bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{systemName}</span>
+                        <span className="font-bold text-sm bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">{systemName}</span>
                     </div>
                 </div>
 
