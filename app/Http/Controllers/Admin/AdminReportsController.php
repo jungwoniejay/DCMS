@@ -85,8 +85,8 @@ class AdminReportsController extends Controller
                 ->get()
                 ->pluck('count', 'nutritional_status_result')
                 ->toArray(),
-            'average_height' => NutritionRecord::whereNotNull('height_first')->avg('height_first'),
-            'average_weight' => NutritionRecord::whereNotNull('weight_first')->avg('weight_first'),
+            'average_height' => (float) (NutritionRecord::whereNotNull('height_first')->avg('height_first') ?? 0),
+            'average_weight' => (float) (NutritionRecord::whereNotNull('weight_first')->avg('weight_first') ?? 0),
         ];
     }
     

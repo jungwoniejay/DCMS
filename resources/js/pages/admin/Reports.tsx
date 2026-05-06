@@ -88,9 +88,9 @@ export default function Reports({ reports }: any) {
                                     <div key={vaccine} className="flex items-center gap-3">
                                         <span className="text-xs text-gray-600 w-16 uppercase">{vaccine}</span>
                                         <div className="flex-1 bg-gray-100 rounded-full h-2">
-                                            <div className="bg-green-500 h-2 rounded-full" style={{ width: `${rate}%` }} />
+                                            <div className="bg-green-500 h-2 rounded-full" style={{ width: `${Number(rate)}%` }} />
                                         </div>
-                                        <span className="text-xs font-semibold w-10 text-right">{rate}%</span>
+                                        <span className="text-xs font-semibold w-10 text-right">{Number(rate).toFixed(1)}%</span>
                                     </div>
                                 ))}
                             </div>
@@ -140,11 +140,11 @@ export default function Reports({ reports }: any) {
                             <div className="space-y-2">
                                 <div className="flex justify-between p-3 bg-green-50 rounded-lg">
                                     <span className="text-sm text-gray-600">Average Height</span>
-                                    <span className="font-semibold text-sm">{reports?.nutrition_summary?.average_height?.toFixed(1) || 0} cm</span>
+                                    <span className="font-semibold text-sm">{Number(reports?.nutrition_summary?.average_height || 0).toFixed(1)} cm</span>
                                 </div>
                                 <div className="flex justify-between p-3 bg-blue-50 rounded-lg">
                                     <span className="text-sm text-gray-600">Average Weight</span>
-                                    <span className="font-semibold text-sm">{reports?.nutrition_summary?.average_weight?.toFixed(1) || 0} kg</span>
+                                    <span className="font-semibold text-sm">{Number(reports?.nutrition_summary?.average_weight || 0).toFixed(1)} kg</span>
                                 </div>
                             </div>
                         </div>
