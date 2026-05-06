@@ -48,6 +48,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
     const { auth } = usePage().props as any;
     const { url } = usePage();
     const barangay = (usePage().props as any).barangay ?? {};
+    const unreadMessages = (usePage().props as any).unread_messages ?? 0;
     const systemName = barangay.system_name || 'KidCare Hinoba-an';
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
@@ -60,7 +61,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
         }
     };
 
-    const NavItem = ({ item, mini }: { item: any; mini: boolean }) => {
+    const NavItem = ({ item, mini, badge }: { item: any; mini: boolean; badge?: number }) => {
         const active = isActive(item.href);
         return (
             <Link
@@ -95,6 +96,11 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                         {item.name}
                     </span>
                 )}
+                {!mini && badge && badge > 0 ? (
+                    <span className="ml-auto shrink-0 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-pink-500 to-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {badge > 9 ? '9+' : badge}
+                    </span>
+                ) : null}
                 {mini && (
                     <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 shadow-lg">
                         {item.name}
@@ -137,7 +143,8 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                         {mini && <div className="mx-2 mb-1.5 h-px bg-sky-100" />}
                         <div className="space-y-0.5">
                             {group.items.map((item) => (
-                                <NavItem key={item.name} item={item} mini={mini} />
+                                <NavItem key={item.name} item={item} mini={mini}
+                                    badge={item.href === '/parent/messages' ? unreadMessages : undefined} />
                             ))}
                         </div>
                     </div>

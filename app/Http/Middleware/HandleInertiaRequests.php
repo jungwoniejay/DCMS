@@ -63,9 +63,18 @@ class HandleInertiaRequests extends Middleware
                 : 0, 0),
             'pending_enrollments' => rescue(fn() => \App\Models\EnrollmentRequest::where('status', 'Pending')->count(), 0),
             'pending_appointments' => rescue(fn() => \App\Models\CheckupAppointment::where('status', 'Pending')->count(), 0),
-            'unread_messages' => rescue(fn() => $request->user() && $request->user()->role === 'admin'
-                ? \App\Models\Message::where('receiver_id', $request->user()->id)->whereNull('read_at')->count()
-                : 0, 0),
+            'unread_messages' => rescue(fn() => {
+                if (!$request->user()) return 0;
+                $user = $request->user();
+                if ($user->role === 'admin') {
+                    return \App\Models\Message::where('receiver_id', $user->id)->whereNull('read_at')->count();
+                }
+                // For parents: count unread messages from admin
+                $adminId = \App\Models\User::where('role', 'admin')->value('id');
+                return $adminId
+                    ? \App\Models\Message::where('sender_id', $adminId)->where('receiver_id', $user->id)->whereNull('read_at')->count()
+                    : 0;
+            }, 0),
             'barangay' => rescue(fn() => \App\Models\BarangaySetting::allKeyed(), []),
             'announcements' => rescue(function () use ($request) {
                 if (!$request->user() || $request->user()->role !== 'parent') return [];
