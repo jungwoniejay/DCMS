@@ -83,30 +83,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     transition-all duration-200 ease-in-out group
                     ${mini ? 'justify-center px-2' : ''}
                     ${active
-                        ? 'bg-emerald-500/10 text-emerald-400'
+                        ? 'bg-indigo-500/10 text-indigo-300'
                         : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
                     }
                 `}
             >
                 {/* Active indicator */}
                 {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-indigo-500 rounded-r-full" />
                 )}
 
                 {/* Icon */}
                 <div className={`
                     shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200
                     ${active
-                        ? 'bg-emerald-500 shadow-md shadow-emerald-900/40'
+                        ? 'bg-indigo-500 shadow-md shadow-indigo-900/40'
                         : 'bg-white/5 group-hover:bg-white/10'
                     }
                 `}>
-                    <item.icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-400 group-hover:text-emerald-400'}`} />
+                    <item.icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-400 group-hover:text-indigo-300'}`} />
                 </div>
 
                 {/* Label */}
                 {!mini && (
-                    <span className={`text-sm font-medium truncate ${active ? 'text-emerald-400' : 'text-slate-300'}`}>
+                    <span className={`text-sm font-medium truncate ${active ? 'text-indigo-300' : 'text-slate-300'}`}>
                         {item.label}
                     </span>
                 )}
@@ -180,7 +180,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             `}
                         >
                             <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-all duration-200">
-                                <Settings className="w-4 h-4 text-slate-400 group-hover:text-emerald-400" />
+                                <Settings className="w-4 h-4 text-slate-400 group-hover:text-indigo-300" />
                             </div>
                             {!mini && (
                                 <>
@@ -213,7 +213,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                     `}
                                 >
                                     <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-all duration-200">
-                                        <MapPin className="w-4 h-4 text-slate-400 group-hover:text-emerald-400" />
+                                        <MapPin className="w-4 h-4 text-slate-400 group-hover:text-indigo-300" />
                                     </div>
                                     {!mini && <span className="text-sm font-medium text-slate-300">Purok Database</span>}
                                     {mini && (
@@ -235,7 +235,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                     `}
                                 >
                                     <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-all duration-200">
-                                        <Building2 className="w-4 h-4 text-slate-400 group-hover:text-emerald-400" />
+                                        <Building2 className="w-4 h-4 text-slate-400 group-hover:text-indigo-300" />
                                     </div>
                                     {!mini && <span className="text-sm font-medium text-slate-300">City & Province</span>}
                                     {mini && (
@@ -256,7 +256,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* User & Logout */}
             <div className={`p-3 shrink-0 ${mini ? 'px-2' : ''}`}>
                 <div className={`flex items-center gap-3 mb-2 p-2.5 rounded-xl bg-white/5 border border-white/10 ${mini ? 'justify-center' : ''}`}>
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shadow-md shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center shadow-md shrink-0">
                         <User className="w-4 h-4 text-white" />
                     </div>
                     {!mini && (
