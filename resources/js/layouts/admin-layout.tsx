@@ -83,30 +83,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     transition-all duration-200 ease-in-out group
                     ${mini ? 'justify-center px-2' : ''}
                     ${active
-                        ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-700 shadow-sm shadow-blue-100'
-                        : 'text-slate-500 hover:text-slate-700 hover:bg-white/60'
+                        ? 'bg-emerald-500/10 text-emerald-400'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
                     }
                 `}
             >
                 {/* Active indicator */}
                 {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-500 rounded-r-full" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-emerald-500 rounded-r-full" />
                 )}
 
                 {/* Icon */}
                 <div className={`
                     shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200
                     ${active
-                        ? 'bg-gradient-to-br from-blue-500 to-purple-500 shadow-md shadow-blue-200'
-                        : 'bg-white/80 group-hover:bg-white group-hover:shadow-sm'
+                        ? 'bg-emerald-500 shadow-md shadow-emerald-900/40'
+                        : 'bg-white/5 group-hover:bg-white/10'
                     }
                 `}>
-                    <item.icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-500 group-hover:text-blue-500'}`} />
+                    <item.icon className={`w-4 h-4 ${active ? 'text-white' : 'text-slate-400 group-hover:text-emerald-400'}`} />
                 </div>
 
                 {/* Label */}
                 {!mini && (
-                    <span className={`text-sm font-medium truncate ${active ? 'text-blue-700' : ''}`}>
+                    <span className={`text-sm font-medium truncate ${active ? 'text-emerald-400' : 'text-slate-300'}`}>
                         {item.label}
                     </span>
                 )}
@@ -133,7 +133,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </div>
                     {!mini && (
                         <div>
-                            <h1 className="text-base font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
+                            <h1 className="text-base font-bold text-white leading-tight">
                                 {systemName}
                             </h1>
                             <p className="text-[10px] text-slate-400 font-semibold tracking-[0.15em] uppercase">{barangay.barangay_name || 'Admin Portal'}</p>
@@ -142,19 +142,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
             </div>
 
-            {/* Divider */}
-            <div className="mx-4 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent shrink-0" />
-
-            {/* Navigation */}
+            <div className="mx-4 h-px bg-white/10 shrink-0" />
             <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4 scrollbar-thin">
                 {menuGroups.map((group) => (
                     <div key={group.label}>
                         {!mini && (
-                            <p className="px-3 mb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.12em]">
+                            <p className="px-3 mb-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em]">
                                 {group.label}
                             </p>
                         )}
-                        {mini && <div className="mx-2 mb-1.5 h-px bg-slate-200/60" />}
+                        {mini && <div className="mx-2 mb-1.5 h-px bg-white/10" />}
                         <div className="space-y-0.5">
                             {group.items.map((item) => (
                                 <NavItem key={item.id} item={item} mini={mini} />
@@ -166,11 +163,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {/* Settings group */}
                 <div>
                     {!mini && (
-                        <p className="px-3 mb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.12em]">
+                        <p className="px-3 mb-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em]">
                             Settings
                         </p>
                     )}
-                    {mini && <div className="mx-2 mb-1.5 h-px bg-slate-200/60" />}
+                    {mini && <div className="mx-2 mb-1.5 h-px bg-white/10" />}
                     <div className="space-y-0.5">
                         <button
                             onClick={() => setSettingsOpen(!settingsOpen)}
@@ -178,16 +175,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             className={`
                                 relative flex items-center gap-3 px-3 py-2.5 rounded-xl w-full
                                 transition-all duration-200 ease-in-out group
-                                text-slate-500 hover:text-slate-700 hover:bg-white/60
+                                text-slate-400 hover:text-slate-200 hover:bg-white/5
                                 ${mini ? 'justify-center px-2' : ''}
                             `}
                         >
-                            <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/80 group-hover:bg-white group-hover:shadow-sm transition-all duration-200">
-                                <Settings className="w-4 h-4 text-slate-500 group-hover:text-blue-500" />
+                            <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-all duration-200">
+                                <Settings className="w-4 h-4 text-slate-400 group-hover:text-emerald-400" />
                             </div>
                             {!mini && (
                                 <>
-                                    <span className="text-sm font-medium flex-1 text-left">Settings</span>
+                                    <span className="text-sm font-medium flex-1 text-left text-slate-300">Settings</span>
                                     {settingsOpen
                                         ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                                         : <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
@@ -203,7 +200,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         </button>
 
                         {(settingsOpen || mini) && (
-                            <div className={mini ? '' : 'ml-4 pl-3 border-l border-slate-200 space-y-0.5'}>
+                            <div className={mini ? '' : 'ml-4 pl-3 border-l border-white/10 space-y-0.5'}>
                                 <Link
                                     href={route('admin.settings.puroks')}
                                     onClick={() => setSidebarOpen(false)}
@@ -211,14 +208,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                     className={`
                                         relative flex items-center gap-3 px-3 py-2.5 rounded-xl
                                         transition-all duration-200 ease-in-out group
-                                        text-slate-500 hover:text-slate-700 hover:bg-white/60
+                                        text-slate-400 hover:text-slate-200 hover:bg-white/5
                                         ${mini ? 'justify-center px-2' : ''}
                                     `}
                                 >
-                                    <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/80 group-hover:bg-white group-hover:shadow-sm transition-all duration-200">
-                                        <MapPin className="w-4 h-4 text-slate-500 group-hover:text-blue-500" />
+                                    <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-all duration-200">
+                                        <MapPin className="w-4 h-4 text-slate-400 group-hover:text-emerald-400" />
                                     </div>
-                                    {!mini && <span className="text-sm font-medium">Purok Database</span>}
+                                    {!mini && <span className="text-sm font-medium text-slate-300">Purok Database</span>}
                                     {mini && (
                                         <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 shadow-lg">
                                             Purok Database
@@ -233,14 +230,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                     className={`
                                         relative flex items-center gap-3 px-3 py-2.5 rounded-xl
                                         transition-all duration-200 ease-in-out group
-                                        text-slate-500 hover:text-slate-700 hover:bg-white/60
+                                        text-slate-400 hover:text-slate-200 hover:bg-white/5
                                         ${mini ? 'justify-center px-2' : ''}
                                     `}
                                 >
-                                    <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/80 group-hover:bg-white group-hover:shadow-sm transition-all duration-200">
-                                        <Building2 className="w-4 h-4 text-slate-500 group-hover:text-blue-500" />
+                                    <div className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 group-hover:bg-white/10 transition-all duration-200">
+                                        <Building2 className="w-4 h-4 text-slate-400 group-hover:text-emerald-400" />
                                     </div>
-                                    {!mini && <span className="text-sm font-medium">City & Province</span>}
+                                    {!mini && <span className="text-sm font-medium text-slate-300">City & Province</span>}
                                     {mini && (
                                         <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 shadow-lg">
                                             City & Province
@@ -254,19 +251,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
             </nav>
 
-            {/* Divider */}
-            <div className="mx-4 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent shrink-0" />
+            <div className="mx-4 h-px bg-white/10 shrink-0" />
 
-            {/* User & Logout */}
+            {/* User & Logout */}}
             <div className={`p-3 shrink-0 ${mini ? 'px-2' : ''}`}>
-                <div className={`flex items-center gap-3 mb-2 p-2.5 rounded-xl bg-white/60 border border-white/80 shadow-sm ${mini ? 'justify-center' : ''}`}>
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-md shrink-0">
+                <div className={`flex items-center gap-3 mb-2 p-2.5 rounded-xl bg-white/5 border border-white/10 ${mini ? 'justify-center' : ''}`}>
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shadow-md shrink-0">
                         <User className="w-4 h-4 text-white" />
                     </div>
                     {!mini && (
                         <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-slate-700 truncate">{auth?.user?.name}</p>
-                            <p className="text-[10px] text-slate-400">Administrator</p>
+                            <p className="text-xs font-semibold text-slate-200 truncate">{auth?.user?.name}</p>
+                            <p className="text-[10px] text-slate-500">Administrator</p>
                         </div>
                     )}
                 </div>
@@ -296,7 +292,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
 
     return (
-        <div className="flex h-screen" style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%)' }}>
+        <div className="flex h-screen bg-slate-950">
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-20 lg:hidden" onClick={() => setSidebarOpen(false)} />
@@ -309,20 +305,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 ${collapsed ? 'w-16' : 'w-64'}
             `}
                 style={{
-                    background: 'rgba(255,255,255,0.7)',
-                    backdropFilter: 'blur(20px)',
-                    borderRight: '1px solid rgba(255,255,255,0.8)',
-                    boxShadow: '4px 0 24px rgba(99,102,241,0.06)',
+                    background: '#0f172a',
+                    borderRight: '1px solid rgba(255,255,255,0.06)',
+                    boxShadow: '4px 0 24px rgba(0,0,0,0.3)',
                 }}
             >
                 {/* Collapse toggle */}
                 <button
                     onClick={() => setCollapsed(!collapsed)}
-                    className="absolute top-4 -right-3 z-10 w-6 h-6 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:border-blue-300"
+                    className="absolute top-4 -right-3 z-10 w-6 h-6 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 hover:border-emerald-500"
                 >
                     {collapsed
-                        ? <PanelLeftOpen className="w-3 h-3 text-slate-500" />
-                        : <PanelLeftClose className="w-3 h-3 text-slate-500" />
+                        ? <PanelLeftOpen className="w-3 h-3 text-slate-400" />
+                        : <PanelLeftClose className="w-3 h-3 text-slate-400" />
                     }
                 </button>
 
@@ -336,30 +331,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             `}
                 style={{
-                    background: 'rgba(255,255,255,0.92)',
-                    backdropFilter: 'blur(20px)',
-                    borderRight: '1px solid rgba(255,255,255,0.8)',
-                    boxShadow: '4px 0 24px rgba(99,102,241,0.1)',
+                    background: '#0f172a',
+                    borderRight: '1px solid rgba(255,255,255,0.06)',
+                    boxShadow: '4px 0 24px rgba(0,0,0,0.4)',
                 }}
             >
-                <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 z-10">
+                <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:bg-white/10 z-10">
                     <X className="w-4 h-4" />
                 </button>
                 <SidebarContent mini={false} />
             </aside>
 
-            {/* Main Content */}
-            <main className="flex-1 overflow-y-auto min-w-0">
+            <main className="flex-1 overflow-y-auto min-w-0 bg-slate-100">
                 {/* Mobile top bar */}
                 <div className="lg:hidden sticky top-0 z-10 px-4 py-3 flex items-center gap-3"
-                    style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.8)' }}
+                    style={{ background: '#0f172a', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
                 >
-                    <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-xl text-slate-500 hover:bg-white/80 transition-colors">
+                    <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-xl text-slate-400 hover:bg-white/10 transition-colors">
                         <Menu className="w-5 h-5" />
                     </button>
                     <div className="flex items-center gap-2">
                         <DaycareLogo className="w-7 h-7" />
-                        <span className="font-bold text-sm bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{systemName}</span>
+                        <span className="font-bold text-sm text-white">{systemName}</span>
                     </div>
                 </div>
 
