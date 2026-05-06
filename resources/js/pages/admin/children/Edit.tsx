@@ -239,8 +239,8 @@ export default function ChildEdit({ child, puroks, cities }: any) {
                                         </div>
                                         <div>
                                             <label className={lc}>Purok / Zone</label>
-                                            <select value={data.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={ic}>
-                                                <option value="">Select Purok...</option>
+                                            <select value={data.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={`${ic} ${!data.address ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!data.address}>
+                                                <option value="">{data.address ? 'Select Purok...' : 'Select a city first...'}</option>
                                                 {puroks?.map((p: string) => <option key={p} value={p}>{p}</option>)}
                                             </select>
                                         </div>

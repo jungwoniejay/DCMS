@@ -230,8 +230,8 @@ export default function ChildCreate({ puroks, cities }: { puroks: string[]; citi
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className={lc}>Purok / Zone</label>
-                                <select value={form.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={ic}>
-                                    <option value="">Select Purok...</option>
+                                <select value={form.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={`${ic} ${!form.address ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!form.address}>
+                                    <option value="">{form.address ? 'Select Purok...' : 'Select a city first...'}</option>
                                     {puroks.map(p => <option key={p} value={p}>{p}</option>)}
                                 </select>
                             </div>

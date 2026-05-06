@@ -307,8 +307,8 @@ export default function EnrollChild({ puroks, cities }: { puroks: string[]; citi
                                     <input type="text" value={data.child_second_language} onChange={e => setData('child_second_language', e.target.value)} className={ic} />
                                 </Field>
                                 <Field label="Purok / Zone *" error={errors.purok_zone}>
-                                    <select value={data.purok_zone} onChange={e => setData('purok_zone', e.target.value)} className={ic} required>
-                                        <option value="">Select Purok/Zone...</option>
+                                    <select value={data.purok_zone} onChange={e => setData('purok_zone', e.target.value)} className={`${ic} ${!data.child_address ? 'opacity-50 cursor-not-allowed' : ''}`} required disabled={!data.child_address}>
+                                        <option value="">{data.child_address ? 'Select Purok/Zone...' : 'Select a city first...'}</option>
                                         {puroks.map(p => <option key={p} value={p}>{p}</option>)}
                                     </select>
                                 </Field>
