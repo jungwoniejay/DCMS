@@ -22,7 +22,10 @@ class MessageController extends Controller
             })
             ->with('sender:id,name,role')
             ->orderBy('created_at')
-            ->get();
+            ->get()
+            ->map(fn($m) => array_merge($m->toArray(), [
+                'attachment_url' => $m->attachment ? asset('storage/' . $m->attachment) : null,
+            ]));
 
         // Mark admin messages as read
         Message::where('sender_id', $admin?->id)
@@ -39,16 +42,31 @@ class MessageController extends Controller
     // Parent: send message to admin
     public function parentSend(Request $request)
     {
-        $request->validate(['body' => 'required|string|max:1000']);
+        $request->validate([
+            'body'       => 'nullable|string|max:1000',
+            'attachment' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
+        ]);
+
+        if (!$request->body && !$request->hasFile('attachment')) {
+            return back()->with('error', 'Message or attachment is required.');
+        }
+
         $admin = User::where('role', 'admin')->first();
         if (!$admin) return back()->with('error', 'No admin found.');
 
-        Message::create([
+        $data = [
             'sender_id'   => auth()->id(),
             'receiver_id' => $admin->id,
-            'body'        => $request->body,
-        ]);
+            'body'        => $request->body ?? '',
+        ];
 
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $data['attachment']      = $file->store('message_attachments', 'public');
+            $data['attachment_type'] = str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'file';
+        }
+
+        Message::create($data);
         return back();
     }
 
@@ -103,7 +121,10 @@ class MessageController extends Controller
             })
             ->with('sender:id,name,role')
             ->orderBy('created_at')
-            ->get();
+            ->get()
+            ->map(fn($m) => array_merge($m->toArray(), [
+                'attachment_url' => $m->attachment ? asset('storage/' . $m->attachment) : null,
+            ]));
 
         // Mark parent messages as read
         Message::where('sender_id', $parentId)
@@ -123,14 +144,24 @@ class MessageController extends Controller
     // Admin: send message to parent
     public function adminSend(Request $request, $parentId)
     {
-        $request->validate(['body' => 'required|string|max:1000']);
-
-        Message::create([
-            'sender_id'   => auth()->id(),
-            'receiver_id' => $parentId,
-            'body'        => $request->body,
+        $request->validate([
+            'body'       => 'nullable|string|max:1000',
+            'attachment' => 'nullable|file|mimes:jpeg,png,jpg,gif,pdf,doc,docx|max:5120',
         ]);
 
+        $data = [
+            'sender_id'   => auth()->id(),
+            'receiver_id' => $parentId,
+            'body'        => $request->body ?? '',
+        ];
+
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $data['attachment']      = $file->store('message_attachments', 'public');
+            $data['attachment_type'] = str_starts_with($file->getMimeType(), 'image/') ? 'image' : 'file';
+        }
+
+        Message::create($data);
         return back();
     }
 
