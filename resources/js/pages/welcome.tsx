@@ -38,10 +38,6 @@ export default function Welcome() {
                                 </Link>
                             ) : (
                                 <>
-                                    <Link href={route('login')}
-                                        className="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-semibold text-sm transition-colors">
-                                        Sign In
-                                    </Link>
                                     <button onClick={() => setShowModal(true)}
                                         className="px-5 py-2.5 bg-gradient-to-r from-sky-500 to-teal-500 text-white rounded-xl font-semibold text-sm shadow-md shadow-teal-200 hover:shadow-lg hover:scale-105 transition-all">
                                         Get Started
@@ -80,10 +76,6 @@ export default function Welcome() {
                                         Get Started Free
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </button>
-                                    <Link href={route('login')}
-                                        className="inline-flex items-center gap-2 px-8 py-4 bg-white text-slate-700 rounded-2xl font-semibold border border-slate-200 hover:border-teal-300 hover:text-teal-600 shadow-sm hover:shadow-md transition-all">
-                                        Sign In
-                                    </Link>
                                 </div>
                             </div>
 
