@@ -63,6 +63,9 @@ class HandleInertiaRequests extends Middleware
                 : 0, 0),
             'pending_enrollments' => rescue(fn() => \App\Models\EnrollmentRequest::where('status', 'Pending')->count(), 0),
             'pending_appointments' => rescue(fn() => \App\Models\CheckupAppointment::where('status', 'Pending')->count(), 0),
+            'unread_messages' => rescue(fn() => $request->user() && $request->user()->role === 'admin'
+                ? \App\Models\Message::where('receiver_id', $request->user()->id)->whereNull('read_at')->count()
+                : 0, 0),
             'barangay' => rescue(fn() => \App\Models\BarangaySetting::allKeyed(), []),
         ]);
     }

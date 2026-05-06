@@ -4,7 +4,7 @@ import {
     LayoutDashboard, Users, Heart, Apple, BookOpen, Baby,
     BarChart3, Settings, User, LogOut, ClipboardList,
     Calendar, Menu, X, ChevronDown, ChevronRight, MapPin,
-    Shield, Stethoscope, PanelLeftClose, PanelLeftOpen, FileText, Truck, Building2, Activity
+    Shield, Stethoscope, PanelLeftClose, PanelLeftOpen, FileText, Truck, Building2, Activity, MessageCircle
 } from 'lucide-react';
 import DaycareLogo from '@/components/daycare-logo';
 import Toast from '@/components/toast';
@@ -36,6 +36,7 @@ const menuGroups = [
         items: [
             { id: 'enrollments', label: 'Enrollment Requests', icon: ClipboardList, route: 'admin.enrollments' },
             { id: 'appointments', label: 'Appointments', icon: Calendar, route: 'admin.appointments' },
+            { id: 'messages', label: 'Messages', icon: MessageCircle, route: 'admin.messages.index' },
             { id: 'logistics', label: 'Attendance & Access', icon: Truck, route: 'admin.logistics' },
         ],
     },
@@ -59,7 +60,7 @@ const menuGroups = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { auth } = usePage().props as any;
     const barangay = (usePage().props as any).barangay ?? {};
-    const { pending_enrollments, pending_appointments } = usePage().props as any;
+    const { pending_enrollments, pending_appointments, unread_messages } = usePage().props as any;
     const systemName = barangay.system_name || 'KidCare Hinoba-an';
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
@@ -76,6 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         const active = isActive(item.route);
         const badge = item.id === 'enrollments' ? pending_enrollments
                     : item.id === 'appointments' ? pending_appointments
+                    : item.id === 'messages' ? unread_messages
                     : 0;
         return (
             <Link
