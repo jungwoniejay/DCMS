@@ -236,6 +236,16 @@ class AdminEnrollmentController extends Controller
         // Save child profile data (Form 2) from enrollment
         $profileData = $enrollment->child_profile_data ?? [];
         if (!empty($profileData)) {
+            // Merge immunizations from health_data into vaccinations if vaccinations is empty
+            $healthDataArr = $enrollment->health_data ?? [];
+            $immunizations = $healthDataArr['immunizations'] ?? [];
+            $vaccinations  = $profileData['vaccinations'] ?? [];
+            // If parent filled immunizations (dates) but not vaccinations (Yes/No), convert
+            if (empty($vaccinations) && !empty($immunizations)) {
+                foreach ($immunizations as $k => $v) {
+                    $vaccinations[$k] = !empty($v) ? 'Yes' : "Don't Know";
+                }
+            }
             $child->childDetails()->updateOrCreate(['child_id' => $child->id], [
                 'birth_order'           => $profileData['birth_order'] ?? null,
                 'registered'            => $profileData['registered'] ?? null,
@@ -246,7 +256,7 @@ class AdminEnrollmentController extends Controller
                 'weight_kg'             => $profileData['weight_kg'] ?? null,
                 'eccd_card'             => !empty($profileData['eccd_card']),
                 'mother_child_book'     => !empty($profileData['mother_child_book']),
-                'vaccinations'          => $profileData['vaccinations'] ?? null,
+                'vaccinations'          => !empty($vaccinations) ? $vaccinations : null,
                 'physical_deformity'    => $profileData['physical_deformity'] ?? null,
                 'problems_with'         => $profileData['problems_with'] ?? null,
                 'left_handed'           => $profileData['left_handed'] ?? null,

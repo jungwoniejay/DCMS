@@ -40,13 +40,54 @@ class ParentHealthController extends Controller
 
                 // Vaccinations: prefer clinical medical_assessments, fall back to parent-submitted child_details
                 $parentVaccinations = $child->childDetails?->vaccinations ?? [];
+                $healthData        = $child->healthAssessment;
+                $immunizations     = [];
+                if ($healthData && !empty($healthData->general_notes)) {
+                    // general_notes may store immunization JSON — skip, use child_details instead
+                }
+
+                // Also check enrollment_requests for immunizations (dates = administered)
+                $enrollmentImmunizations = [];
+                $enrollment = \DB::table('enrollment_requests')
+                    ->where('parent_id', $child->guardian_id)
+                    ->where('child_id', $child->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                if ($enrollment && !empty($enrollment->health_data)) {
+                    $hd = is_string($enrollment->health_data) ? json_decode($enrollment->health_data, true) : (array)$enrollment->health_data;
+                    $enrollmentImmunizations = $hd['immunizations'] ?? [];
+                }
+
+                // Helper: resolve status from multiple sources
+                $resolve = function(array $keys) use ($medicalAssessment, $parentVaccinations, $enrollmentImmunizations): string {
+                    // 1. Clinical assessment (admin-recorded)
+                    foreach ($keys as $k) {
+                        $col = strtolower(str_replace(' ', '_', $k)) . '_status';
+                        if ($medicalAssessment && isset($medicalAssessment->$col) && $medicalAssessment->$col !== null) {
+                            return $medicalAssessment->$col;
+                        }
+                    }
+                    // 2. Parent-submitted Yes/No from child_details.vaccinations
+                    foreach ($keys as $k) {
+                        if (isset($parentVaccinations[$k])) return $parentVaccinations[$k];
+                        if (isset($parentVaccinations[strtolower($k)])) return $parentVaccinations[strtolower($k)];
+                        if (isset($parentVaccinations[strtoupper($k)])) return $parentVaccinations[strtoupper($k)];
+                    }
+                    // 3. Enrollment immunizations (date present = Yes)
+                    foreach ($keys as $k) {
+                        if (!empty($enrollmentImmunizations[$k])) return 'Yes';
+                        if (!empty($enrollmentImmunizations[strtoupper($k)])) return 'Yes';
+                    }
+                    return 'Unknown';
+                };
+
                 $vaccinations = [
-                    'bcg'     => $medicalAssessment?->bcg_status     ?? ($parentVaccinations['BCG']        ?? ($parentVaccinations['bcg']     ?? 'Unknown')),
-                    'dpt'     => $medicalAssessment?->dpt_status     ?? ($parentVaccinations['DPT']        ?? ($parentVaccinations['dpt']     ?? 'Unknown')),
-                    'polio'   => $medicalAssessment?->polio_status   ?? ($parentVaccinations['Oral Polio'] ?? ($parentVaccinations['polio']   ?? 'Unknown')),
-                    'hepa_b'  => $medicalAssessment?->hepa_b_status  ?? ($parentVaccinations['Hepa B']     ?? ($parentVaccinations['hepa_b']  ?? 'Unknown')),
-                    'measles' => $medicalAssessment?->measles_status ?? ($parentVaccinations['Measles']    ?? ($parentVaccinations['measles'] ?? 'Unknown')),
-                    'mmr'     => $medicalAssessment?->mmr_status     ?? 'Unknown',
+                    'bcg'     => $resolve(['BCG', 'bcg']),
+                    'dpt'     => $resolve(['DPT', 'dpt']),
+                    'polio'   => $resolve(['Polio', 'Oral Polio', 'polio', 'POLIO']),
+                    'hepa_b'  => $resolve(['Hepa B', 'hepa_b', 'HEPA_B', 'Hepa_B']),
+                    'measles' => $resolve(['Measles', 'measles', 'MEASLES']),
+                    'mmr'     => $resolve(['MMR', 'mmr']),
                 ];
 
                 $nextVaccine = $this->calculateNextVaccine($child->age, $vaccinations);
