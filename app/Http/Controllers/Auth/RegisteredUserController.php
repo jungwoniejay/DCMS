@@ -31,34 +31,21 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password'  => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'      => 'required|in:parent,admin',
-            'admin_key' => 'nullable|string',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
-        if ($request->role === 'admin') {
-            $validKey = env('ADMIN_REGISTER_KEY', 'Brgy2DMS@AdminKey2024');
-            if (trim($request->admin_key) !== trim($validKey)) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'admin_key' => 'Invalid admin registration key.',
-                ]);
-            }
-        }
 
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => $request->role === 'admin' ? 'admin' : 'parent',
+            'role'     => 'parent',
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
 
-        $url = $user->role === 'admin' ? route('admin.dashboard') : route('parent.dashboard');
-        return redirect($url);
+        return redirect(route('parent.dashboard'));
     }
 }
