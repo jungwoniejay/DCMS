@@ -1,6 +1,6 @@
 import ParentLayout from '@/layouts/parent-layout';
 import { Head, Link, router } from '@inertiajs/react';
-import { Users, Clock, CheckCircle, AlertTriangle, Baby, Calendar, Plus, ArrowRight, User, Activity, Apple } from 'lucide-react';
+import { Users, Clock, CheckCircle, AlertTriangle, Baby, Calendar, Plus, ArrowRight, User, Activity, Apple, GraduationCap } from 'lucide-react';
 
 interface Child {
     id: number;
@@ -10,6 +10,7 @@ interface Child {
     sex: string;
     status: string;
     zone: string;
+    classroom: string | null;
     profile_picture: string | null;
     has_emergency_alert: boolean;
     nutritional_status: string;
@@ -145,6 +146,11 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                                                     </span>
                                                 </div>
                                                 <p className="text-xs text-slate-500 mt-0.5">{child.age} yrs • {child.sex} • {child.zone}</p>
+                                                {child.classroom && (
+                                                    <span className="inline-flex items-center gap-1 mt-1 text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-200 px-2 py-0.5 rounded-full">
+                                                        <GraduationCap className="w-3 h-3" /> {child.classroom} Class
+                                                    </span>
+                                                )}
                                                 <div className="flex items-center gap-3 mt-2">
                                                     <span className="flex items-center gap-1 text-xs text-slate-500">
                                                         <Apple className="w-3 h-3 text-teal-500" /> {child.nutritional_status}

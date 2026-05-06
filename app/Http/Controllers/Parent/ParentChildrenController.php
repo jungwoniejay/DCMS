@@ -71,6 +71,7 @@ class ParentChildrenController extends Controller
                     'address'              => $child->address,
                     'status'               => $child->registration_status ?? 'Pending',
                     'zone'                 => $child->familyProfile?->purok_zone ?? 'N/A',
+                    'classroom'            => $child->classroom ?? null,
                     'profile_picture'      => $child->profile_picture,
                     'emergency_alert'      => !empty($latestMedical?->emergency_action_conditions),
                     'emergency_description' => $latestMedical?->emergency_action_conditions ?? null,

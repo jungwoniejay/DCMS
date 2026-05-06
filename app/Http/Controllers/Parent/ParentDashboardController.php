@@ -32,6 +32,7 @@ class ParentDashboardController extends Controller
                     'sex'                 => $child->sex,
                     'status'              => $child->registration_status ?? 'Pending',
                     'zone'                => $child->familyProfile?->purok_zone ?? 'N/A',
+                    'classroom'           => $child->classroom ?? null,
                     'profile_picture'     => $child->profile_picture,
                     'has_emergency_alert' => !empty($child->healthAssessment?->medicalAssessment?->emergency_action_conditions),
                     'nutritional_status'  => $latestNutrition?->nutritional_status_result ?? 'Not assessed',

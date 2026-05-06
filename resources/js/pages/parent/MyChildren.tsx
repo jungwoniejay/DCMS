@@ -1,5 +1,5 @@
 import ParentLayout from '@/layouts/parent-layout';
-import { Users, AlertTriangle, Activity, Syringe, User } from 'lucide-react';
+import { Users, AlertTriangle, Activity, Syringe, User, GraduationCap } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
 interface Child {
@@ -12,6 +12,7 @@ interface Child {
   birthdate: string;
   status: string;
   zone: string;
+  classroom: string | null;
   profile_picture: string | null;
   emergency_alert: boolean;
   emergency_description: string | null;
@@ -26,6 +27,14 @@ interface Child {
     measles: string;
   };
 }
+
+const classroomColor: Record<string, string> = {
+  Infants:      'bg-pink-100 text-pink-700 border-pink-200',
+  Toddlers:     'bg-orange-100 text-orange-700 border-orange-200',
+  Nursery:      'bg-emerald-100 text-emerald-700 border-emerald-200',
+  Kindergarten: 'bg-sky-100 text-sky-700 border-sky-200',
+  Prep:         'bg-violet-100 text-violet-700 border-violet-200',
+};
 
 interface Props {
   children: Child[];
@@ -69,6 +78,12 @@ export default function MyChildren({ children }: Props) {
                         <p className="text-gray-500 text-sm mt-0.5">
                           {child.age} yrs • {child.sex} • Born {child.birthdate} • {child.zone}
                         </p>
+                        {child.classroom && (
+                          <span className={`inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${classroomColor[child.classroom] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                            <GraduationCap className="w-3 h-3" />
+                            {child.classroom} Class
+                          </span>
+                        )}
                       </div>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -91,6 +106,7 @@ export default function MyChildren({ children }: Props) {
                       <div className="space-y-2 text-sm">
                         {[
                           { label: 'Zone', value: child.zone },
+                          { label: 'Classroom', value: child.classroom ?? 'Not assigned' },
                           { label: 'Height', value: child.height ? `${child.height} cm` : 'Not recorded' },
                           { label: 'Weight', value: child.weight ? `${child.weight} kg` : 'Not recorded' },
                           { label: 'Nutrition', value: child.nutritional_status === 'Not assessed' ? 'Not yet assessed' : child.nutritional_status },
