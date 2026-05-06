@@ -253,7 +253,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             <div className="mx-4 h-px bg-white/10 shrink-0" />
 
-            {/* User & Logout */}}
+            {/* User & Logout */}
             <div className={`p-3 shrink-0 ${mini ? 'px-2' : ''}`}>
                 <div className={`flex items-center gap-3 mb-2 p-2.5 rounded-xl bg-white/5 border border-white/10 ${mini ? 'justify-center' : ''}`}>
                     <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shadow-md shrink-0">
