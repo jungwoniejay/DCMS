@@ -26,7 +26,7 @@ const CheckGroup = ({ label, checked, onChange }: any) => (
 const ic = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400';
 const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
-export default function ChildEdit({ child, puroks }: any) {
+export default function ChildEdit({ child, puroks, cities }: any) {
     const [activeTab, setActiveTab] = useState('basic');
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(
@@ -230,7 +230,13 @@ export default function ChildEdit({ child, puroks }: any) {
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div><label className={lc}>Address *</label><input value={data.address} onChange={e => set('address', e.target.value)} required className={ic} /></div>
+                                        <div>
+                                            <label className={lc}>Address (City/Municipality) *</label>
+                                            <select value={data.address} onChange={e => set('address', e.target.value)} required className={ic}>
+                                                <option value="">Select City/Municipality...</option>
+                                                {cities?.map((c: string) => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
                                         <div>
                                             <label className={lc}>Purok / Zone</label>
                                             <select value={data.purok_zone} onChange={e => set('purok_zone', e.target.value)} className={ic}>
@@ -291,7 +297,13 @@ export default function ChildEdit({ child, puroks }: any) {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                                         <div><label className={lc}>Age</label><input type="number" value={father.age} onChange={e => setF('age', e.target.value)} className={ic} /></div>
                                         <div><label className={lc}>Occupation</label><input value={father.occupation} onChange={e => setF('occupation', e.target.value)} className={ic} /></div>
-                                        <div><label className={lc}>Address</label><input value={father.address} onChange={e => setF('address', e.target.value)} className={ic} /></div>
+                                        <div>
+                                            <label className={lc}>Address (City/Municipality)</label>
+                                            <select value={father.address} onChange={e => setF('address', e.target.value)} className={ic}>
+                                                <option value="">Select City/Municipality...</option>
+                                                {cities?.map((c: string) => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                         <div><label className={lc}>Home Number</label><input value={father.contact_home} onChange={e => setF('contact_home', e.target.value)} className={ic} /></div>
@@ -332,7 +344,13 @@ export default function ChildEdit({ child, puroks }: any) {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                                         <div><label className={lc}>Age</label><input type="number" value={mother.age} onChange={e => setM('age', e.target.value)} className={ic} /></div>
                                         <div><label className={lc}>Occupation</label><input value={mother.occupation} onChange={e => setM('occupation', e.target.value)} className={ic} /></div>
-                                        <div><label className={lc}>Address</label><input value={mother.address} onChange={e => setM('address', e.target.value)} className={ic} /></div>
+                                        <div>
+                                            <label className={lc}>Address (City/Municipality)</label>
+                                            <select value={mother.address} onChange={e => setM('address', e.target.value)} className={ic}>
+                                                <option value="">Select City/Municipality...</option>
+                                                {cities?.map((c: string) => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                         <div><label className={lc}>Home Number</label><input value={mother.contact_home} onChange={e => setM('contact_home', e.target.value)} className={ic} /></div>

@@ -100,6 +100,7 @@ class AdminChildrenController extends Controller
     {
         return Inertia::render('admin/children/Create', [
             'puroks' => \App\Models\Purok::orderBy('name')->pluck('name'),
+            'cities' => \App\Models\City::orderBy('name')->pluck('name'),
         ]);
     }
 
@@ -257,6 +258,7 @@ class AdminChildrenController extends Controller
         return Inertia::render('admin/children/Edit', [
             'child'  => $child,
             'puroks' => \App\Models\Purok::orderBy('name')->pluck('name'),
+            'cities' => \App\Models\City::orderBy('name')->pluck('name'),
         ]);
     }
 
