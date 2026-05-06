@@ -372,11 +372,17 @@ export default function EnrollChild({ puroks, cities }: { puroks: string[]; citi
                                 <Field label="Age">
                                     <input type="number" value={data.father_age} readOnly className={`${ic} bg-sky-50 cursor-not-allowed`} placeholder="Auto-calculated" />
                                 </Field>
-                                <Field label="District">
-                                    <input type="text" value={data.father_district} onChange={e => setData('father_district', e.target.value)} className={ic} />
+                                <Field label="Address (City/Municipality)">
+                                    <select value={data.father_district} onChange={e => setData('father_district', e.target.value)} className={ic}>
+                                        <option value="">Select City/Municipality...</option>
+                                        {cities.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
                                 </Field>
                                 <Field label="Purok / Zone">
-                                    <input type="text" value={data.father_purok} onChange={e => setData('father_purok', e.target.value)} className={ic} />
+                                    <select value={data.father_purok} onChange={e => setData('father_purok', e.target.value)} className={`${ic} ${!data.father_district ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!data.father_district}>
+                                        <option value="">{data.father_district ? 'Select Purok/Zone...' : 'Select a city first...'}</option>
+                                        {puroks.map(p => <option key={p} value={p}>{p}</option>)}
+                                    </select>
                                 </Field>
                                 <Field label="Contact (Home)">
                                     <input type="text" value={data.father_contact_home} onChange={e => setData('father_contact_home', e.target.value)} className={ic} />
@@ -420,11 +426,17 @@ export default function EnrollChild({ puroks, cities }: { puroks: string[]; citi
                                 <Field label="Age">
                                     <input type="number" value={data.mother_age} readOnly className={`${ic} bg-sky-50 cursor-not-allowed`} placeholder="Auto-calculated" />
                                 </Field>
-                                <Field label="District">
-                                    <input type="text" value={data.mother_district} onChange={e => setData('mother_district', e.target.value)} className={ic} />
+                                <Field label="Address (City/Municipality)">
+                                    <select value={data.mother_district} onChange={e => setData('mother_district', e.target.value)} className={ic}>
+                                        <option value="">Select City/Municipality...</option>
+                                        {cities.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
                                 </Field>
                                 <Field label="Purok / Zone">
-                                    <input type="text" value={data.mother_purok} onChange={e => setData('mother_purok', e.target.value)} className={ic} />
+                                    <select value={data.mother_purok} onChange={e => setData('mother_purok', e.target.value)} className={`${ic} ${!data.mother_district ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!data.mother_district}>
+                                        <option value="">{data.mother_district ? 'Select Purok/Zone...' : 'Select a city first...'}</option>
+                                        {puroks.map(p => <option key={p} value={p}>{p}</option>)}
+                                    </select>
                                 </Field>
                                 <Field label="Contact (Home)">
                                     <input type="text" value={data.mother_contact_home} onChange={e => setData('mother_contact_home', e.target.value)} className={ic} />
