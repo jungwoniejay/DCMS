@@ -8,6 +8,7 @@ import {
 import DaycareLogo from '@/components/daycare-logo';
 import { ReactNode } from 'react';
 import Toast from '@/components/toast';
+import NotificationBell from '@/components/notification-bell';
 
 const menuGroups = [
     {
@@ -155,6 +156,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                             <p className="text-[10px] text-slate-400">Parent Account</p>
                         </div>
                     )}
+                    {!mini && <NotificationBell />}
                 </div>
                 <button
                     onClick={handleLogout}
@@ -228,6 +230,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                         <DaycareLogo className="w-7 h-7" />
                         <span className="font-bold text-sm bg-gradient-to-r from-sky-500 to-teal-600 bg-clip-text text-transparent">{systemName}</span>
                     </div>
+                    <NotificationBell />
                 </div>
 
                 <div className="p-4 md:p-6 lg:p-8">
