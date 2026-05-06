@@ -1,42 +1,60 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
-import { ArrowLeft, Save, User, Camera } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Save, User, Camera, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
-const ic = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-slate-400';
+const ic = 'w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all';
 const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
-const Section = ({ title, subtitle, children }: any) => (
-    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-slate-100 p-5 space-y-4">
-        <div>
-            <h2 className="text-sm font-bold text-slate-700 uppercase tracking-wide">{title}</h2>
-            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+const STEPS = ['Child Info', 'Father', 'Mother', 'Family', 'Review'];
+
+function StepIndicator({ current }: { current: number }) {
+    return (
+        <div className="flex items-center gap-1 mb-6">
+            {STEPS.map((label, i) => (
+                <div key={i} className="flex items-center gap-1 flex-1 last:flex-none">
+                    <div className="flex flex-col items-center">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all
+                            ${i < current ? 'bg-blue-600 text-white' : i === current ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' : 'bg-slate-100 text-slate-400'}`}>
+                            {i < current ? <CheckCircle className="w-4 h-4" /> : i + 1}
+                        </div>
+                        <span className={`text-[10px] mt-0.5 font-medium ${i === current ? 'text-blue-600' : 'text-slate-400'}`}>{label}</span>
+                    </div>
+                    {i < STEPS.length - 1 && <div className={`h-0.5 flex-1 mb-3 rounded ${i < current ? 'bg-blue-600' : 'bg-slate-200'}`} />}
+                </div>
+            ))}
         </div>
+    );
+}
+
+const Section = ({ title, children }: any) => (
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-100 p-5 space-y-4">
+        <h2 className="text-sm font-bold text-blue-600 uppercase tracking-wide">{title}</h2>
         {children}
     </div>
 );
 
-const CheckGroup = ({ label, name, checked, onChange }: any) => (
-    <label className="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)}
-            className="w-4 h-4 rounded border-slate-300 text-blue-500 focus:ring-blue-400" />
-        <span className="text-sm text-slate-700">{label}</span>
-    </label>
-);
-
-const RadioGroup = ({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) => (
-    <div className="flex flex-wrap gap-4">
-        {options.map(o => (
-            <label key={o} className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" checked={value === o} onChange={() => onChange(o)}
-                    className="w-4 h-4 border-slate-300 text-blue-500 focus:ring-blue-400" />
-                <span className="text-sm text-slate-700">{o}</span>
-            </label>
-        ))}
+const RadioGroup = ({ options, value, onChange }: { label?: string; options: string[]; value: string; onChange: (v: string) => void }) => (
+    <div>
+        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">{label}</p>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {options.map(o => (
+                <label key={o} className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer">
+                    <input type="radio" checked={value === o} onChange={() => onChange(o)} className="accent-blue-500" /> {o}
+                </label>
+            ))}
+        </div>
     </div>
 );
 
+const CheckGroup = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) => (
+    <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-600">
+        <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} className="accent-blue-500" /> {label}
+    </label>
+);
+
 export default function ChildCreate({ puroks }: { puroks: string[] }) {
+    const [step, setStep] = useState(0);
     const [processing, setProcessing] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -147,8 +165,13 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                     </div>
                 </div>
 
+                <StepIndicator current={step} />
+
                 <form onSubmit={handleSubmit} className="space-y-5">
 
+                    {/* Step 0 — Child Info */}}
+                    {step === 0 && (
+                    <>
                     {/* Profile Picture */}
                     <Section title="Profile Picture">
                         <div className="flex items-center gap-5">
@@ -240,8 +263,10 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                             <div><label className={lc}>Date</label><input type="date" value={form.reviewed_date} onChange={e => set('reviewed_date', e.target.value)} className={ic} /></div>
                         </div>
                     </Section>
+                    </> )}
 
-                    {/* FORM 1A - Father's Profile */}
+                    {/* Step 1 — Father */}
+                    {step === 1 && (
                     <Section title="Form 1A — Father's Profile">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">1. Personal Information</p>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -281,8 +306,10 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                             <RadioGroup options={['Employed','Unemployed','Retired','OFW','Others']} value={father.occupational_status} onChange={v => setF('occupational_status', v)} />
                         </div>
                     </Section>
+                    )}
 
-                    {/* FORM 1B - Mother's Profile */}
+                    {/* Step 2 — Mother */}
+                    {step === 2 && (
                     <Section title="Form 1B — Mother's Profile">
                         <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">1. Personal Information</p>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -330,8 +357,10 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                             <RadioGroup options={['Below 1yr','1yr','2yr','3yr','4yr']} value={mother.age_interest_daycare} onChange={v => setM('age_interest_daycare', v)} />
                         </div>
                     </Section>
+                    )}
 
-                    {/* FORM 1C - Family Profile */}
+                    {/* Step 3 — Family */}
+                    {step === 3 && (
                     <Section title="Form 1C — Family Profile">
                         <div>
                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">A. Home Ownership</p>
@@ -375,19 +404,50 @@ export default function ChildCreate({ puroks }: { puroks: string[] }) {
                             </div>
                         </div>
                     </Section>
+                    )}
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-3">
-                        <button type="submit" disabled={processing}
-                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50">
-                            <Save className="w-4 h-4" />
-                            {processing ? 'Saving...' : 'Create Child Record'}
-                        </button>
+                    {/* Step 4 — Review */}
+                    {step === 4 && (
+                    <Section title="Review & Submit">
+                        <p className="text-sm text-slate-600">Please review all information before submitting.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <div><span className="text-slate-400">Name:</span> <span className="font-medium text-slate-700">{form.first_name} {form.last_name}</span></div>
+                            <div><span className="text-slate-400">Sex:</span> <span className="font-medium text-slate-700">{form.sex}</span></div>
+                            <div><span className="text-slate-400">Birthday:</span> <span className="font-medium text-slate-700">{form.birthdate}</span></div>
+                            <div><span className="text-slate-400">Age:</span> <span className="font-medium text-slate-700">{form.age}</span></div>
+                            <div><span className="text-slate-400">Address:</span> <span className="font-medium text-slate-700">{form.address}</span></div>
+                            <div><span className="text-slate-400">Purok:</span> <span className="font-medium text-slate-700">{form.purok_zone}</span></div>
+                            <div><span className="text-slate-400">Father:</span> <span className="font-medium text-slate-700">{father.first_name} {father.last_name}</span></div>
+                            <div><span className="text-slate-400">Mother:</span> <span className="font-medium text-slate-700">{mother.first_name} {mother.last_name}</span></div>
+                        </div>
+                    </Section>
+                    )}
+
+                    {/* Nav buttons */}
+                    <div className="flex items-center gap-3 pt-2">
+                        {step > 0 && (
+                            <button type="button" onClick={() => setStep(s => s - 1)}
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
+                                <ArrowLeft className="w-4 h-4" /> Back
+                            </button>
+                        )}
+                        {step < STEPS.length - 1 ? (
+                            <button type="button" onClick={() => setStep(s => s + 1)}
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all">
+                                Next <ArrowRight className="w-4 h-4" />
+                            </button>
+                        ) : (
+                            <button type="submit" disabled={processing}
+                                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50">
+                                <Save className="w-4 h-4" /> {processing ? 'Saving...' : 'Create Child Record'}
+                            </button>
+                        )}
                         <Link href={route('admin.children.index')}
-                            className="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
+                            className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
                             Cancel
                         </Link>
                     </div>
+
                 </form>
             </div>
         </AdminLayout>
