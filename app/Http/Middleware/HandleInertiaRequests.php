@@ -67,6 +67,26 @@ class HandleInertiaRequests extends Middleware
                 ? \App\Models\Message::where('receiver_id', $request->user()->id)->whereNull('read_at')->count()
                 : 0, 0),
             'barangay' => rescue(fn() => \App\Models\BarangaySetting::allKeyed(), []),
+            'announcements' => rescue(function () use ($request) {
+                if (!$request->user() || $request->user()->role !== 'parent') return [];
+                return \App\Models\Notification::where('user_id', $request->user()->id)
+                    ->where('type', 'admin_announcement')
+                    ->whereNull('read_at')
+                    ->where(function ($q) { $q->whereNull('expires_at')->orWhere('expires_at', '>', now()); })
+                    ->where(function ($q) { $q->whereNull('scheduled_at')->orWhere('scheduled_at', '<=', now()); })
+                    ->orderBy('created_at', 'desc')
+                    ->take(5)
+                    ->get(['id', 'title', 'message', 'read_at', 'created_at', 'expires_at', 'data'])
+                    ->map(fn($n) => [
+                        'id'              => $n->id,
+                        'title'           => $n->title,
+                        'message'         => $n->message,
+                        'read_at'         => $n->read_at,
+                        'created_at'      => $n->created_at,
+                        'expires_at'      => $n->expires_at,
+                        'display_minutes' => (int) (($n->data ?? [])['display_minutes'] ?? 5),
+                    ])->values();
+            }, []),
         ]);
     }
 }

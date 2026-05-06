@@ -9,6 +9,7 @@ import DaycareLogo from '@/components/daycare-logo';
 import { ReactNode } from 'react';
 import Toast from '@/components/toast';
 import NotificationBell from '@/components/notification-bell';
+import AnnouncementBanner from '@/components/AnnouncementBanner';
 
 const menuGroups = [
     {
@@ -219,6 +220,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
             </aside>
 
             <main className="flex-1 overflow-y-auto min-w-0">
+                <AnnouncementBanner announcements={(usePage().props as any).announcements ?? []} />
                 <div
                     className="lg:hidden sticky top-0 z-10 px-4 py-3 flex items-center gap-3 no-print"
                     style={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.8)' }}

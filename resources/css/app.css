@@ -251,6 +251,19 @@
     animation: spin-slow 8s linear infinite;
 }
 
+/* Announcement ticker */
+@keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+    display: inline-block;
+    animation: ticker 18s linear infinite;
+}
+.animate-ticker:hover {
+    animation-play-state: paused;
+}
+
 .animation-delay-1000 {
     animation-delay: 1s;
 }

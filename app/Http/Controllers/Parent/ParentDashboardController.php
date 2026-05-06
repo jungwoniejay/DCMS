@@ -59,9 +59,27 @@ class ParentDashboardController extends Controller
 
         $announcements = \App\Models\Notification::where('user_id', $parentId)
             ->where('type', 'admin_announcement')
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('scheduled_at')->orWhere('scheduled_at', '<=', now());
+            })
             ->orderBy('created_at', 'desc')
             ->take(5)
-            ->get(['id', 'title', 'message', 'read_at', 'created_at']);
+            ->get(['id', 'title', 'message', 'read_at', 'created_at', 'expires_at', 'data'])
+            ->map(function ($n) {
+                $data = $n->data ?? [];
+                return [
+                    'id'               => $n->id,
+                    'title'            => $n->title,
+                    'message'          => $n->message,
+                    'read_at'          => $n->read_at,
+                    'created_at'       => $n->created_at,
+                    'expires_at'       => $n->expires_at,
+                    'display_minutes'  => (int) ($data['display_minutes'] ?? 5),
+                ];
+            });
 
         return Inertia::render('parent/Dashboard', [
             'children'           => $children,

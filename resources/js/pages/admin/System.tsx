@@ -76,7 +76,7 @@ export default function System({ users, stats, barangay_settings, provinces, cit
         }
     };
 
-    const announcementForm = useForm({ title: '', message: '', scheduled_at: '', expires_at: '' });
+    const announcementForm = useForm({ title: '', message: '', scheduled_at: '', expires_at: '', display_minutes: '5' });
 
     const handleSendAnnouncement = (e: React.FormEvent) => {
         e.preventDefault();
@@ -371,7 +371,7 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                             className={`${ic} resize-none`} rows={4} placeholder="Write your announcement here..." required />
                                         {announcementForm.errors.message && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.message}</p>}
                                     </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
                                         <div>
                                             <label className={lc}>Schedule Date & Time <span className="text-slate-400 font-normal">(optional)</span></label>
                                             <input type="datetime-local" value={announcementForm.data.scheduled_at}
@@ -385,8 +385,16 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                             <input type="datetime-local" value={announcementForm.data.expires_at}
                                                 onChange={e => announcementForm.setData('expires_at', e.target.value)}
                                                 className={ic} />
-                                            <p className="text-[10px] text-slate-400 mt-1">Announcement hides from parents after this time</p>
+                                            <p className="text-[10px] text-slate-400 mt-1">Banner hides from parents after this time</p>
                                             {announcementForm.errors.expires_at && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.expires_at}</p>}
+                                        </div>
+                                        <div>
+                                            <label className={lc}>Banner Display Duration (minutes)</label>
+                                            <input type="number" min="1" max="60" value={announcementForm.data.display_minutes}
+                                                onChange={e => announcementForm.setData('display_minutes', e.target.value)}
+                                                className={ic} />
+                                            <p className="text-[10px] text-slate-400 mt-1">How long the ticker stays visible per session</p>
+                                            {announcementForm.errors.display_minutes && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.display_minutes}</p>}
                                         </div>
                                     </div>
                                     <button type="submit" disabled={announcementForm.processing}
