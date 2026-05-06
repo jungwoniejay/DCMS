@@ -74,7 +74,7 @@ function MultiCheck({ label, options, value, onChange, span }: {
     );
 }
 
-export default function EnrollChild({ puroks }: { puroks: string[] }) {
+export default function EnrollChild({ puroks, cities }: { puroks: string[]; cities: string[] }) {
     const [step, setStep] = useState(0);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -294,8 +294,11 @@ export default function EnrollChild({ puroks }: { puroks: string[] }) {
                                 <Field label="Age">
                                     <input type="number" value={data.child_age} readOnly className={`${ic} bg-sky-50 cursor-not-allowed`} placeholder="Auto-calculated" />
                                 </Field>
-                                <Field label="Address *" error={errors.child_address} span="md:col-span-3">
-                                    <textarea value={data.child_address} onChange={e => setData('child_address', e.target.value)} className={`${ic} resize-none`} rows={2} required />
+                                <Field label="Address (City/Municipality) *" error={errors.child_address} span="md:col-span-3">
+                                    <select value={data.child_address} onChange={e => setData('child_address', e.target.value)} className={ic} required>
+                                        <option value="">Select City/Municipality...</option>
+                                        {cities.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
                                 </Field>
                                 <Field label="First Language *">
                                     <input type="text" value={data.child_first_language} onChange={e => setData('child_first_language', e.target.value)} className={ic} required />
