@@ -1,5 +1,5 @@
 import { usePage, router } from '@inertiajs/react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Bell, CheckCircle, XCircle, X, CheckCheck, Megaphone } from 'lucide-react';
 import axios from 'axios';
@@ -13,51 +13,48 @@ interface NotificationItem {
     created_at: string;
 }
 
-interface Pos { top: number; right: number; }
+const DROPDOWN_W = 320;
 
 export default function NotificationBell() {
     const { props } = usePage();
     const count = (props as any).notifications_count ?? 0;
     const [open, setOpen] = useState(false);
-    const [pos, setPos] = useState<Pos>({ top: 0, right: 0 });
+    const [style, setStyle] = useState<React.CSSProperties>({ display: 'none' });
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [loading, setLoading] = useState(false);
     const btnRef = useRef<HTMLButtonElement>(null);
     const dropRef = useRef<HTMLDivElement>(null);
+
+    const calcStyle = (): React.CSSProperties => {
+        if (!btnRef.current) return { display: 'none' };
+        const r = btnRef.current.getBoundingClientRect();
+        // Try to align left edge with button, but clamp so it doesn't go off-screen right
+        let left = r.left;
+        if (left + DROPDOWN_W > window.innerWidth - 8) {
+            left = window.innerWidth - DROPDOWN_W - 8;
+        }
+        if (left < 8) left = 8;
+        return {
+            position: 'fixed',
+            top: r.bottom + 6,
+            left,
+            width: DROPDOWN_W,
+            zIndex: 9999,
+        };
+    };
 
     // Close on outside click
     useEffect(() => {
         if (!open) return;
         const handler = (e: MouseEvent) => {
             if (
-                btnRef.current && !btnRef.current.contains(e.target as Node) &&
-                dropRef.current && !dropRef.current.contains(e.target as Node)
+                !btnRef.current?.contains(e.target as Node) &&
+                !dropRef.current?.contains(e.target as Node)
             ) setOpen(false);
         };
         document.addEventListener('mousedown', handler);
         return () => document.removeEventListener('mousedown', handler);
     }, [open]);
-
-    // Reposition on scroll/resize
-    const updatePos = useCallback(() => {
-        if (!btnRef.current) return;
-        const r = btnRef.current.getBoundingClientRect();
-        setPos({
-            top: r.bottom + 8,
-            right: window.innerWidth - r.right,
-        });
-    }, []);
-
-    useEffect(() => {
-        if (!open) return;
-        updatePos();
-        window.addEventListener('scroll', updatePos, true);
-        window.addEventListener('resize', updatePos);
-        return () => {
-            window.removeEventListener('scroll', updatePos, true);
-            window.removeEventListener('resize', updatePos);
-        };
-    }, [open, updatePos]);
 
     const fetchNotifications = async () => {
         setLoading(true);
@@ -69,12 +66,10 @@ export default function NotificationBell() {
     };
 
     const handleOpen = () => {
-        const next = !open;
-        setOpen(next);
-        if (next) {
-            updatePos();
-            fetchNotifications();
-        }
+        if (open) { setOpen(false); return; }
+        setStyle(calcStyle());
+        setOpen(true);
+        fetchNotifications();
     };
 
     const markRead = async (id: number) => {
@@ -90,29 +85,20 @@ export default function NotificationBell() {
     };
 
     const typeIcon = (type: string) => {
-        if (type === 'enrollment_approved') return <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />;
-        if (type === 'enrollment_rejected') return <XCircle className="w-4 h-4 text-red-500 shrink-0" />;
-        if (type === 'admin_announcement') return <Megaphone className="w-4 h-4 text-sky-500 shrink-0" />;
-        return <Bell className="w-4 h-4 text-violet-500 shrink-0" />;
+        if (type === 'enrollment_approved') return <CheckCircle className="w-4 h-4 text-emerald-500" />;
+        if (type === 'enrollment_rejected') return <XCircle className="w-4 h-4 text-red-500" />;
+        if (type === 'admin_announcement') return <Megaphone className="w-4 h-4 text-sky-500" />;
+        return <Bell className="w-4 h-4 text-violet-500" />;
     };
 
-    const dropdown = open ? (
+    const dropdown = (
         <div
             ref={dropRef}
-            style={{
-                position: 'fixed',
-                top: pos.top,
-                right: pos.right,
-                zIndex: 9999,
-                width: 320,
-                background: 'rgba(255,255,255,0.97)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(226,232,240,1)',
-                borderRadius: '1rem',
-                overflow: 'hidden',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-            }}
+            style={open ? style : { display: 'none' }}
+            className="rounded-2xl overflow-hidden"
+            onClick={e => e.stopPropagation()}
         >
+            <div style={{ background: 'rgba(255,255,255,0.98)', border: '1px solid #e2e8f0', borderRadius: '1rem', overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.14)' }}>
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
                     <div className="flex items-center gap-2">
@@ -124,12 +110,12 @@ export default function NotificationBell() {
                     <div className="flex items-center gap-2">
                         {notifications.some(n => !n.read_at) && (
                             <button onClick={markAllRead}
-                                className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-800 font-semibold transition-colors">
+                                className="flex items-center gap-1 text-xs text-violet-600 hover:text-violet-800 font-semibold">
                                 <CheckCheck className="w-3.5 h-3.5" /> Mark all read
                             </button>
                         )}
                         <button onClick={() => setOpen(false)}
-                            className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">
+                            className="p-1 rounded-lg text-slate-400 hover:bg-slate-100">
                             <X className="w-3.5 h-3.5" />
                         </button>
                     </div>
@@ -151,8 +137,8 @@ export default function NotificationBell() {
                         notifications.map(n => (
                             <div key={n.id}
                                 onClick={() => !n.read_at && markRead(n.id)}
-                                className={`flex items-start gap-3 px-4 py-3 border-b border-slate-50 transition-colors ${
-                                    !n.read_at ? 'bg-violet-50/40 hover:bg-violet-50 cursor-pointer' : 'hover:bg-slate-50 cursor-default'
+                                className={`flex items-start gap-3 px-4 py-3 border-b border-slate-50 ${
+                                    !n.read_at ? 'bg-violet-50/40 hover:bg-violet-50 cursor-pointer' : 'hover:bg-slate-50'
                                 }`}>
                                 <div className="mt-0.5 shrink-0">{typeIcon(n.type)}</div>
                                 <div className="flex-1 min-w-0">
@@ -167,8 +153,9 @@ export default function NotificationBell() {
                         ))
                     )}
                 </div>
+            </div>
         </div>
-    ) : null;
+    );
 
     return (
         <>
@@ -181,7 +168,7 @@ export default function NotificationBell() {
                     </span>
                 )}
             </button>
-            {typeof document !== 'undefined' && createPortal(dropdown, document.body)}
+            {createPortal(dropdown, document.body)}
         </>
     );
 }
