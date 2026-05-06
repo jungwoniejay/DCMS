@@ -34,9 +34,8 @@ const Section = ({ title, children }: any) => (
     </div>
 );
 
-const RadioGroup = ({ options, value, onChange }: { label?: string; options: string[]; value: string; onChange: (v: string) => void }) => (
+const RadioGroup = ({ options, value, onChange }: { options: string[]; value: string; onChange: (v: string) => void }) => (
     <div>
-        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">{label}</p>
         <div className="flex flex-wrap gap-x-4 gap-y-1">
             {options.map(o => (
                 <label key={o} className="flex items-center gap-1.5 text-sm text-slate-600 cursor-pointer">
@@ -169,7 +168,7 @@ export default function ChildCreate({ puroks, cities }: { puroks: string[]; citi
 
                 <form onSubmit={handleSubmit} className="space-y-5">
 
-                    {/* Step 0 — Child Info */}}
+                    {/* Step 0 — Child Info */}
                     {step === 0 && (
                     <>
                     {/* Profile Picture */}
