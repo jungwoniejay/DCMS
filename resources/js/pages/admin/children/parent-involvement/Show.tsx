@@ -1,11 +1,10 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
-import { ArrowLeft, Edit, Trash2, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft, Edit, Trash2, Users, Phone, Mail, Heart, Plus } from 'lucide-react';
 
 export default function ParentInvolvementShow({ child, parentInvolvement }: any) {
     const handleDelete = () => {
-        if (confirm('Are you sure you want to delete this parent involvement information?')) {
+        if (confirm('Delete this parent involvement record?')) {
             router.delete(route('admin.children.parent-involvement.destroy', child.id));
         }
     };
@@ -14,98 +13,110 @@ export default function ParentInvolvementShow({ child, parentInvolvement }: any)
 
     return (
         <AdminLayout>
-            <Head title={`Parent Involvement - ${child.first_name} ${child.last_name}`} />
+            <Head title={`Parent Involvement — ${child.first_name} ${child.last_name}`} />
 
-            <div className="space-y-6">
+            <div className="space-y-5">
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                        <Link
-                            href={route('admin.children.show', child.id)}
-                            className="text-gray-600 hover:text-gray-900"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                    <div className="flex items-center gap-4">
+                        <Link href={route('admin.children.show', child.id)}
+                            className="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all shadow-sm">
+                            <ArrowLeft className="w-4 h-4" />
                         </Link>
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Parent Involvement
-                            </h1>
-                            <p className="text-gray-600 mt-1">Family support and involvement records</p>
+                            <h1 className="text-2xl font-bold text-slate-800">Parent Involvement</h1>
+                            <p className="text-slate-500 text-sm mt-0.5">{child.first_name} {child.last_name} · Family support and involvement records</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
                         {hasData ? (
                             <>
-                                <Link href={route('admin.children.parent-involvement.edit', child.id)}>
-                                    <Button>
-                                        <Edit className="w-4 h-4 mr-2" />
-                                        Edit
-                                    </Button>
+                                <Link href={route('admin.children.parent-involvement.edit', child.id)}
+                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-all shadow-sm">
+                                    <Edit className="w-3.5 h-3.5" /> Edit
                                 </Link>
-                                <Button onClick={handleDelete} variant="outline" className="border-red-600 text-red-600 hover:bg-red-50">
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    Delete
-                                </Button>
+                                <button onClick={handleDelete}
+                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-red-200 text-red-500 text-xs font-semibold hover:bg-red-50 transition-all shadow-sm">
+                                    <Trash2 className="w-3.5 h-3.5" /> Delete
+                                </button>
                             </>
                         ) : (
-                            <Link href={route('admin.children.parent-involvement.edit', child.id)}>
-                                <Button className="bg-green-600 hover:bg-green-700">
-                                    Add Parent Involvement
-                                </Button>
+                            <Link href={route('admin.children.parent-involvement.edit', child.id)}
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-xs font-semibold shadow-md hover:shadow-lg transition-all">
+                                <Plus className="w-3.5 h-3.5" /> Add Parent Involvement
                             </Link>
                         )}
                     </div>
                 </div>
 
                 {hasData ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Parent Information */}
-                        <Section icon={<Users />} title="Parent/Guardian Information">
-                            <InfoGrid>
-                                <InfoItem label="Name" value={parentInvolvement.parent_name} />
-                                <InfoItem label="Relationship" value={parentInvolvement.parent_relationship} />
-                                <InfoItem label="Contact" value={parentInvolvement.parent_contact} />
-                                <InfoItem label="Email" value={parentInvolvement.parent_email} />
-                            </InfoGrid>
-                        </Section>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {/* Parent Info */}
+                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div className="px-5 py-4 border-b border-slate-50 flex items-center gap-2.5">
+                                <div className="w-7 h-7 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center">
+                                    <Users className="w-4 h-4" />
+                                </div>
+                                <h2 className="text-sm font-bold text-teal-600">Parent / Guardian Information</h2>
+                            </div>
+                            <div className="p-5 space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <InfoItem label="Name" value={parentInvolvement.parent_name} />
+                                    <InfoItem label="Relationship" value={parentInvolvement.parent_relationship} />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <InfoItem label={<span className="inline-flex items-center gap-1"><Phone className="w-3 h-3" />Contact</span>} value={parentInvolvement.parent_contact} />
+                                    <InfoItem label={<span className="inline-flex items-center gap-1"><Mail className="w-3 h-3" />Email</span>} value={parentInvolvement.parent_email} />
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Support Roles */}
-                        <Section icon={<Users />} title="Support Roles">
-                            {parentInvolvement.support_roles && parentInvolvement.support_roles.length > 0 ? (
-                                <div className="flex flex-wrap gap-2">
-                                    {parentInvolvement.support_roles.map((role: string, index: number) => (
-                                        <span
-                                            key={index}
-                                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
-                                        >
-                                            {role}
-                                        </span>
-                                    ))}
+                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div className="px-5 py-4 border-b border-slate-50 flex items-center gap-2.5">
+                                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                    <Heart className="w-4 h-4" />
                                 </div>
-                            ) : (
-                                <p className="text-sm text-gray-500">No support roles selected</p>
-                            )}
-                        </Section>
+                                <h2 className="text-sm font-bold text-emerald-600">Support Roles</h2>
+                            </div>
+                            <div className="p-5">
+                                {parentInvolvement.support_roles?.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                        {parentInvolvement.support_roles.map((role: string, i: number) => (
+                                            <span key={i} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                                {role}
+                                            </span>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-slate-400 italic">No support roles selected</p>
+                                )}
+                            </div>
+                        </div>
 
-                        {/* Additional Notes */}
+                        {/* Notes */}
                         {parentInvolvement.additional_notes && (
-                            <div className="lg:col-span-2">
-                                <Section icon={<Users />} title="Additional Notes">
-                                    <p className="text-sm text-gray-700 leading-relaxed">{parentInvolvement.additional_notes}</p>
-                                </Section>
+                            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                                <div className="px-5 py-4 border-b border-slate-50">
+                                    <h2 className="text-sm font-bold text-slate-500">Additional Notes</h2>
+                                </div>
+                                <div className="p-5">
+                                    <p className="text-sm text-slate-600 leading-relaxed">{parentInvolvement.additional_notes}</p>
+                                </div>
                             </div>
                         )}
                     </div>
                 ) : (
-                    <div className="bg-white rounded-lg shadow p-12 text-center">
-                        <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Parent Involvement Data</h3>
-                        <p className="text-gray-600 mb-6">There is no parent involvement information recorded for this child yet.</p>
-                        <Link href={route('admin.children.parent-involvement.edit', child.id)}>
-                            <Button className="bg-green-600 hover:bg-green-700">
-                                Add Parent Involvement
-                            </Button>
+                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-12 text-center">
+                        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                            <Users className="w-8 h-8 text-slate-300" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-slate-700 mb-1">No Parent Involvement Data</h3>
+                        <p className="text-slate-400 text-sm mb-6">No parent involvement information has been recorded yet.</p>
+                        <Link href={route('admin.children.parent-involvement.edit', child.id)}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all">
+                            <Plus className="w-4 h-4" /> Add Parent Involvement
                         </Link>
                     </div>
                 )}
@@ -114,27 +125,11 @@ export default function ParentInvolvementShow({ child, parentInvolvement }: any)
     );
 }
 
-function Section({ icon, title, children }: any) {
+function InfoItem({ label, value }: { label: any; value?: string | null }) {
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
-                <div className="p-2 bg-green-50 rounded-lg text-green-600">{icon}</div>
-                <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-            </div>
-            <div className="p-6">{children}</div>
-        </div>
-    );
-}
-
-function InfoGrid({ children }: any) {
-    return <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>;
-}
-
-function InfoItem({ label, value }: any) {
-    return (
-        <div className="bg-gray-50 rounded-lg px-4 py-3">
-            <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">{label}</span>
-            <p className="text-sm font-medium text-gray-900 mt-1">{value || 'N/A'}</p>
+        <div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
+            <p className="text-sm font-medium text-slate-700">{value || <span className="text-slate-300 italic font-normal">N/A</span>}</p>
         </div>
     );
 }

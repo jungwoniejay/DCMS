@@ -1,11 +1,13 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
-import { ArrowLeft, Save, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft, Save, Users, Phone, Mail, Heart } from 'lucide-react';
 
-const relationshipOptions = ['Mother', 'Father', 'Guardian'];
+const ic = 'w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent transition-all';
+const lc = 'block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5';
 
-const supportRoleOptions = [
+const RELATIONSHIPS = ['Mother', 'Father', 'Guardian', 'Grandparent', 'Aunt/Uncle', 'Sibling', 'Other'];
+
+const SUPPORT_ROLES = [
     'Volunteer in classroom',
     'Help with field trips',
     'Assist with events',
@@ -18,21 +20,21 @@ const supportRoleOptions = [
     'Share professional expertise',
     'Help with gardening',
     'Assist with meals',
-    'Other'
+    'Other',
 ];
 
-export default function ParentInvolvementEdit({ child, parentInvolvement }: any) {
-    const { data, setData, post, put, processing, errors } = useForm({
-        child_id: child.id,
-        parent_name: parentInvolvement?.parent_name || '',
-        parent_relationship: parentInvolvement?.parent_relationship || '',
-        parent_contact: parentInvolvement?.parent_contact || '',
-        parent_email: parentInvolvement?.parent_email || '',
-        support_roles: parentInvolvement?.support_roles || [],
-        additional_notes: parentInvolvement?.additional_notes || '',
-    });
-
+export default function ParentInvolvementEdit({ child, parentInvolvement, prefill }: any) {
     const isEditing = parentInvolvement !== null;
+
+    const { data, setData, post, put, processing, errors } = useForm({
+        child_id:            child.id,
+        parent_name:         parentInvolvement?.parent_name         ?? prefill?.parent_name         ?? '',
+        parent_relationship: parentInvolvement?.parent_relationship ?? prefill?.parent_relationship ?? '',
+        parent_contact:      parentInvolvement?.parent_contact      ?? prefill?.parent_contact      ?? '',
+        parent_email:        parentInvolvement?.parent_email        ?? prefill?.parent_email        ?? '',
+        support_roles:       parentInvolvement?.support_roles       ?? [],
+        additional_notes:    parentInvolvement?.additional_notes    ?? '',
+    });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,177 +45,151 @@ export default function ParentInvolvementEdit({ child, parentInvolvement }: any)
         }
     };
 
-    const handleRoleToggle = (role: string) => {
+    const toggleRole = (role: string) => {
         const current = data.support_roles || [];
-        if (current.includes(role)) {
-            setData('support_roles', current.filter((r: string) => r !== role));
-        } else {
-            setData('support_roles', [...current, role]);
-        }
+        setData('support_roles', current.includes(role)
+            ? current.filter((r: string) => r !== role)
+            : [...current, role]
+        );
     };
 
     return (
         <AdminLayout>
-            <Head title={`${isEditing ? 'Edit' : 'Add'} Parent Involvement - ${child.first_name} ${child.last_name}`} />
+            <Head title={`${isEditing ? 'Edit' : 'Add'} Parent Involvement — ${child.first_name} ${child.last_name}`} />
 
-            <div className="space-y-6">
+            <div className="space-y-5">
                 {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                        <Link
-                            href={route('admin.children.parent-involvement.show', child.id)}
-                            className="text-gray-600 hover:text-gray-900"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </Link>
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                {isEditing ? 'Edit' : 'Add'} Parent Involvement
-                            </h1>
-                            <p className="text-gray-600 mt-1">For: {child.first_name} {child.last_name}</p>
-                        </div>
+                <div className="flex items-center gap-4">
+                    <Link href={route('admin.children.parent-involvement.show', child.id)}
+                        className="p-2 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all shadow-sm">
+                        <ArrowLeft className="w-4 h-4" />
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-800">
+                            {isEditing ? 'Edit' : 'Add'} Parent Involvement
+                        </h1>
+                        <p className="text-slate-500 text-sm mt-0.5">{child.first_name} {child.last_name}</p>
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Parent Information */}
-                        <Section icon={<Users />} title="Parent/Guardian Information">
-                            <div className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+                        {/* Parent/Guardian Info */}
+                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div className="px-5 py-4 border-b border-slate-50 flex items-center gap-2.5">
+                                <div className="w-7 h-7 rounded-lg bg-teal-100 text-teal-600 flex items-center justify-center">
+                                    <Users className="w-4 h-4" />
+                                </div>
+                                <h2 className="text-sm font-bold text-teal-600">Parent / Guardian Information</h2>
+                            </div>
+                            <div className="p-5 space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Parent/Guardian Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.parent_name}
-                                        onChange={(e) => setData('parent_name', e.target.value)}
-                                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-green-500 focus:ring-green-500 placeholder-gray-400"
-                                        placeholder="Enter parent or guardian name"
-                                    />
-                                    {errors.parent_name && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.parent_name}</p>
-                                    )}
+                                    <label className={lc}>Full Name</label>
+                                    <input type="text" value={data.parent_name}
+                                        onChange={e => setData('parent_name', e.target.value)}
+                                        className={ic} placeholder="e.g. Maria Santos" />
+                                    {errors.parent_name && <p className="text-xs text-red-500 mt-1">{errors.parent_name}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Relationship to Child
-                                    </label>
-                                    <select
-                                        value={data.parent_relationship}
-                                        onChange={(e) => setData('parent_relationship', e.target.value)}
-                                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-green-500 focus:ring-green-500"
-                                    >
-                                        <option value="">Select relationship</option>
-                                        {relationshipOptions.map((option) => (
-                                            <option key={option} value={option}>{option}</option>
+                                    <label className={lc}>Relationship to Child</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {RELATIONSHIPS.map(rel => (
+                                            <button key={rel} type="button"
+                                                onClick={() => setData('parent_relationship', rel)}
+                                                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                                                    data.parent_relationship === rel
+                                                        ? 'bg-teal-50 border-teal-300 text-teal-700'
+                                                        : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
+                                                }`}>
+                                                {rel}
+                                            </button>
                                         ))}
-                                    </select>
-                                    {errors.parent_relationship && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.parent_relationship}</p>
-                                    )}
+                                    </div>
+                                    {errors.parent_relationship && <p className="text-xs text-red-500 mt-1">{errors.parent_relationship}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Contact Number
+                                    <label className={lc}>
+                                        <span className="inline-flex items-center gap-1"><Phone className="w-3 h-3" /> Contact Number</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        value={data.parent_contact}
-                                        onChange={(e) => setData('parent_contact', e.target.value)}
-                                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-green-500 focus:ring-green-500 placeholder-gray-400"
-                                        placeholder="Enter contact number"
-                                    />
-                                    {errors.parent_contact && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.parent_contact}</p>
-                                    )}
+                                    <input type="text" value={data.parent_contact}
+                                        onChange={e => setData('parent_contact', e.target.value)}
+                                        className={ic} placeholder="e.g. 09XX XXX XXXX" />
+                                    {errors.parent_contact && <p className="text-xs text-red-500 mt-1">{errors.parent_contact}</p>}
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Email Address
+                                    <label className={lc}>
+                                        <span className="inline-flex items-center gap-1"><Mail className="w-3 h-3" /> Email Address</span>
                                     </label>
-                                    <input
-                                        type="email"
-                                        value={data.parent_email}
-                                        onChange={(e) => setData('parent_email', e.target.value)}
-                                        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-green-500 focus:ring-green-500 placeholder-gray-400"
-                                        placeholder="Enter email address"
-                                    />
-                                    {errors.parent_email && (
-                                        <p className="text-sm text-red-600 mt-1">{errors.parent_email}</p>
-                                    )}
+                                    <input type="email" value={data.parent_email}
+                                        onChange={e => setData('parent_email', e.target.value)}
+                                        className={ic} placeholder="e.g. parent@email.com" />
+                                    {errors.parent_email && <p className="text-xs text-red-500 mt-1">{errors.parent_email}</p>}
                                 </div>
                             </div>
-                        </Section>
+                        </div>
 
                         {/* Support Roles */}
-                        <Section icon={<Users />} title="Support Roles">
-                            <div className="space-y-4">
-                                <p className="text-sm text-gray-600 mb-2">
-                                    Select all roles the parent/guardian is willing to support:
-                                </p>
-                                <div className="grid grid-cols-1 gap-2 max-h-96 overflow-y-auto">
-                                    {supportRoleOptions.map((role) => (
-                                        <label key={role} className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-gray-50">
-                                            <input
-                                                type="checkbox"
-                                                checked={data.support_roles?.includes(role) || false}
-                                                onChange={() => handleRoleToggle(role)}
-                                                className="rounded border-gray-300 text-green-600 focus:ring-green-500"
-                                            />
-                                            <span className="text-sm text-gray-900">{role}</span>
-                                        </label>
-                                    ))}
+                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div className="px-5 py-4 border-b border-slate-50 flex items-center gap-2.5">
+                                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                    <Heart className="w-4 h-4" />
                                 </div>
-                                {errors.support_roles && (
-                                    <p className="text-sm text-red-600 mt-1">{errors.support_roles}</p>
-                                )}
+                                <h2 className="text-sm font-bold text-emerald-600">Support Roles</h2>
                             </div>
-                        </Section>
-
-                        {/* Additional Notes */}
-                        <div className="lg:col-span-2">
-                            <Section icon={<Users />} title="Additional Notes">
-                                <textarea
-                                    value={data.additional_notes}
-                                    onChange={(e) => setData('additional_notes', e.target.value)}
-                                    className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-green-500 focus:ring-green-500 placeholder-gray-400"
-                                    rows={4}
-                                    placeholder="Enter any additional notes about parent involvement..."
-                                />
-                            </Section>
+                            <div className="p-5">
+                                <p className="text-xs text-slate-400 mb-3">Select all roles the parent/guardian is willing to support:</p>
+                                <div className="grid grid-cols-1 gap-2">
+                                    {SUPPORT_ROLES.map(role => {
+                                        const active = data.support_roles?.includes(role);
+                                        return (
+                                            <label key={role} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border cursor-pointer transition-all ${
+                                                active
+                                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                                                    : 'bg-white border-slate-100 text-slate-600 hover:bg-slate-50'
+                                            }`}>
+                                                <input type="checkbox" checked={active || false}
+                                                    onChange={() => toggleRole(role)}
+                                                    className="accent-emerald-500 shrink-0" />
+                                                <span className="text-sm font-medium">{role}</span>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Submit Buttons */}
-                    <div className="flex items-center gap-4 mt-6">
-                        <Button type="submit" disabled={processing} className="bg-green-600 hover:bg-green-700">
-                            <Save className="w-4 h-4 mr-2" />
-                            {isEditing ? 'Update' : 'Save'} Parent Involvement
-                        </Button>
-                        <Link href={route('admin.children.parent-involvement.show', child.id)}>
-                            <Button variant="outline" type="button">
-                                Cancel
-                            </Button>
+                    {/* Additional Notes */}
+                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div className="px-5 py-4 border-b border-slate-50">
+                            <h2 className="text-sm font-bold text-slate-500">Additional Notes</h2>
+                        </div>
+                        <div className="p-5">
+                            <textarea value={data.additional_notes}
+                                onChange={e => setData('additional_notes', e.target.value)}
+                                className={ic} rows={3}
+                                placeholder="Enter any additional notes about parent involvement..." />
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-3">
+                        <button type="submit" disabled={processing}
+                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50">
+                            <Save className="w-4 h-4" />
+                            {processing ? 'Saving...' : `${isEditing ? 'Update' : 'Save'} Parent Involvement`}
+                        </button>
+                        <Link href={route('admin.children.parent-involvement.show', child.id)}
+                            className="inline-flex items-center px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all">
+                            Cancel
                         </Link>
                     </div>
                 </form>
             </div>
         </AdminLayout>
-    );
-}
-
-function Section({ icon, title, children }: any) {
-    return (
-        <div className="bg-gray-50 rounded-lg shadow p-6">
-            <div className="flex items-center gap-2 mb-4">
-                <div className="text-green-600">{icon}</div>
-                <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
-            </div>
-            {children}
-        </div>
     );
 }

@@ -23,11 +23,27 @@ class ParentInvolvementController extends Controller
 
     public function edit($childId)
     {
-        $child = Child::with(['parentInvolvement'])->findOrFail($childId);
-        
+        $child = Child::with(['parentInvolvement', 'guardians', 'fatherProfile', 'motherProfile'])->findOrFail($childId);
+
+        // Build prefill from existing enrollment data
+        $guardian = $child->guardians->first();
+        $father   = $child->fatherProfile;
+        $mother   = $child->motherProfile;
+
+        $prefill = [
+            'parent_name'         => $guardian?->name
+                                  ?? ($father ? trim($father->first_name . ' ' . $father->last_name) : null)
+                                  ?? ($mother ? trim($mother->first_name . ' ' . $mother->last_name) : null)
+                                  ?? '',
+            'parent_relationship' => $guardian?->relationship ?? '',
+            'parent_contact'      => $guardian?->mobile_phone ?? '',
+            'parent_email'        => $guardian?->email ?? '',
+        ];
+
         return Inertia::render('admin/children/parent-involvement/Edit', [
-            'child' => $child,
+            'child'             => $child,
             'parentInvolvement' => $child->parentInvolvement,
+            'prefill'           => $prefill,
         ]);
     }
 
