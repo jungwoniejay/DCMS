@@ -28,19 +28,23 @@ export default function NotificationBell() {
     const calcStyle = (): React.CSSProperties => {
         if (!btnRef.current) return { display: 'none' };
         const r = btnRef.current.getBoundingClientRect();
-        // Try to align left edge with button, but clamp so it doesn't go off-screen right
+        const spaceBelow = window.innerHeight - r.bottom;
+        const spaceAbove = r.top;
+        const DROPDOWN_H = 340; // approximate max height
+
+        // Open upward if not enough space below
+        const openUp = spaceBelow < DROPDOWN_H && spaceAbove > spaceBelow;
+        let top = openUp ? r.top - DROPDOWN_H - 6 : r.bottom + 6;
+        if (top < 8) top = 8;
+
+        // Align left edge with button, clamp to viewport
         let left = r.left;
         if (left + DROPDOWN_W > window.innerWidth - 8) {
             left = window.innerWidth - DROPDOWN_W - 8;
         }
         if (left < 8) left = 8;
-        return {
-            position: 'fixed',
-            top: r.bottom + 6,
-            left,
-            width: DROPDOWN_W,
-            zIndex: 9999,
-        };
+
+        return { position: 'fixed', top, left, width: DROPDOWN_W, zIndex: 9999 };
     };
 
     // Close on outside click
