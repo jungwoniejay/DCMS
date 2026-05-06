@@ -16,7 +16,7 @@ class ParentDashboardController extends Controller
         $parentId = auth()->id();
 
         $children = Child::where('guardian_id', $parentId)
-            ->with(['familyProfile', 'healthAssessment', 'nutritionRecord'])
+            ->with(['familyProfile', 'healthAssessment.medicalAssessment', 'nutritionRecord'])
             ->get()
             ->map(function ($child) {
                 $latestNutrition = DB::table('nutrition_records')
@@ -33,7 +33,7 @@ class ParentDashboardController extends Controller
                     'status'              => $child->registration_status ?? 'Pending',
                     'zone'                => $child->familyProfile?->purok_zone ?? 'N/A',
                     'profile_picture'     => $child->profile_picture,
-                    'has_emergency_alert' => false,
+                    'has_emergency_alert' => !empty($child->healthAssessment?->medicalAssessment?->emergency_action_conditions),
                     'nutritional_status'  => $latestNutrition?->nutritional_status_result ?? 'Not assessed',
                     'height'              => $latestNutrition?->height_first ?? null,
                     'weight'              => $latestNutrition?->weight_first ?? null,
