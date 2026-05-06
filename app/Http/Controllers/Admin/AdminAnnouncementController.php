@@ -12,8 +12,10 @@ class AdminAnnouncementController extends Controller
     public function send(Request $request)
     {
         $request->validate([
-            'title'   => 'required|string|max:255',
-            'message' => 'required|string|max:1000',
+            'title'        => 'required|string|max:255',
+            'message'      => 'required|string|max:1000',
+            'scheduled_at' => 'nullable|date',
+            'expires_at'   => 'nullable|date|after:now',
         ]);
 
         $parents = User::where('role', 'parent')->pluck('id');
@@ -24,7 +26,9 @@ class AdminAnnouncementController extends Controller
                 'admin_announcement',
                 $request->title,
                 $request->message,
-                ['from' => 'admin']
+                ['from' => 'admin'],
+                $request->scheduled_at ?: null,
+                $request->expires_at   ?: null,
             );
         }
 

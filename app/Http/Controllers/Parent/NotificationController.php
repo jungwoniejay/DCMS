@@ -11,6 +11,12 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = Notification::where('user_id', auth()->id())
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('scheduled_at')->orWhere('scheduled_at', '<=', now());
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
@@ -21,6 +27,12 @@ class NotificationController extends Controller
     {
         $count = Notification::where('user_id', auth()->id())
             ->whereNull('read_at')
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('scheduled_at')->orWhere('scheduled_at', '<=', now());
+            })
             ->count();
 
         return response()->json(['count' => $count]);

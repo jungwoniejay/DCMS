@@ -76,7 +76,7 @@ export default function System({ users, stats, barangay_settings, provinces, cit
         }
     };
 
-    const announcementForm = useForm({ title: '', message: '' });
+    const announcementForm = useForm({ title: '', message: '', scheduled_at: '', expires_at: '' });
 
     const handleSendAnnouncement = (e: React.FormEvent) => {
         e.preventDefault();
@@ -356,7 +356,7 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                     <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-2">
                                         <Megaphone className="w-4 h-4" /> Send Announcement to All Parents
                                     </h2>
-                                    <p className="text-xs text-slate-400">This will appear on every parent's dashboard immediately.</p>
+                                    <p className="text-xs text-slate-400">This will appear on every parent's notification feed.</p>
                                 </div>
                                 <form onSubmit={handleSendAnnouncement} className="space-y-4">
                                     <div>
@@ -370,6 +370,24 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                         <textarea value={announcementForm.data.message} onChange={e => announcementForm.setData('message', e.target.value)}
                                             className={`${ic} resize-none`} rows={4} placeholder="Write your announcement here..." required />
                                         {announcementForm.errors.message && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.message}</p>}
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                                        <div>
+                                            <label className={lc}>Schedule Date & Time <span className="text-slate-400 font-normal">(optional)</span></label>
+                                            <input type="datetime-local" value={announcementForm.data.scheduled_at}
+                                                onChange={e => announcementForm.setData('scheduled_at', e.target.value)}
+                                                className={ic} />
+                                            <p className="text-[10px] text-slate-400 mt-1">Leave blank to send immediately</p>
+                                            {announcementForm.errors.scheduled_at && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.scheduled_at}</p>}
+                                        </div>
+                                        <div>
+                                            <label className={lc}>Expiry Date & Time <span className="text-slate-400 font-normal">(optional)</span></label>
+                                            <input type="datetime-local" value={announcementForm.data.expires_at}
+                                                onChange={e => announcementForm.setData('expires_at', e.target.value)}
+                                                className={ic} />
+                                            <p className="text-[10px] text-slate-400 mt-1">Announcement hides from parents after this time</p>
+                                            {announcementForm.errors.expires_at && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.expires_at}</p>}
+                                        </div>
                                     </div>
                                     <button type="submit" disabled={announcementForm.processing}
                                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all disabled:opacity-50">
