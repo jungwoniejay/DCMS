@@ -1,5 +1,5 @@
 import ParentLayout from '@/layouts/parent-layout';
-import { Syringe, AlertTriangle, Pill, Calendar } from 'lucide-react';
+import { Syringe, AlertTriangle, Pill, Calendar, X, Send } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -240,17 +240,27 @@ export default function Health({ healthData }: Props) {
         )}
 
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 print:hidden">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-xl font-bold mb-4">Schedule Appointment</h3>
-              
-              <div className="space-y-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:hidden">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md">
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Appointment Type</label>
-                  <select 
+                  <h2 className="text-base font-bold text-slate-800">Schedule Appointment</h2>
+                  <p className="text-xs text-slate-400 mt-0.5">Submit a checkup appointment request</p>
+                </div>
+                <button onClick={() => setShowModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Appointment Type</label>
+                  <select
                     value={appointmentType}
                     onChange={(e) => setAppointmentType(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full px-3 py-2 border border-purple-100 rounded-xl bg-white/80 text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all"
                   >
                     <option value="checkup">General Checkup</option>
                     <option value="vaccination">Vaccination</option>
@@ -259,30 +269,31 @@ export default function Health({ healthData }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Notes (Optional)</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Notes <span className="text-slate-400 normal-case font-normal">(Optional)</span></label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
                     rows={3}
                     placeholder="Any specific concerns or requests..."
+                    className="w-full px-3 py-2 border border-purple-100 rounded-xl bg-white/80 text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all resize-none"
                   />
                 </div>
-              </div>
 
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={submitAppointment}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Submit Request
-                </button>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
+                <div className="flex gap-3 pt-2 border-t border-slate-100">
+                  <button
+                    onClick={submitAppointment}
+                    className="inline-flex items-center gap-2 flex-1 justify-center px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all"
+                  >
+                    <Send className="w-4 h-4" />
+                    Submit Request
+                  </button>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
