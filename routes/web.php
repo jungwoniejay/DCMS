@@ -169,6 +169,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('enrollments/pending', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'clearPending'])->name('enrollments.clear-pending');
     Route::post('enrollments/cleanup-duplicates', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'cleanupDuplicates'])->name('enrollments.cleanup-duplicates');
     
+    // Messaging
+    Route::get('messages', [\App\Http\Controllers\MessageController::class, 'adminIndex'])->name('messages.index');
+    Route::get('messages/{parentId}', [\App\Http\Controllers\MessageController::class, 'adminShow'])->name('messages.show');
+    Route::post('messages/{parentId}', [\App\Http\Controllers\MessageController::class, 'adminSend'])->name('messages.send');
+
     // Appointment Management
     Route::get('appointments', [\App\Http\Controllers\Admin\AdminAppointmentController::class, 'index'])->name('appointments');
     Route::post('appointments/{id}/schedule', [\App\Http\Controllers\Admin\AdminAppointmentController::class, 'schedule'])->name('appointments.schedule');
@@ -220,6 +225,10 @@ Route::middleware(['auth', 'parent'])->prefix('parent')->name('parent.')->group(
     Route::post('enroll', [\App\Http\Controllers\Parent\ParentEnrollmentController::class, 'store'])->name('enroll.store');
     Route::get('enrollment-requests', [\App\Http\Controllers\Parent\ParentEnrollmentController::class, 'index'])->name('enrollment.index');
     
+    // Messaging
+    Route::get('messages', [\App\Http\Controllers\MessageController::class, 'parentIndex'])->name('messages.index');
+    Route::post('messages', [\App\Http\Controllers\MessageController::class, 'parentSend'])->name('messages.send');
+
     // Appointment Requests
     Route::post('appointments', [\App\Http\Controllers\Parent\ParentAppointmentController::class, 'store'])->name('appointments.store');
     Route::get('appointments', [\App\Http\Controllers\Parent\ParentAppointmentController::class, 'index'])->name('appointments.index');

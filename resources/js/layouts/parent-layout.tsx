@@ -34,7 +34,7 @@ const menuGroups = [
     {
         label: 'Communication',
         items: [
-            { name: 'Messages', href: '/parent/appointments', icon: MessageCircle },
+            { name: 'Messages', href: '/parent/messages', icon: MessageCircle },
         ],
     },
 ];
