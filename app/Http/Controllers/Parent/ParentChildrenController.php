@@ -30,6 +30,36 @@ class ParentChildrenController extends Controller
 
                 $latestMedical = $vaccinations;
 
+                // Resolve vaccination status from all sources
+                $parentVax = $child->childDetails?->vaccinations ?? [];
+                $enrollment = DB::table('enrollment_requests')
+                    ->where('parent_id', $child->guardian_id)
+                    ->where('child_id', $child->id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+                $enrollImmunizations = [];
+                if ($enrollment && !empty($enrollment->health_data)) {
+                    $hd = is_string($enrollment->health_data) ? json_decode($enrollment->health_data, true) : (array)$enrollment->health_data;
+                    $enrollImmunizations = $hd['immunizations'] ?? [];
+                }
+
+                $resolveVax = function(array $keys) use ($vaccinations, $parentVax, $enrollImmunizations): string {
+                    foreach ($keys as $k) {
+                        $col = strtolower(str_replace([' ','-'], '_', $k)) . '_status';
+                        if ($vaccinations && isset($vaccinations->$col) && $vaccinations->$col !== null) return $vaccinations->$col;
+                    }
+                    foreach ($keys as $k) {
+                        if (!empty($parentVax[$k])) return $parentVax[$k];
+                        if (!empty($parentVax[strtolower($k)])) return $parentVax[strtolower($k)];
+                        if (!empty($parentVax[strtoupper($k)])) return $parentVax[strtoupper($k)];
+                    }
+                    foreach ($keys as $k) {
+                        if (!empty($enrollImmunizations[$k])) return 'Yes';
+                        if (!empty($enrollImmunizations[strtoupper($k)])) return 'Yes';
+                    }
+                    return 'Unknown';
+                };
+
                 return [
                     'id'                   => $child->id,
                     'full_name'            => trim("{$child->first_name} {$child->middle_name} {$child->last_name}"),
@@ -48,11 +78,11 @@ class ParentChildrenController extends Controller
                     'height'               => $latestNutrition?->height_first ?? $child->childDetails?->height_cm ?? null,
                     'weight'               => $latestNutrition?->weight_first ?? $child->childDetails?->weight_kg ?? null,
                     'vaccinations'         => [
-                        'bcg'     => $vaccinations?->bcg_status ?? 'Unknown',
-                        'dpt'     => $vaccinations?->dpt_status ?? 'Unknown',
-                        'polio'   => $vaccinations?->polio_status ?? 'Unknown',
-                        'hepa_b'  => $vaccinations?->hepa_b_status ?? 'Unknown',
-                        'measles' => $vaccinations?->measles_status ?? 'Unknown',
+                        'bcg'     => $resolveVax(['BCG', 'bcg']),
+                        'dpt'     => $resolveVax(['DPT', 'dpt']),
+                        'polio'   => $resolveVax(['Polio', 'Oral Polio', 'polio', 'POLIO']),
+                        'hepa_b'  => $resolveVax(['Hepa B', 'hepa_b', 'HEPA_B']),
+                        'measles' => $resolveVax(['Measles', 'measles', 'MEASLES']),
                     ],
                 ];
             });
