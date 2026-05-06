@@ -1,18 +1,16 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import AdminLayout from '@/layouts/admin-layout';
 import Modal from '@/components/Modal';
-import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle, X } from 'lucide-react';
+import { Users, Database, Trash2, Edit, Plus, Download, RefreshCw, Phone, Building2, Settings, FileSpreadsheet, FileCode, FileJson, CheckSquare, Square, AlertTriangle, X, Megaphone } from 'lucide-react';
 import { useState } from 'react';
 
 const ic = 'w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400';
 const lc = 'block text-sm font-medium text-slate-600 mb-1';
 
 export default function System({ users, stats, barangay_settings, provinces, cities, tables }: any) {
-    const [activeTab, setActiveTab] = useState<'barangay' | 'users' | 'maintenance'>(() => {
-        // Check URL hash on initial load
-        if (typeof window !== 'undefined' && window.location.hash === '#maintenance') {
-            return 'maintenance';
-        }
+    const [activeTab, setActiveTab] = useState<'barangay' | 'users' | 'announcements' | 'maintenance'>(() => {
+        if (typeof window !== 'undefined' && window.location.hash === '#maintenance') return 'maintenance';
+        if (typeof window !== 'undefined' && window.location.hash === '#announcements') return 'announcements';
         return 'barangay';
     });
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -78,10 +76,20 @@ export default function System({ users, stats, barangay_settings, provinces, cit
         }
     };
 
+    const announcementForm = useForm({ title: '', message: '' });
+
+    const handleSendAnnouncement = (e: React.FormEvent) => {
+        e.preventDefault();
+        announcementForm.post(route('admin.announcements.send'), {
+            onSuccess: () => announcementForm.reset(),
+        });
+    };
+
     const tabs = [
-        { id: 'barangay', label: 'Barangay Settings', icon: Building2 },
-        { id: 'users',    label: 'User Management',   icon: Users },
-        { id: 'maintenance',   label: 'System Maintenance',    icon: Settings },
+        { id: 'barangay',      label: 'Barangay Settings',  icon: Building2 },
+        { id: 'users',         label: 'User Management',    icon: Users },
+        { id: 'announcements', label: 'Announcements',      icon: Megaphone },
+        { id: 'maintenance',   label: 'System Maintenance', icon: Settings },
     ];
 
     const inputClass = ic;
@@ -338,6 +346,37 @@ export default function System({ users, stats, barangay_settings, provinces, cit
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        )}
+
+                        {/* Announcements Tab */}
+                        {activeTab === 'announcements' && (
+                            <div className="max-w-xl space-y-5">
+                                <div>
+                                    <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-2">
+                                        <Megaphone className="w-4 h-4" /> Send Announcement to All Parents
+                                    </h2>
+                                    <p className="text-xs text-slate-400">This will appear on every parent's dashboard immediately.</p>
+                                </div>
+                                <form onSubmit={handleSendAnnouncement} className="space-y-4">
+                                    <div>
+                                        <label className={lc}>Title *</label>
+                                        <input value={announcementForm.data.title} onChange={e => announcementForm.setData('title', e.target.value)}
+                                            className={ic} placeholder="e.g. School Holiday Notice" required />
+                                        {announcementForm.errors.title && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.title}</p>}
+                                    </div>
+                                    <div>
+                                        <label className={lc}>Message *</label>
+                                        <textarea value={announcementForm.data.message} onChange={e => announcementForm.setData('message', e.target.value)}
+                                            className={`${ic} resize-none`} rows={4} placeholder="Write your announcement here..." required />
+                                        {announcementForm.errors.message && <p className="text-red-500 text-xs mt-1">{announcementForm.errors.message}</p>}
+                                    </div>
+                                    <button type="submit" disabled={announcementForm.processing}
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-semibold shadow-sm hover:shadow-md transition-all disabled:opacity-50">
+                                        <Megaphone className="w-4 h-4" />
+                                        {announcementForm.processing ? 'Sending...' : 'Send to All Parents'}
+                                    </button>
+                                </form>
                             </div>
                         )}
 

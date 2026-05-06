@@ -57,11 +57,18 @@ class ParentDashboardController extends Controller
             ->where('status', 'Pending')
             ->count();
 
+        $announcements = \App\Models\Notification::where('user_id', $parentId)
+            ->where('type', 'admin_announcement')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get(['id', 'title', 'message', 'read_at', 'created_at']);
+
         return Inertia::render('parent/Dashboard', [
             'children'           => $children,
             'stats'              => $stats,
             'recentAppointments' => $recentAppointments,
             'pendingEnrollments' => $pendingEnrollments,
+            'announcements'      => $announcements,
         ]);
     }
 }

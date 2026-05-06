@@ -162,6 +162,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('welcome-content', [WelcomeContentController::class, 'index'])->name('welcome-content');
     Route::post('welcome-content', [WelcomeContentController::class, 'update'])->name('welcome-content.update');
     
+    // Announcements
+    Route::post('announcements', [\App\Http\Controllers\Admin\AdminAnnouncementController::class, 'send'])->name('announcements.send');
+
     // Enrollment Management
     Route::get('enrollments', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'index'])->name('enrollments');
     Route::post('enrollments/{id}/approve', [\App\Http\Controllers\Admin\AdminEnrollmentController::class, 'approve'])->name('enrollments.approve');

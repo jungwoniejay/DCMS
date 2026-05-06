@@ -1,6 +1,6 @@
 import ParentLayout from '@/layouts/parent-layout';
-import { Head, Link } from '@inertiajs/react';
-import { Users, Clock, CheckCircle, AlertTriangle, Baby, Calendar, Plus, ArrowRight, User, Activity, Apple } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { Users, Clock, CheckCircle, AlertTriangle, Baby, Calendar, Plus, ArrowRight, User, Activity, Apple, Megaphone, X } from 'lucide-react';
 
 interface Child {
     id: number;
@@ -29,9 +29,10 @@ interface Props {
     stats: Stats;
     recentAppointments: any[];
     pendingEnrollments: number;
+    announcements: any[];
 }
 
-export default function Dashboard({ children, stats, recentAppointments, pendingEnrollments }: Props) {
+export default function Dashboard({ children, stats, recentAppointments, pendingEnrollments, announcements }: Props) {
     const statCards = [
         { label: 'My Children',    value: stats.total_children,        icon: Users,         color: 'from-sky-400 to-sky-600',       bg: 'bg-sky-50 border-sky-100 text-sky-700' },
         { label: 'Pending',        value: stats.pending_registrations,  icon: Clock,         color: 'from-amber-400 to-orange-500',  bg: 'bg-amber-50 border-amber-100 text-amber-700' },
@@ -70,6 +71,30 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                         Enroll New Child
                     </Link>
                 </div>
+
+                {/* Admin Announcements */}
+                {announcements?.length > 0 && (
+                    <div className="space-y-2">
+                        {announcements.map((a: any) => (
+                            <div key={a.id} className={`flex items-start gap-3 p-4 rounded-2xl border ${a.read_at ? 'bg-white/50 border-slate-100' : 'bg-sky-50 border-sky-200'}`}>
+                                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-400 to-teal-500 flex items-center justify-center shrink-0 shadow-sm">
+                                    <Megaphone className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className={`text-sm font-semibold ${a.read_at ? 'text-slate-600' : 'text-sky-800'}`}>{a.title}</p>
+                                    <p className="text-xs text-slate-500 mt-0.5">{a.message}</p>
+                                    <p className="text-[10px] text-slate-400 mt-1">{new Date(a.created_at).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                </div>
+                                {!a.read_at && (
+                                    <button onClick={() => router.post(`/parent/notifications/${a.id}/read`, {}, { preserveScroll: true })}
+                                        className="shrink-0 p-1 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">
+                                        <X className="w-3.5 h-3.5" />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 {/* Pending notice */}
                 {pendingEnrollments > 0 && (
