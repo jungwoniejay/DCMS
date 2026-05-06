@@ -233,6 +233,37 @@ class AdminEnrollmentController extends Controller
             'child_id'    => $child->id,
         ]);
 
+        // Save child profile data (Form 2) from enrollment
+        $profileData = $enrollment->child_profile_data ?? [];
+        if (!empty($profileData)) {
+            $child->childDetails()->updateOrCreate(['child_id' => $child->id], [
+                'birth_order'           => $profileData['birth_order'] ?? null,
+                'registered'            => $profileData['registered'] ?? null,
+                'born_at'               => $profileData['born_at'] ?? null,
+                'mother_tongue'         => $profileData['mother_tongue'] ?? null,
+                'other_dialects'        => $profileData['other_dialects'] ?? null,
+                'height_cm'             => $profileData['height_cm'] ?? null,
+                'weight_kg'             => $profileData['weight_kg'] ?? null,
+                'eccd_card'             => !empty($profileData['eccd_card']),
+                'mother_child_book'     => !empty($profileData['mother_child_book']),
+                'vaccinations'          => $profileData['vaccinations'] ?? null,
+                'physical_deformity'    => $profileData['physical_deformity'] ?? null,
+                'problems_with'         => $profileData['problems_with'] ?? null,
+                'left_handed'           => $profileData['left_handed'] ?? null,
+            ]);
+        }
+
+        // Save health data (Form 2 health) from enrollment
+        $healthData = $enrollment->health_data ?? [];
+        if (!empty($healthData)) {
+            $child->healthAssessment()->updateOrCreate(['child_id' => $child->id], [
+                'hospital_center_name'    => $healthData['routine_hospital'] ?? null,
+                'hospital_center_address' => $healthData['routine_address'] ?? null,
+                'last_checkup_date'       => !empty($healthData['last_checkup_date']) ? $healthData['last_checkup_date'] : null,
+                'general_notes'           => $healthData['accident_description'] ?? null,
+            ]);
+        }
+
         Notification::send(
             $enrollment->parent_id,
             'enrollment_approved',
