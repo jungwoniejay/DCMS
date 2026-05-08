@@ -55,7 +55,7 @@ export default function Health({ healthData }: Props) {
     });
   };
 
-  const handlePrintHealthForm = () => {
+  const handlePrintHealthForm = (childId: number) => {
     window.print();
   };
 
@@ -169,7 +169,7 @@ export default function Health({ healthData }: Props) {
                       Schedule Checkup
                     </button>
                     <button 
-                      onClick={handlePrintHealthForm}
+                      onClick={() => handlePrintHealthForm(data.child_id)}
                       className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       Print Health Form
@@ -302,12 +302,120 @@ export default function Health({ healthData }: Props) {
 
       <style>{`
         @media print {
-          body * { visibility: hidden; }
-          .print\\:block, .print\\:block * { visibility: visible; }
-          .print\\:hidden { display: none !important; }
-          @page { margin: 2cm; }
+          body > * { display: none !important; }
+          #health-print-area { display: block !important; }
+          #health-print-area * { visibility: visible !important; }
+          @page { margin: 1.5cm; }
         }
+        #health-print-area { display: none; }
       `}</style>
+
+      {/* Hidden print area */}
+      <div id="health-print-area">
+        <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '13px', color: '#111' }}>
+          <div style={{ textAlign: 'center', marginBottom: '24px', borderBottom: '2px solid #333', paddingBottom: '12px' }}>
+            <h1 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>KidCare Hinoba-an — Health & Medical Report</h1>
+            <p style={{ margin: '4px 0 0', color: '#555' }}>Printed on {new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          </div>
+          {healthData.map((data) => (
+            <div key={data.child_id} style={{ marginBottom: '32px', pageBreakInside: 'avoid' }}>
+              <h2 style={{ fontSize: '15px', fontWeight: 'bold', borderBottom: '1px solid #ccc', paddingBottom: '6px', marginBottom: '12px' }}>
+                {data.child_name} — {data.age} years old
+              </h2>
+
+              {/* Vaccinations */}
+              <h3 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>Vaccination Record</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '16px' }}>
+                <thead>
+                  <tr style={{ background: '#f3f4f6' }}>
+                    <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Vaccine</th>
+                    <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(data.vaccinations).map(([vaccine, status]) => (
+                    <tr key={vaccine}>
+                      <td style={{ border: '1px solid #ddd', padding: '6px 10px' }}>{vaccine.toUpperCase()}</td>
+                      <td style={{ border: '1px solid #ddd', padding: '6px 10px' }}>{status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Next Vaccine */}
+              <p style={{ marginBottom: '16px' }}><strong>Next Vaccine Due:</strong> {data.next_vaccine}</p>
+
+              {/* Health Alerts */}
+              <h3 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>Health Alerts</h3>
+              <p style={{ marginBottom: '16px' }}>
+                {data.emergency_alert ? `⚠️ Emergency Action Required: ${data.emergency_description}` : '✓ No emergency alerts'}
+              </p>
+
+              {/* Health Problems */}
+              {data.health_problems.length > 0 && (
+                <>
+                  <h3 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>Health Problems</h3>
+                  <ul style={{ marginBottom: '16px', paddingLeft: '20px' }}>
+                    {data.health_problems.map((p: any, i: number) => (
+                      <li key={i}>{p.problem_type}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+
+              {/* Medications */}
+              {data.medications.length > 0 && (
+                <>
+                  <h3 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>Current Medications</h3>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '16px' }}>
+                    <thead>
+                      <tr style={{ background: '#f3f4f6' }}>
+                        <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Medication</th>
+                        <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Dosage</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.medications.map((med: any, i: number) => (
+                        <tr key={i}>
+                          <td style={{ border: '1px solid #ddd', padding: '6px 10px' }}>{med.medication_name}</td>
+                          <td style={{ border: '1px solid #ddd', padding: '6px 10px' }}>{med.dosage}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+
+              {/* Appointments */}
+              {data.appointments?.length > 0 && (
+                <>
+                  <h3 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px' }}>Appointments</h3>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '16px' }}>
+                    <thead>
+                      <tr style={{ background: '#f3f4f6' }}>
+                        <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Type</th>
+                        <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Status</th>
+                        <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Date</th>
+                        <th style={{ border: '1px solid #ddd', padding: '6px 10px', textAlign: 'left' }}>Location</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.appointments.map((apt: any, i: number) => (
+                        <tr key={i}>
+                          <td style={{ border: '1px solid #ddd', padding: '6px 10px', textTransform: 'capitalize' }}>{apt.appointment_type?.replace('_', ' ')}</td>
+                          <td style={{ border: '1px solid #ddd', padding: '6px 10px', textTransform: 'capitalize' }}>{apt.status}</td>
+                          <td style={{ border: '1px solid #ddd', padding: '6px 10px' }}>{apt.scheduled_date ?? '—'}</td>
+                          <td style={{ border: '1px solid #ddd', padding: '6px 10px' }}>{apt.location ?? '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </ParentLayout>
   );
 }
