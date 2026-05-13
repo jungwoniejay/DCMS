@@ -11,33 +11,39 @@ import Toast from '@/components/toast';
 import NotificationBell from '@/components/notification-bell';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import AiAssistant from '@/components/AiAssistant';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { LanguageProvider, useTranslation } from '@/lib/i18n';
 
 const menuGroups = [
     {
         label: 'Main',
+        labelKey: 'Main',
         items: [
-            { name: 'Dashboard', href: '/parent/dashboard', icon: LayoutDashboard },
+            { name: 'Dashboard',    nameKey: 'nav.dashboard',  href: '/parent/dashboard', icon: LayoutDashboard },
         ],
     },
     {
         label: 'My Child',
+        labelKey: 'My Child',
         items: [
-            { name: 'My Children',  href: '/parent/my-children',       icon: Baby },
-            { name: 'Health',        href: '/parent/health',             icon: Stethoscope },
-            { name: 'Growth & Dev.', href: '/parent/child-development',  icon: TrendingUp },
-            { name: 'Nutrition',     href: '/parent/nutrition',          icon: BookOpen },
+            { name: 'My Children',  nameKey: 'nav.my_children', href: '/parent/my-children',      icon: Baby },
+            { name: 'Health',       nameKey: 'nav.health',      href: '/parent/health',            icon: Stethoscope },
+            { name: 'Growth & Dev.',nameKey: 'nav.growth_dev',  href: '/parent/child-development', icon: TrendingUp },
+            { name: 'Nutrition',    nameKey: 'nav.nutrition',   href: '/parent/nutrition',         icon: BookOpen },
         ],
     },
     {
         label: 'Requests',
+        labelKey: 'Requests',
         items: [
-            { name: 'Requests', href: '/parent/enrollment-requests', icon: ClipboardList },
+            { name: 'Requests',     nameKey: 'nav.requests',    href: '/parent/enrollment-requests', icon: ClipboardList },
         ],
     },
     {
         label: 'Communication',
+        labelKey: 'Communication',
         items: [
-            { name: 'Messages', href: '/parent/messages', icon: MessageCircle },
+            { name: 'Messages',     nameKey: 'nav.messages',    href: '/parent/messages', icon: MessageCircle },
         ],
     },
 ];
@@ -46,7 +52,7 @@ interface ParentLayoutProps {
     children: ReactNode;
 }
 
-export default function ParentLayout({ children }: ParentLayoutProps) {
+function ParentLayoutInner({ children }: ParentLayoutProps) {
     const { auth } = usePage().props as any;
     const { url } = usePage();
     const barangay = (usePage().props as any).barangay ?? {};
@@ -54,6 +60,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
     const systemName = barangay.system_name || 'KidCare Hinoba-an';
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
+    const { t } = useTranslation();
 
     const isActive = (href: string) => url.startsWith(href);
 
@@ -95,7 +102,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                 </div>
                 {!mini && (
                     <span className={`text-sm font-medium ${active ? 'text-teal-700' : ''}`}>
-                        {item.name}
+                        {t(item.nameKey as any)}
                     </span>
                 )}
                 {!mini && badge && badge > 0 ? (
@@ -126,7 +133,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                             <h1 className="text-base font-bold bg-gradient-to-r from-sky-500 to-teal-600 bg-clip-text text-transparent leading-tight">
                                 {systemName}
                             </h1>
-                            <p className="text-[10px] text-slate-400 font-semibold tracking-[0.15em] uppercase">Parent Portal</p>
+                    <p className="text-[10px] text-slate-400 font-semibold tracking-[0.15em] uppercase">{t('nav.parent_portal')}</p>
                         </div>
                     )}
                 </div>
@@ -163,7 +170,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                     {!mini && (
                         <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-slate-700 truncate">{auth?.user?.name || 'Parent'}</p>
-                            <p className="text-[10px] text-slate-400">Parent Account</p>
+                            <p className="text-[10px] text-slate-400">{t('nav.parent_portal')}</p>
                         </div>
                     )}
                     {!mini && <NotificationBell />}
@@ -180,8 +187,9 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                     `}
                 >
                     <LogOut className="w-3.5 h-3.5 shrink-0" />
-                    {!mini && <span>Logout</span>}
+                    {!mini && <span>{t('nav.logout')}</span>}
                 </button>
+                {!mini && <div className="mt-2"><LanguageSwitcher /></div>}
             </div>
         </div>
     );
@@ -251,5 +259,13 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
             <Toast />
             <AiAssistant />
         </div>
+    );
+}
+
+export default function ParentLayout({ children }: ParentLayoutProps) {
+    return (
+        <LanguageProvider>
+            <ParentLayoutInner>{children}</ParentLayoutInner>
+        </LanguageProvider>
     );
 }

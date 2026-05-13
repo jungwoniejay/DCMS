@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Sparkles, Loader2, ChevronDown, User } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
+import { useTranslation } from '@/lib/i18n';
 
 interface Message {
     role: 'user' | 'ai';
@@ -42,6 +43,7 @@ function formatText(text: string) {
 export default function AiAssistant() {
     const props = usePage().props as any;
     const children: Child[] = props.ai_children ?? [];
+    const { t } = useTranslation();
 
     const [open, setOpen]               = useState(false);
     const [selectedChild, setSelectedChild] = useState<Child | null>(null);
@@ -73,7 +75,7 @@ export default function AiAssistant() {
         setShowPicker(false);
         setMessages([{
             role: 'ai',
-            text: `Hi! 👋 I'm KidCare AI. I'm now looking at **${child.name}'s** records. What would you like to know about ${child.name}?`,
+            text: `${t('ai.greeting').replace("Hi! I'm KidCare AI 👋 I can help you track your child's growth, development, and give personalized insights. What would you like to know?", `Hi! 👋 I'm now looking at **${child.name}'s** records. What would you like to know about ${child.name}?`)}`,
             time: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }),
         }]);
         setShowSugg(true);
@@ -147,11 +149,11 @@ export default function AiAssistant() {
                             {selectedChild ? (
                                 <button onClick={() => setShowPicker(p => !p)}
                                     className="flex items-center gap-1 text-[10px] text-teal-100 hover:text-white transition-colors">
-                                    <span className="truncate">Asking about: {selectedChild.name}</span>
+                                    <span className="truncate">{t('ai.asking_about')} {selectedChild.name}</span>
                                     {children.length > 1 && <ChevronDown className="w-3 h-3 shrink-0" />}
                                 </button>
                             ) : (
-                                <p className="text-[10px] text-teal-100">Select a child to get started</p>
+                                <p className="text-[10px] text-teal-100">{t('ai.select_child')}</p>
                             )}
                         </div>
                         <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/20 transition-colors shrink-0">
@@ -191,8 +193,8 @@ export default function AiAssistant() {
                             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-100 to-sky-100 flex items-center justify-center">
                                 <User className="w-7 h-7 text-teal-500" />
                             </div>
-                            <p className="text-sm font-semibold text-slate-700 text-center">Who would you like to ask about?</p>
-                            <p className="text-xs text-slate-400 text-center">Select a child to get personalized insights</p>
+                            <p className="text-sm font-semibold text-slate-700 text-center">{t('ai.select_child')}</p>
+                            <p className="text-xs text-slate-400 text-center">{t('ai.select_child_sub')}</p>
                             <div className="w-full space-y-2 mt-1">
                                 {children.length === 0 ? (
                                     <p className="text-xs text-slate-400 text-center">No children registered yet.</p>
@@ -206,7 +208,7 @@ export default function AiAssistant() {
                                             <p className="text-sm font-bold text-slate-700">{child.name}</p>
                                             <p className="text-[10px] text-slate-400">{child.age} yrs old • {child.sex}</p>
                                         </div>
-                                        <span className="ml-auto text-teal-500 text-xs font-semibold">Ask →</span>
+                                        <span className="ml-auto text-teal-500 text-xs font-semibold">{t('ai.ask')}</span>
                                     </button>
                                 ))}
                             </div>
