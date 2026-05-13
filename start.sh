@@ -48,14 +48,10 @@ MAIL_USERNAME=${MAIL_USERNAME:-null}
 MAIL_PASSWORD=${MAIL_PASSWORD:-null}
 MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-null}
 MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-hello@example.com}
-MAIL_FROM_NAME=KidCare_Hinoba-an
+MAIL_FROM_NAME="KidCare Hinoba-an"
 VITE_APP_NAME=\${APP_NAME}
 ADMIN_REGISTER_KEY=${ADMIN_REGISTER_KEY:-Brgy2DMS@AdminKey2024}
 EOF
-
-# Fix MAIL_FROM_NAME with spaces and apply Railway mail vars
-FROM_NAME="${MAIL_FROM_NAME:-KidCare Hinoba-an}"
-sed -i "s|^MAIL_FROM_NAME=.*|MAIL_FROM_NAME=${FROM_NAME}|" /app/.env
 
 # Parse DATABASE_URL if set
 if [ -n "$DATABASE_URL" ]; then
