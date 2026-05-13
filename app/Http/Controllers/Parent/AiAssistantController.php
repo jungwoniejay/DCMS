@@ -16,8 +16,17 @@ class AiAssistantController extends Controller
         $request->validate(['message' => 'required|string|max:500', 'child_id' => 'nullable|integer']);
 
         $parentId = auth()->id();
-        $context  = $this->buildContext($parentId, $request->child_id);
-        $reply    = $this->askGemini($request->message, $context);
+
+        // Security: verify the child_id belongs to this parent
+        if ($request->child_id) {
+            $owns = Child::where('id', $request->child_id)
+                ->where('guardian_id', $parentId)
+                ->exists();
+            if (!$owns) abort(403, 'You do not have access to this child.');
+        }
+
+        $context = $this->buildContext($parentId, $request->child_id);
+        $reply   = $this->askGemini($request->message, $context);
 
         return response()->json(['reply' => $reply]);
     }
