@@ -249,6 +249,9 @@ Route::middleware(['auth', 'parent'])->prefix('parent')->name('parent.')->group(
     // Child Development Graph
     Route::get('child-development', [\App\Http\Controllers\Parent\ParentChildDevelopmentController::class, 'index'])->name('child-development');
 
+    // Child Progress Report PDF
+    Route::get('children/{childId}/report', [\App\Http\Controllers\Parent\ChildReportController::class, 'download'])->name('children.report');
+
     // View Development Plans
     Route::get('children/{childId}/development-plans', [\App\Http\Controllers\Parent\ParentDevelopmentPlanController::class, 'index'])->name('development-plans');
 

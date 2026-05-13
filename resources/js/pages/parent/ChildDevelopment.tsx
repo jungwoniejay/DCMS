@@ -1,7 +1,7 @@
 import ParentLayout from '@/layouts/parent-layout';
 import { Head, router } from '@inertiajs/react';
 import { useState, useEffect, useCallback } from 'react';
-import { TrendingUp, Brain, ClipboardCheck, ChevronDown, ChevronUp, User, RefreshCw } from 'lucide-react';
+import { TrendingUp, Brain, ClipboardCheck, ChevronDown, ChevronUp, User, RefreshCw, Download } from 'lucide-react';
 
 interface GrowthPoint { date: string; height: number; weight: number; status: string; }
 interface ObsPoint { month: string; label: string; avg_score: number; count: number; behaviors: string[]; }
@@ -241,6 +241,14 @@ function ChildCard({ data }: { data: DevelopmentData }) {
 
             {expanded && (
                 <div className="p-5 space-y-4">
+                    {/* Download Report Button */}
+                    <a
+                        href={`/parent/children/${data.child_id}/report`}
+                        target="_blank"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-sky-500 text-white text-xs font-semibold shadow-sm hover:shadow-md transition-all"
+                    >
+                        <Download className="w-3.5 h-3.5" /> Download Progress Report (PDF)
+                    </a>
                     {/* Tabs */}
                     <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
                         {tabs.map(t => (
