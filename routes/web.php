@@ -25,16 +25,6 @@ Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 })->name('privacy-policy');
 
-Route::get('/debug-gemini', function () {
-    return response()->json([
-        '_ENV'     => $_ENV['GEMINI_API_KEY'] ?? 'NOT IN $_ENV',
-        'getenv'   => getenv('GEMINI_API_KEY') ?: 'NOT IN getenv',
-        'env()'    => env('GEMINI_API_KEY') ?? 'NOT IN env()',
-        'config'   => config('services.gemini.key') ?? 'NOT IN config',
-        'all_env_keys' => array_keys($_ENV),
-    ]);
-});
-
 // Debug endpoint - remove after fixing
 Route::get('/debug-storage', function () {
     $publicPath = storage_path('app/public');

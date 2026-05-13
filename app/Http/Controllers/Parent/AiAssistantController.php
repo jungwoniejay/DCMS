@@ -133,7 +133,7 @@ class AiAssistantController extends Controller
             return "AI assistant is not configured yet. Please contact the administrator.";
         }
 
-        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . urlencode($apiKey);
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" . urlencode($apiKey);
 
         $prompt = "{$context}\n\nParent's question: {$message}\n\nPlease provide a helpful, specific answer based on the child data above. If you detect any health or development concerns, mention them clearly but gently.";
 
