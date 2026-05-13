@@ -8,12 +8,14 @@ interface Message {
 }
 
 const SUGGESTIONS = [
-    "How is my child growing?",
-    "What is my child's nutritional status?",
-    "Any development concerns I should know?",
-    "Give me a progress report",
-    "What activities can help my child?",
     "Are there any health risks?",
+    "How is my child growing?",
+    "What is the nutritional status?",
+    "Give me a progress report",
+    "What are the development plans?",
+    "When is the next appointment?",
+    "Any development tips?",
+    "Show behavioral observations",
 ];
 
 function formatText(text: string) {
