@@ -75,6 +75,17 @@ class HandleInertiaRequests extends Middleware
                     : 0;
             }, 0),
             'barangay' => rescue(fn() => \App\Models\BarangaySetting::allKeyed(), []),
+            'ai_children' => rescue(function () use ($request) {
+                if (!$request->user() || $request->user()->role !== 'parent') return [];
+                return \App\Models\Child::where('guardian_id', $request->user()->id)
+                    ->get(['id', 'first_name', 'last_name', 'age', 'sex'])
+                    ->map(fn($c) => [
+                        'id'   => $c->id,
+                        'name' => "{$c->first_name} {$c->last_name}",
+                        'age'  => $c->age,
+                        'sex'  => $c->sex,
+                    ])->values();
+            }, []),
             'announcements' => rescue(function () use ($request) {
                 if (!$request->user() || $request->user()->role !== 'parent') return [];
                 return \App\Models\Notification::where('user_id', $request->user()->id)

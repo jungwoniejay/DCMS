@@ -1,10 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles, Loader2 } from 'lucide-react';
+import { X, Send, Sparkles, Loader2, ChevronDown, User } from 'lucide-react';
+import { usePage } from '@inertiajs/react';
 
 interface Message {
     role: 'user' | 'ai';
     text: string;
     time: string;
+}
+
+interface Child {
+    id: number;
+    name: string;
+    age: number;
+    sex: string;
 }
 
 const SUGGESTIONS = [
@@ -19,44 +27,60 @@ const SUGGESTIONS = [
 ];
 
 function formatText(text: string) {
-    // Convert **bold** and bullet points to styled elements
     return text
         .split('\n')
         .map((line, i) => {
             const bold = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            const withBullet = bold.startsWith('* ') || bold.startsWith('- ')
-                ? `<span class="flex gap-1.5"><span class="text-teal-500 shrink-0">•</span><span>${bold.slice(2)}</span></span>`
+            const withBullet = bold.startsWith('• ') || bold.startsWith('* ') || bold.startsWith('- ')
+                ? `<span class="flex gap-1.5 mt-0.5"><span class="text-teal-500 shrink-0">•</span><span>${bold.slice(2)}</span></span>`
                 : bold;
-            return `<p key="${i}" class="mb-1 last:mb-0">${withBullet}</p>`;
+            return `<p key="${i}" class="mb-0.5 last:mb-0">${withBullet}</p>`;
         })
         .join('');
 }
 
-export default function AiAssistant({ childId }: { childId?: number }) {
-    const [open, setOpen]         = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            role: 'ai',
-            text: "Hi! I'm KidCare AI 👋 I can help you track your child's growth, development, and give personalized insights. What would you like to know?",
-            time: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }),
+export default function AiAssistant() {
+    const props = usePage().props as any;
+    const children: Child[] = props.ai_children ?? [];
+
+    const [open, setOpen]               = useState(false);
+    const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+    const [showPicker, setShowPicker]   = useState(false);
+    const [messages, setMessages]       = useState<Message[]>([]);
+    const [input, setInput]             = useState('');
+    const [loading, setLoading]         = useState(false);
+    const [showSugg, setShowSugg]       = useState(true);
+    const bottomRef                     = useRef<HTMLDivElement>(null);
+    const inputRef                      = useRef<HTMLInputElement>(null);
+
+    // Auto-select if only one child
+    useEffect(() => {
+        if (children.length === 1 && !selectedChild) {
+            selectChild(children[0]);
         }
-    ]);
-    const [input, setInput]       = useState('');
-    const [loading, setLoading]   = useState(false);
-    const [showSugg, setShowSugg] = useState(true);
-    const bottomRef               = useRef<HTMLDivElement>(null);
-    const inputRef                = useRef<HTMLInputElement>(null);
+    }, [children]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, loading]);
 
     useEffect(() => {
-        if (open) setTimeout(() => inputRef.current?.focus(), 300);
-    }, [open]);
+        if (open && selectedChild) setTimeout(() => inputRef.current?.focus(), 300);
+    }, [open, selectedChild]);
+
+    const selectChild = (child: Child) => {
+        setSelectedChild(child);
+        setShowPicker(false);
+        setMessages([{
+            role: 'ai',
+            text: `Hi! 👋 I'm KidCare AI. I'm now looking at **${child.name}'s** records. What would you like to know about ${child.name}?`,
+            time: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }),
+        }]);
+        setShowSugg(true);
+    };
 
     const send = async (text: string) => {
-        if (!text.trim() || loading) return;
+        if (!text.trim() || loading || !selectedChild) return;
         const userMsg: Message = {
             role: 'user',
             text: text.trim(),
@@ -76,7 +100,7 @@ export default function AiAssistant({ childId }: { childId?: number }) {
                     'X-CSRF-TOKEN': csrfToken ?? '',
                     'X-Requested-With': 'XMLHttpRequest',
                 },
-                body: JSON.stringify({ message: text.trim(), child_id: childId ?? null }),
+                body: JSON.stringify({ message: text.trim(), child_id: selectedChild.id }),
             });
             const json = await res.json();
             setMessages(m => [...m, {
@@ -111,94 +135,155 @@ export default function AiAssistant({ childId }: { childId?: number }) {
             {/* Chat Window */}
             {open && (
                 <div className="fixed bottom-6 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] flex flex-col rounded-2xl shadow-2xl overflow-hidden"
-                    style={{ height: '520px', background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.9)' }}>
+                    style={{ height: '540px', background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.9)' }}>
 
                     {/* Header */}
                     <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-teal-500 to-sky-500 shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                             <Sparkles className="w-4 h-4 text-white" />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-white">KidCare AI</p>
-                            <p className="text-[10px] text-teal-100">Powered by Gemini · Always here to help</p>
+                            {selectedChild ? (
+                                <button onClick={() => setShowPicker(p => !p)}
+                                    className="flex items-center gap-1 text-[10px] text-teal-100 hover:text-white transition-colors">
+                                    <span className="truncate">Asking about: {selectedChild.name}</span>
+                                    {children.length > 1 && <ChevronDown className="w-3 h-3 shrink-0" />}
+                                </button>
+                            ) : (
+                                <p className="text-[10px] text-teal-100">Select a child to get started</p>
+                            )}
                         </div>
-                        <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/20 transition-colors">
+                        <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/20 transition-colors shrink-0">
                             <X className="w-4 h-4" />
                         </button>
                     </div>
 
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-                        {messages.map((msg, i) => (
-                            <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                                {msg.role === 'ai' && (
-                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-400 to-sky-500 flex items-center justify-center shrink-0 mt-0.5">
-                                        <Sparkles className="w-3.5 h-3.5 text-white" />
-                                    </div>
-                                )}
-                                <div className={`max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
-                                    <div className={`px-3 py-2 rounded-2xl text-sm leading-relaxed ${
-                                        msg.role === 'user'
-                                            ? 'bg-gradient-to-br from-teal-500 to-sky-500 text-white rounded-tr-sm'
-                                            : 'bg-slate-100 text-slate-700 rounded-tl-sm'
+                    {/* Child Picker Dropdown */}
+                    {showPicker && children.length > 1 && (
+                        <div className="shrink-0 bg-white border-b border-slate-100 px-3 py-2 space-y-1">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">Select a child</p>
+                            {children.map(child => (
+                                <button key={child.id} onClick={() => selectChild(child)}
+                                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all ${
+                                        selectedChild?.id === child.id
+                                            ? 'bg-teal-50 border border-teal-200'
+                                            : 'hover:bg-slate-50 border border-transparent'
                                     }`}>
-                                        {msg.role === 'ai' ? (
-                                            <div dangerouslySetInnerHTML={{ __html: formatText(msg.text) }} />
-                                        ) : (
-                                            msg.text
-                                        )}
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-sky-500 flex items-center justify-center shrink-0">
+                                        <User className="w-4 h-4 text-white" />
                                     </div>
-                                    <span className="text-[10px] text-slate-400 px-1">{msg.time}</span>
-                                </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-700">{child.name}</p>
+                                        <p className="text-[10px] text-slate-400">{child.age} yrs • {child.sex}</p>
+                                    </div>
+                                    {selectedChild?.id === child.id && (
+                                        <span className="ml-auto text-[10px] font-bold text-teal-600 bg-teal-100 px-2 py-0.5 rounded-full">Active</span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* No child selected — show picker */}
+                    {!selectedChild ? (
+                        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-3">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-100 to-sky-100 flex items-center justify-center">
+                                <User className="w-7 h-7 text-teal-500" />
                             </div>
-                        ))}
-
-                        {loading && (
-                            <div className="flex gap-2">
-                                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-400 to-sky-500 flex items-center justify-center shrink-0">
-                                    <Sparkles className="w-3.5 h-3.5 text-white" />
-                                </div>
-                                <div className="px-3 py-2 bg-slate-100 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
-                                    <Loader2 className="w-3.5 h-3.5 text-teal-500 animate-spin" />
-                                    <span className="text-xs text-slate-500">Thinking...</span>
-                                </div>
-                            </div>
-                        )}
-
-                        <div ref={bottomRef} />
-                    </div>
-
-                    {/* Suggestions */}
-                    {showSugg && (
-                        <div className="px-4 pb-2 shrink-0">
-                            <p className="text-[10px] text-slate-400 mb-1.5 font-semibold uppercase tracking-wide">Quick questions</p>
-                            <div className="flex flex-wrap gap-1.5">
-                                {SUGGESTIONS.map(s => (
-                                    <button key={s} onClick={() => send(s)}
-                                        className="text-xs px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-100 hover:bg-teal-100 transition-colors font-medium">
-                                        {s}
+                            <p className="text-sm font-semibold text-slate-700 text-center">Who would you like to ask about?</p>
+                            <p className="text-xs text-slate-400 text-center">Select a child to get personalized insights</p>
+                            <div className="w-full space-y-2 mt-1">
+                                {children.length === 0 ? (
+                                    <p className="text-xs text-slate-400 text-center">No children registered yet.</p>
+                                ) : children.map(child => (
+                                    <button key={child.id} onClick={() => selectChild(child)}
+                                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-teal-50 to-sky-50 border border-teal-100 hover:border-teal-300 hover:shadow-sm transition-all">
+                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-400 to-sky-500 flex items-center justify-center shrink-0">
+                                            <User className="w-4 h-4 text-white" />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-sm font-bold text-slate-700">{child.name}</p>
+                                            <p className="text-[10px] text-slate-400">{child.age} yrs old • {child.sex}</p>
+                                        </div>
+                                        <span className="ml-auto text-teal-500 text-xs font-semibold">Ask →</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
-                    )}
+                    ) : (
+                        <>
+                            {/* Messages */}
+                            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+                                {messages.map((msg, i) => (
+                                    <div key={i} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                                        {msg.role === 'ai' && (
+                                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-400 to-sky-500 flex items-center justify-center shrink-0 mt-0.5">
+                                                <Sparkles className="w-3.5 h-3.5 text-white" />
+                                            </div>
+                                        )}
+                                        <div className={`max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
+                                            <div className={`px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+                                                msg.role === 'user'
+                                                    ? 'bg-gradient-to-br from-teal-500 to-sky-500 text-white rounded-tr-sm'
+                                                    : 'bg-slate-100 text-slate-700 rounded-tl-sm'
+                                            }`}>
+                                                {msg.role === 'ai' ? (
+                                                    <div dangerouslySetInnerHTML={{ __html: formatText(msg.text) }} />
+                                                ) : msg.text}
+                                            </div>
+                                            <span className="text-[10px] text-slate-400 px-1">{msg.time}</span>
+                                        </div>
+                                    </div>
+                                ))}
 
-                    {/* Input */}
-                    <div className="px-3 pb-3 pt-2 border-t border-slate-100 shrink-0">
-                        <form onSubmit={e => { e.preventDefault(); send(input); }} className="flex gap-2">
-                            <input
-                                ref={inputRef}
-                                value={input}
-                                onChange={e => setInput(e.target.value)}
-                                placeholder="Ask about your child..."
-                                className="flex-1 px-3 py-2 rounded-xl bg-slate-100 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
-                            />
-                            <button type="submit" disabled={!input.trim() || loading}
-                                className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-sky-500 text-white flex items-center justify-center shadow-sm hover:shadow-md transition-all disabled:opacity-40 shrink-0">
-                                <Send className="w-4 h-4" />
-                            </button>
-                        </form>
-                    </div>
+                                {loading && (
+                                    <div className="flex gap-2">
+                                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-teal-400 to-sky-500 flex items-center justify-center shrink-0">
+                                            <Sparkles className="w-3.5 h-3.5 text-white" />
+                                        </div>
+                                        <div className="px-3 py-2 bg-slate-100 rounded-2xl rounded-tl-sm flex items-center gap-1.5">
+                                            <Loader2 className="w-3.5 h-3.5 text-teal-500 animate-spin" />
+                                            <span className="text-xs text-slate-500">Thinking...</span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div ref={bottomRef} />
+                            </div>
+
+                            {/* Suggestions */}
+                            {showSugg && (
+                                <div className="px-4 pb-2 shrink-0">
+                                    <p className="text-[10px] text-slate-400 mb-1.5 font-semibold uppercase tracking-wide">Quick questions</p>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {SUGGESTIONS.map(s => (
+                                            <button key={s} onClick={() => send(s)}
+                                                className="text-xs px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-100 hover:bg-teal-100 transition-colors font-medium">
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Input */}
+                            <div className="px-3 pb-3 pt-2 border-t border-slate-100 shrink-0">
+                                <form onSubmit={e => { e.preventDefault(); send(input); }} className="flex gap-2">
+                                    <input
+                                        ref={inputRef}
+                                        value={input}
+                                        onChange={e => setInput(e.target.value)}
+                                        placeholder={`Ask about ${selectedChild.name}...`}
+                                        className="flex-1 px-3 py-2 rounded-xl bg-slate-100 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+                                    />
+                                    <button type="submit" disabled={!input.trim() || loading}
+                                        className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-sky-500 text-white flex items-center justify-center shadow-sm hover:shadow-md transition-all disabled:opacity-40 shrink-0">
+                                        <Send className="w-4 h-4" />
+                                    </button>
+                                </form>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
         </>
