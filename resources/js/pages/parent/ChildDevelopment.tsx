@@ -1,7 +1,7 @@
 import ParentLayout from '@/layouts/parent-layout';
-import { Head } from '@inertiajs/react';
-import { useState } from 'react';
-import { TrendingUp, Brain, ClipboardCheck, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { Head, router } from '@inertiajs/react';
+import { useState, useEffect, useCallback } from 'react';
+import { TrendingUp, Brain, ClipboardCheck, ChevronDown, ChevronUp, User, RefreshCw } from 'lucide-react';
 
 interface GrowthPoint { date: string; height: number; weight: number; status: string; }
 interface ObsPoint { month: string; label: string; avg_score: number; count: number; behaviors: string[]; }
@@ -340,13 +340,46 @@ function ChildCard({ data }: { data: DevelopmentData }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ChildDevelopment({ developmentData }: { developmentData: DevelopmentData[] }) {
+    const [refreshing, setRefreshing] = useState(false);
+    const [lastUpdated, setLastUpdated] = useState(new Date());
+
+    const refresh = useCallback(() => {
+        setRefreshing(true);
+        router.reload({
+            only: ['developmentData'],
+            onFinish: () => {
+                setRefreshing(false);
+                setLastUpdated(new Date());
+            },
+        });
+    }, []);
+
+    // Auto-refresh every 30 seconds
+    useEffect(() => {
+        const interval = setInterval(refresh, 30000);
+        return () => clearInterval(interval);
+    }, [refresh]);
+
     return (
         <ParentLayout>
             <Head title="Child Development" />
             <div className="space-y-6">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Child Development</h1>
-                    <p className="text-slate-500 text-sm mt-1">Track your child's growth, behavioral milestones, and development plan progress over time.</p>
+                <div className="flex items-start justify-between gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-800">Child Development</h1>
+                        <p className="text-slate-500 text-sm mt-1">Track your child's growth, behavioral milestones, and development plan progress over time.</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                        <button
+                            onClick={refresh}
+                            disabled={refreshing}
+                            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/80 border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-white hover:shadow-sm transition-all disabled:opacity-50"
+                        >
+                            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                            {refreshing ? 'Refreshing...' : 'Refresh'}
+                        </button>
+                        <p className="text-[10px] text-slate-400">Updated {lastUpdated.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
                 </div>
 
                 {developmentData.length === 0 ? (
