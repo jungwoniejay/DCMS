@@ -124,7 +124,10 @@ class AiAssistantController extends Controller
 
     private function askGemini(string $message, string $context): string
     {
-        $apiKey = env('GEMINI_API_KEY') ?: config('services.gemini.key');
+        $apiKey = $_ENV['GEMINI_API_KEY']
+            ?? getenv('GEMINI_API_KEY')
+            ?: env('GEMINI_API_KEY')
+            ?: config('services.gemini.key');
 
         if (!$apiKey) {
             return "AI assistant is not configured yet. Please contact the administrator.";
