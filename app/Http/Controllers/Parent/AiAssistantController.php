@@ -124,12 +124,19 @@ class AiAssistantController extends Controller
 
     private function askGemini(string $message, string $context): string
     {
-        $apiKey = config('services.gemini.key');
-        $url    = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={$apiKey}";
+        $apiKey = env('GEMINI_API_KEY') ?: config('services.gemini.key');
+
+        if (!$apiKey) {
+            return "AI assistant is not configured yet. Please contact the administrator.";
+        }
+
+        $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . urlencode($apiKey);
 
         $prompt = "{$context}\n\nParent's question: {$message}\n\nPlease provide a helpful, specific answer based on the child data above. If you detect any health or development concerns, mention them clearly but gently.";
 
-        $response = Http::timeout(30)->post($url, [
+        $response = Http::timeout(30)
+            ->withHeaders(['x-goog-api-key' => $apiKey])
+            ->post($url, [
             'contents' => [
                 ['parts' => [['text' => $prompt]]]
             ],
