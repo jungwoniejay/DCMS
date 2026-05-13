@@ -54,6 +54,17 @@ class AdminDashboardController extends Controller
                 ->pluck('count', 'purok_zone')
                 ->toArray(),
             'monthly_enrollment_trend' => $this->getMonthlyEnrollmentTrend(),
+            'classroom_distribution'    => Child::select('classroom', DB::raw('count(*) as count'))
+                ->whereNotNull('classroom')
+                ->groupBy('classroom')
+                ->get()->pluck('count', 'classroom')->toArray(),
+            'growth_trend_monthly'      => $this->getGrowthTrendMonthly(),
+            'dev_plan_status'           => DB::table('development_plans')
+                ->select('status', DB::raw('count(*) as count'))
+                ->groupBy('status')->get()->pluck('count', 'status')->toArray(),
+            'total_appointments'        => DB::table('checkup_appointments')->count(),
+            'pending_appointments'      => DB::table('checkup_appointments')->where('status','pending')->count(),
+            'completed_appointments'    => DB::table('checkup_appointments')->where('status','completed')->count(),
         ];
 
         return Inertia::render('admin/Dashboard', ['stats' => $stats]);
@@ -115,6 +126,29 @@ class AdminDashboardController extends Controller
             'count' => (int) $item->count,
         ])
         ->toArray();
+    }
+
+    private function getGrowthTrendMonthly()
+    {
+        return DB::table('nutrition_records')
+            ->select(
+                $this->yearMonthExpr('assessment_date'),
+                DB::raw('round(avg(height_first),1) as avg_height'),
+                DB::raw('round(avg(weight_first),1) as avg_weight'),
+                DB::raw('count(*) as count')
+            )
+            ->whereNotNull('assessment_date')
+            ->whereYear('assessment_date', now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->map(fn($item) => [
+                'month'      => date('M', strtotime($item->month . '-01')),
+                'avg_height' => (float) $item->avg_height,
+                'avg_weight' => (float) $item->avg_weight,
+                'count'      => (int) $item->count,
+            ])
+            ->toArray();
     }
 
     public function stats()
