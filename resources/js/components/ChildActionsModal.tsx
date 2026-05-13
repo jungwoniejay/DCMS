@@ -1,6 +1,6 @@
 import { router, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { X, TrendingUp, Brain, Utensils, ClipboardList, Users, Plus, Trash2, Edit, Save } from 'lucide-react';
+import { X, TrendingUp, Brain, Utensils, ClipboardList, Users, Trash2, Edit, Save } from 'lucide-react';
 import Modal from '@/components/Modal';
 
 type ModalType = 'growth' | 'development' | 'care' | 'observations' | 'parent-involvement' | null;
@@ -199,7 +199,7 @@ function CareModal({ child, onClose }: { child: any; onClose: () => void }) {
 function ObservationsModal({ child, onClose }: { child: any; onClose: () => void }) {
     const [observations, setObservations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [showForm, setShowForm] = useState(false);
+    const [showForm, setShowForm] = useState(true);
     const { data, setData, processing, reset } = useForm({ behavior_name: '', observation_count: '', comment: '' });
 
     const load = () => {
@@ -224,9 +224,6 @@ function ObservationsModal({ child, onClose }: { child: any; onClose: () => void
 
     return (
         <div className="space-y-4">
-            <button onClick={() => setShowForm(!showForm)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700">
-                <Plus className="w-3.5 h-3.5" /> Add Observation
-            </button>
             {showForm && (
                 <form onSubmit={submit} className="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
                     <div><label className={lc}>Behavior Name *</label><input value={data.behavior_name} onChange={e => setData('behavior_name', e.target.value)} className={ic} required placeholder="e.g. Sharing with peers" /></div>
@@ -240,7 +237,6 @@ function ObservationsModal({ child, onClose }: { child: any; onClose: () => void
                     <div><label className={lc}>Comment</label><textarea value={data.comment} onChange={e => setData('comment', e.target.value)} className={`${ic} resize-none`} rows={3} /></div>
                     <div className="flex gap-2">
                         <button type="submit" disabled={processing} className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-semibold disabled:opacity-50">Save</button>
-                        <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50">Cancel</button>
                     </div>
                 </form>
             )}
