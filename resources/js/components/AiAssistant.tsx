@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles, Loader2, ChevronDown } from 'lucide-react';
-import axios from 'axios';
+import { MessageCircle, X, Send, Sparkles, Loader2 } from 'lucide-react';
 
 interface Message {
     role: 'user' | 'ai';
@@ -67,13 +66,20 @@ export default function AiAssistant({ childId }: { childId?: number }) {
         setLoading(true);
 
         try {
-            const res = await axios.post('/parent/ai/chat', {
-                message: text.trim(),
-                child_id: childId ?? null,
+            const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content;
+            const res = await fetch('/parent/ai/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken ?? '',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ message: text.trim(), child_id: childId ?? null }),
             });
+            const json = await res.json();
             setMessages(m => [...m, {
                 role: 'ai',
-                text: res.data.reply,
+                text: json.reply ?? "I couldn't generate a response.",
                 time: new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }),
             }]);
         } catch {

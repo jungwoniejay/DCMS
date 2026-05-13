@@ -140,7 +140,12 @@ class AiAssistantController extends Controller
         ]);
 
         if ($response->failed()) {
-            return "I'm having trouble connecting right now. Please try again in a moment.";
+            \Log::error('Gemini API error', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
+            $errorMsg = $response->json('error.message') ?? 'Unknown error (status '.$response->status().')';
+            return "AI error: {$errorMsg}";
         }
 
         return $response->json('candidates.0.content.parts.0.text')
