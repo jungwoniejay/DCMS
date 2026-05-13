@@ -243,6 +243,9 @@ Route::middleware(['auth', 'parent'])->prefix('parent')->name('parent.')->group(
     Route::post('notifications/{id}/read', [\App\Http\Controllers\Parent\NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('notifications/read-all', [\App\Http\Controllers\Parent\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
     
+    // Child Development Graph
+    Route::get('child-development', [\App\Http\Controllers\Parent\ParentChildDevelopmentController::class, 'index'])->name('child-development');
+
     // View Development Plans
     Route::get('children/{childId}/development-plans', [\App\Http\Controllers\Parent\ParentDevelopmentPlanController::class, 'index'])->name('development-plans');
 

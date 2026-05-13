@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {
     LayoutDashboard, Baby, ClipboardList,
     MessageCircle, LogOut, User, Menu, X,
-    PanelLeftClose, PanelLeftOpen, Stethoscope, BookOpen
+    PanelLeftClose, PanelLeftOpen, Stethoscope, BookOpen, TrendingUp
 } from 'lucide-react';
 import DaycareLogo from '@/components/daycare-logo';
 import { ReactNode } from 'react';
@@ -21,9 +21,10 @@ const menuGroups = [
     {
         label: 'My Child',
         items: [
-            { name: 'My Children', href: '/parent/my-children', icon: Baby },
-            { name: 'Health', href: '/parent/health', icon: Stethoscope },
-            { name: 'Development', href: '/parent/nutrition', icon: BookOpen },
+            { name: 'My Children',  href: '/parent/my-children',       icon: Baby },
+            { name: 'Health',        href: '/parent/health',             icon: Stethoscope },
+            { name: 'Growth & Dev.', href: '/parent/child-development',  icon: TrendingUp },
+            { name: 'Nutrition',     href: '/parent/nutrition',          icon: BookOpen },
         ],
     },
     {
