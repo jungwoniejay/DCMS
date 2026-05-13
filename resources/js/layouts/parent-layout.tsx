@@ -10,6 +10,7 @@ import { ReactNode } from 'react';
 import Toast from '@/components/toast';
 import NotificationBell from '@/components/notification-bell';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
+import AiAssistant from '@/components/AiAssistant';
 
 const menuGroups = [
     {
@@ -248,6 +249,7 @@ export default function ParentLayout({ children }: ParentLayoutProps) {
                 </div>
             </main>
             <Toast />
+            <AiAssistant />
         </div>
     );
 }
