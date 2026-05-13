@@ -32,9 +32,17 @@ class PasswordResetLinkController extends Controller
             'email' => 'required|email',
         ]);
 
-        Password::sendResetLink(
+        $status = Password::sendResetLink(
             $request->only('email')
         );
+
+        \Illuminate\Support\Facades\Log::info('Password reset attempted', [
+            'email'  => $request->email,
+            'status' => $status,
+            'mailer' => config('mail.mailer'),
+            'host'   => config('mail.mailers.smtp.host'),
+            'from'   => config('mail.from.address'),
+        ]);
 
         return back()->with('status', __('A reset link will be sent if the account exists.'));
     }
