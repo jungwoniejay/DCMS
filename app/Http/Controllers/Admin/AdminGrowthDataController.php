@@ -46,6 +46,17 @@ class AdminGrowthDataController extends Controller
             'updated_at'               => now(),
         ]);
 
+        // Notify parent
+        $child = Child::findOrFail($childId);
+        if ($child->guardian_id) {
+            \App\Models\Notification::send(
+                $child->guardian_id,
+                'growth_updated',
+                '📏 New Growth Record Added',
+                "A new measurement has been recorded for {$child->first_name}: Height {$validated['height']}cm, Weight {$validated['weight']}kg, Status: {$validated['nutritional_status']}."
+            );
+        }
+
         return back()->with('success', 'Growth measurement added successfully!');
     }
 }

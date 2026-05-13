@@ -41,6 +41,17 @@ class AdminAppointmentController extends Controller
             'status'         => 'scheduled',
             'scheduled_by'   => auth()->id(),
         ]);
+
+        // Notify parent
+        if ($appointment->requested_by) {
+            \App\Models\Notification::send(
+                $appointment->requested_by,
+                'appointment_scheduled',
+                '📅 Appointment Scheduled',
+                "Your {$appointment->appointment_type} appointment for {$appointment->child?->first_name} has been scheduled on {$validated['scheduled_date']} at {$validated['scheduled_time']} at {$validated['location']}."
+            );
+        }
+
         $this->logActivity('update', "Scheduled appointment #{$id}", 'appointment', CheckupAppointment::class, $id);
         return back()->with('success', 'Appointment scheduled successfully!');
     }

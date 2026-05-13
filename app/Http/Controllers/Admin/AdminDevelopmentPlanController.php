@@ -49,8 +49,18 @@ class AdminDevelopmentPlanController extends Controller
             'created_by'       => auth()->id(),
         ]);
 
-        $this->logActivity('create', "Created development plan for child #{$childId}", 'development_plan', DevelopmentPlan::class, $plan->id);
+        // Notify parent
+        $child = Child::findOrFail($childId);
+        if ($child->guardian_id) {
+            \App\Models\Notification::send(
+                $child->guardian_id,
+                'development_plan_added',
+                '📋 New Development Plan Created',
+                "A new {$validated['plan_type']} development plan has been created for {$child->first_name}. Goal: {$validated['goals']}"
+            );
+        }
 
+        $this->logActivity('create', "Created development plan for child #{$childId}", 'development_plan', DevelopmentPlan::class, $plan->id);
         return back()->with('success', 'Development plan created successfully!');
     }
 
@@ -63,8 +73,19 @@ class AdminDevelopmentPlanController extends Controller
 
         $plan = DevelopmentPlan::findOrFail($id);
         $plan->update($validated);
+        // Notify parent if completed
+        if ($validated['status'] === 'completed') {
+            $child = $plan->child;
+            if ($child?->guardian_id) {
+                \App\Models\Notification::send(
+                    $child->guardian_id,
+                    'development_plan_completed',
+                    '✅ Development Plan Completed!',
+                    "Great news! The {$plan->plan_type} development plan for {$child->first_name} has been marked as completed."
+                );
+            }
+        }
         $this->logActivity('update', "Updated development plan #{$id}", 'development_plan', DevelopmentPlan::class, $id);
-
         return back()->with('success', 'Development plan updated successfully!');
     }
 

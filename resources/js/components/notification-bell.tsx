@@ -89,9 +89,13 @@ export default function NotificationBell() {
     };
 
     const typeIcon = (type: string) => {
-        if (type === 'enrollment_approved') return <CheckCircle className="w-4 h-4 text-emerald-500" />;
-        if (type === 'enrollment_rejected') return <XCircle className="w-4 h-4 text-red-500" />;
-        if (type === 'admin_announcement') return <Megaphone className="w-4 h-4 text-sky-500" />;
+        if (type === 'enrollment_approved')      return <CheckCircle className="w-4 h-4 text-emerald-500" />;
+        if (type === 'enrollment_rejected')      return <XCircle className="w-4 h-4 text-red-500" />;
+        if (type === 'admin_announcement')       return <Megaphone className="w-4 h-4 text-sky-500" />;
+        if (type === 'growth_updated')           return <span className="text-sm">📏</span>;
+        if (type === 'development_plan_added')   return <span className="text-sm">📋</span>;
+        if (type === 'development_plan_completed') return <span className="text-sm">✅</span>;
+        if (type === 'appointment_scheduled')    return <span className="text-sm">📅</span>;
         return <Bell className="w-4 h-4 text-violet-500" />;
     };
 
