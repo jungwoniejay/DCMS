@@ -15,7 +15,7 @@ class ParentChildDevelopmentController extends Controller
         $parentId = auth()->id();
 
         $children = Child::where('guardian_id', $parentId)
-            ->where('registration_status', 'Approved')
+            ->whereIn('registration_status', ['Approved', 'Pending'])
             ->get();
 
         $developmentData = $children->map(function ($child) {
