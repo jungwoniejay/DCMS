@@ -1,6 +1,7 @@
 import ParentLayout from '@/layouts/parent-layout';
 import { TrendingUp, Ruler, Weight, X, Calendar, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 interface HistoryRecord { date: string; height: number; weight: number; status: string; }
 interface NutritionData {
@@ -94,13 +95,14 @@ function GrowthChart({ history }: { history: HistoryRecord[] }) {
 
 export default function Nutrition({ nutritionData }: { nutritionData: NutritionData[] }) {
     const [selected, setSelected] = useState<NutritionData | null>(null);
+    const { t } = useTranslation();
 
     return (
         <ParentLayout>
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Growth & Development</h1>
-                    <p className="text-slate-500 text-sm mt-1">Track your children's growth, nutrition status, and feeding habits</p>
+                    <h1 className="text-2xl font-bold text-slate-800">{t('nutrition.title')}</h1>
+                    <p className="text-slate-500 text-sm mt-1">{t('nutrition.subtitle')}</p>
                 </div>
 
                 {nutritionData.length === 0 ? (
@@ -108,8 +110,8 @@ export default function Nutrition({ nutritionData }: { nutritionData: NutritionD
                         <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
                             <TrendingUp className="w-8 h-8 text-slate-300" />
                         </div>
-                        <p className="text-slate-500 font-medium">No growth data available yet.</p>
-                        <p className="text-slate-400 text-sm mt-1">Data will appear once the admin records measurements.</p>
+                        <p className="text-slate-500 font-medium">{t('nutrition.no_data')}</p>
+                        <p className="text-slate-400 text-sm mt-1">{t('nutrition.no_data_sub')}</p>
                     </div>
                 ) : (
                     <div className="space-y-5">
@@ -135,7 +137,7 @@ export default function Nutrition({ nutritionData }: { nutritionData: NutritionD
                                             <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <Ruler className="w-4 h-4 text-blue-500" />
-                                                    <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Height</span>
+                                                    <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">{t('nutrition.height')}</span>
                                                 </div>
                                                 <p className="text-2xl font-bold text-blue-700">
                                                     {data.current_height ? `${data.current_height}` : '—'}
@@ -146,7 +148,7 @@ export default function Nutrition({ nutritionData }: { nutritionData: NutritionD
                                             <div className="bg-emerald-50 rounded-2xl p-4 border border-emerald-100">
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <Weight className="w-4 h-4 text-emerald-500" />
-                                                    <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Weight</span>
+                                                    <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">{t('nutrition.weight')}</span>
                                                 </div>
                                                 <p className="text-2xl font-bold text-emerald-700">
                                                     {data.current_weight ? `${data.current_weight}` : '—'}
@@ -157,7 +159,7 @@ export default function Nutrition({ nutritionData }: { nutritionData: NutritionD
                                             <div className="bg-violet-50 rounded-2xl p-4 border border-violet-100">
                                                 <div className="flex items-center gap-2 mb-2">
                                                     <Calendar className="w-4 h-4 text-violet-500" />
-                                                    <span className="text-xs font-semibold text-violet-600 uppercase tracking-wide">Last Measured</span>
+                                                    <span className="text-xs font-semibold text-violet-600 uppercase tracking-wide">{t('nutrition.last_measured')}</span>
                                                 </div>
                                                 <p className="text-sm font-bold text-violet-700 leading-tight">
                                                     {data.last_measured ? fmtDate(data.last_measured) : '—'}
@@ -173,14 +175,14 @@ export default function Nutrition({ nutritionData }: { nutritionData: NutritionD
                                                     <div className="flex items-start gap-3 p-4 bg-red-50 rounded-2xl border border-red-100">
                                                         <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                                                         <div>
-                                                            <p className="text-xs font-bold text-red-500 uppercase tracking-wide mb-1">Food Allergies</p>
+                                                            <p className="text-xs font-bold text-red-500 uppercase tracking-wide mb-1">{t('nutrition.allergies')}</p>
                                                             <p className="text-sm text-red-700">{data.food_allergies}</p>
                                                         </div>
                                                     </div>
                                                 )}
                                                 {data.eating_habits && (
                                                     <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Eating Habits</p>
+                                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">{t('nutrition.eating')}</p>
                                                         <p className="text-sm text-slate-600">{data.eating_habits}</p>
                                                     </div>
                                                 )}
@@ -190,7 +192,7 @@ export default function Nutrition({ nutritionData }: { nutritionData: NutritionD
                                         {/* Growth history table */}
                                         {data.history.length > 0 && (
                                             <div>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">Growth History</p>
+                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">{t('nutrition.history')}</p>
                                                 <div className="rounded-xl border border-slate-100 overflow-hidden">
                                                     <table className="w-full text-sm">
                                                         <thead>
@@ -225,7 +227,7 @@ export default function Nutrition({ nutritionData }: { nutritionData: NutritionD
 
                                         <button onClick={() => setSelected(data)}
                                             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-violet-500 text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all">
-                                            <TrendingUp className="w-4 h-4" /> View Growth Chart
+                                            <TrendingUp className="w-4 h-4" /> {t('nutrition.view_chart')}
                                         </button>
                                     </div>
                                 </div>

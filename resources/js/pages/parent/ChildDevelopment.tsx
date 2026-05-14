@@ -2,6 +2,7 @@ import ParentLayout from '@/layouts/parent-layout';
 import { Head, router } from '@inertiajs/react';
 import { useState, useEffect, useCallback } from 'react';
 import { TrendingUp, Brain, ClipboardCheck, ChevronDown, ChevronUp, User, RefreshCw, Download } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface GrowthPoint { date: string; height: number; weight: number; status: string; }
 interface ObsPoint { month: string; label: string; avg_score: number; count: number; behaviors: string[]; }
@@ -213,11 +214,12 @@ const statusBadge: Record<string, string> = {
 function ChildCard({ data }: { data: DevelopmentData }) {
     const [tab, setTab] = useState<'growth' | 'milestones' | 'plans'>('growth');
     const [expanded, setExpanded] = useState(true);
+    const { t } = useTranslation();
 
     const tabs = [
-        { key: 'growth',     label: 'Growth',      icon: TrendingUp },
-        { key: 'milestones', label: 'Milestones',   icon: Brain },
-        { key: 'plans',      label: 'Dev. Plans',   icon: ClipboardCheck },
+        { key: 'growth',     label: t('dev.growth'),     icon: TrendingUp },
+        { key: 'milestones', label: t('dev.milestones'),  icon: Brain },
+        { key: 'plans',      label: t('dev.plans'),       icon: ClipboardCheck },
     ] as const;
 
     return (
@@ -247,7 +249,7 @@ function ChildCard({ data }: { data: DevelopmentData }) {
                         target="_blank"
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-sky-500 text-white text-xs font-semibold shadow-sm hover:shadow-md transition-all"
                     >
-                        <Download className="w-3.5 h-3.5" /> Download Progress Report (PDF)
+                        <Download className="w-3.5 h-3.5" /> {t('dev.download_report')}
                     </a>
                     {/* Tabs */}
                     <div className="flex gap-1 bg-slate-100 rounded-xl p-1">
@@ -350,6 +352,7 @@ function ChildCard({ data }: { data: DevelopmentData }) {
 export default function ChildDevelopment({ developmentData }: { developmentData: DevelopmentData[] }) {
     const [refreshing, setRefreshing] = useState(false);
     const [lastUpdated, setLastUpdated] = useState(new Date());
+    const { t } = useTranslation();
 
     const refresh = useCallback(() => {
         setRefreshing(true);
@@ -374,8 +377,8 @@ export default function ChildDevelopment({ developmentData }: { developmentData:
             <div className="space-y-6">
                 <div className="flex items-start justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">Child Development</h1>
-                        <p className="text-slate-500 text-sm mt-1">Track your child's growth, behavioral milestones, and development plan progress over time.</p>
+                        <h1 className="text-2xl font-bold text-slate-800">{t('dev.title')}</h1>
+                        <p className="text-slate-500 text-sm mt-1">{t('dev.subtitle')}</p>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
                         <button
@@ -384,8 +387,7 @@ export default function ChildDevelopment({ developmentData }: { developmentData:
                             className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/80 border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-white hover:shadow-sm transition-all disabled:opacity-50"
                         >
                             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-                            {refreshing ? 'Refreshing...' : 'Refresh'}
-                        </button>
+                            {refreshing ? t('dev.refreshing') : t('dev.refresh')}</button>
                         <p className="text-[10px] text-slate-400">Updated {lastUpdated.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                 </div>
@@ -395,8 +397,8 @@ export default function ChildDevelopment({ developmentData }: { developmentData:
                         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-100 to-teal-100 flex items-center justify-center mx-auto mb-3">
                             <TrendingUp className="w-8 h-8 text-teal-400" />
                         </div>
-                        <p className="text-slate-500 font-medium">No approved children found.</p>
-                        <p className="text-slate-400 text-sm mt-1">Development data will appear once your child's enrollment is approved.</p>
+                        <p className="text-slate-500 font-medium">{t('dev.no_approved')}</p>
+                        <p className="text-slate-400 text-sm mt-1">{t('dev.no_approved_sub')}</p>
                     </div>
                 ) : (
                     <div className="space-y-5">
