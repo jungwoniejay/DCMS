@@ -1,12 +1,11 @@
 #!/bin/sh
-set -e
 
 echo "=== Starting DCMS ==="
 
 # Clear stale caches
-rm -rf /app/bootstrap/cache/*.php
-rm -rf /app/storage/framework/views/*.php
-rm -rf /app/storage/framework/cache/data/*
+rm -rf /app/bootstrap/cache/*.php 2>/dev/null || true
+rm -rf /app/storage/framework/views/*.php 2>/dev/null || true
+rm -rf /app/storage/framework/cache/data/* 2>/dev/null || true
 echo "Caches cleared"
 
 # Build .env from Railway environment variables
@@ -53,29 +52,50 @@ EOF
 if [ -n "$DATABASE_URL" ]; then
     DB_USER=$(echo "$DATABASE_URL" | sed -E 's|.*://([^:]+):.*|\1|')
     DB_PASS=$(echo "$DATABASE_URL" | sed -E 's|.*://[^:]+:([^@]+)@.*|\1|')
-    DB_HOST=$(echo "$DATABASE_URL" | sed -E 's|.*@([^:/]+)[:/].*|\1|')
-    DB_PORT=$(echo "$DATABASE_URL" | sed -E 's|.*@[^:]+:([0-9]+)/.*|\1|')
+    DB_HOST_PARSED=$(echo "$DATABASE_URL" | sed -E 's|.*@([^:/]+)[:/].*|\1|')
+    DB_PORT_PARSED=$(echo "$DATABASE_URL" | sed -E 's|.*@[^:]+:([0-9]+)/.*|\1|')
     DB_NAME=$(echo "$DATABASE_URL" | sed -E 's|.*/([^?]+).*|\1|')
-    sed -i "s|^DB_HOST=.*|DB_HOST=${DB_HOST}|" /app/.env
-    sed -i "s|^DB_PORT=.*|DB_PORT=${DB_PORT}|" /app/.env
+    sed -i "s|^DB_HOST=.*|DB_HOST=${DB_HOST_PARSED}|" /app/.env
+    sed -i "s|^DB_PORT=.*|DB_PORT=${DB_PORT_PARSED}|" /app/.env
     sed -i "s|^DB_DATABASE=.*|DB_DATABASE=${DB_NAME}|" /app/.env
     sed -i "s|^DB_USERNAME=.*|DB_USERNAME=${DB_USER}|" /app/.env
     sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=${DB_PASS}|" /app/.env
-    echo "DB configured: host=${DB_HOST} db=${DB_NAME}"
+    echo "DB configured: host=${DB_HOST_PARSED} db=${DB_NAME}"
 fi
 
 # Storage setup
 mkdir -p /app/storage/app/public/enrollment_photos
 mkdir -p /app/storage/app/public/profile_pictures
+mkdir -p /app/storage/framework/sessions
+mkdir -p /app/storage/framework/views
+mkdir -p /app/storage/framework/cache
+mkdir -p /app/storage/logs
 chmod -R 777 /app/storage
+chmod -R 777 /app/bootstrap/cache
 rm -f /app/public/storage
 ln -sfn /app/storage/app/public /app/public/storage
+echo "Storage ready"
 
-# Migrate and cache
-php artisan migrate --force
-php artisan db:seed --class=WelcomeContentSeeder --force 2>/dev/null || true
-php artisan config:cache
-php artisan route:cache
+# Migrate
+php artisan migrate --force && echo "Migrations done" || echo "Migration warning (may already be up to date)"
+
+# Seed welcome content
+php artisan db:seed --class=WelcomeContentSeeder --force 2>/dev/null && echo "Seeded" || true
+
+# Cache config and routes only (no view:cache)
+php artisan config:cache && echo "Config cached"
+php artisan route:cache && echo "Routes cached"
+
+# Create Laravel router for php -S
+cat > /app/server.php << 'ROUTER'
+<?php
+$uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+if ($uri !== '/' && file_exists(__DIR__.'/public'.$uri)) {
+    return false;
+}
+$_SERVER['SCRIPT_FILENAME'] = __DIR__.'/public/index.php';
+require_once __DIR__.'/public/index.php';
+ROUTER
 
 echo "=== DCMS Ready on port ${PORT:-8080} ==="
-exec php -S 0.0.0.0:${PORT:-8080} -t /app/public /app/public/index.php
+exec php -S 0.0.0.0:${PORT:-8080} /app/server.php
