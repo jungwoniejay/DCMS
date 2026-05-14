@@ -3,13 +3,13 @@ set -e
 
 echo "=== Starting DCMS ==="
 
-# AGGRESSIVELY clear ALL cached files that may persist on volume
+# Clear stale caches
 rm -rf /app/bootstrap/cache/*.php
 rm -rf /app/storage/framework/views/*.php
 rm -rf /app/storage/framework/cache/data/*
-echo "All caches cleared"
+echo "Caches cleared"
 
-# Always regenerate .env from Railway environment variables
+# Build .env from Railway environment variables
 cat > /app/.env << EOF
 APP_NAME=${APP_NAME:-KidCareHinoba-an}
 APP_ENV=production
@@ -20,10 +20,10 @@ APP_LOCALE=en
 APP_FALLBACK_LOCALE=en
 APP_FAKER_LOCALE=en_US
 APP_MAINTENANCE_DRIVER=file
-PHP_CLI_SERVER_WORKERS=4
+PHP_CLI_SERVER_WORKERS=8
 BCRYPT_ROUNDS=12
 LOG_CHANNEL=stderr
-LOG_LEVEL=debug
+LOG_LEVEL=error
 DB_CONNECTION=pgsql
 DB_HOST=${DB_HOST}
 DB_PORT=${DB_PORT:-5432}
@@ -65,17 +65,17 @@ if [ -n "$DATABASE_URL" ]; then
 fi
 
 # Storage setup
-mkdir -p /tmp/sessions
-chmod -R 777 /tmp/sessions
-chmod -R 777 /app/storage/app/public 2>/dev/null || true
 mkdir -p /app/storage/app/public/enrollment_photos
 mkdir -p /app/storage/app/public/profile_pictures
+chmod -R 777 /app/storage
 rm -f /app/public/storage
 ln -sfn /app/storage/app/public /app/public/storage
 
-# Run migrations and seed default content
+# Migrate and cache
 php artisan migrate --force
-php artisan db:seed --class=WelcomeContentSeeder --force
+php artisan db:seed --class=WelcomeContentSeeder --force 2>/dev/null || true
+php artisan config:cache
+php artisan route:cache
 
 echo "=== DCMS Ready on port ${PORT:-8080} ==="
-exec php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+exec php -S 0.0.0.0:${PORT:-8080} -t /app/public /app/public/index.php

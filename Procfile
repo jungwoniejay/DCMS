@@ -1,1 +1,1 @@
-web: php artisan config:clear && php artisan view:clear && php artisan route:clear && php artisan event:clear && php artisan migrate --force && php artisan storage:link --force && php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+web: chmod +x /app/start.sh && /app/start.sh
