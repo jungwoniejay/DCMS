@@ -10,6 +10,8 @@ use App\Models\MotherProfile;
 use App\Models\Guardian;
 use App\Models\EmergencyContact;
 use App\Models\Notification;
+use App\Models\PriorExperience;
+use App\Models\PerformanceInput;
 use App\Traits\LogsActivity;
 use App\Services\ClassroomClassifier;
 use Illuminate\Http\Request;
@@ -266,6 +268,26 @@ class AdminEnrollmentController extends Controller
                 'left_handed'           => $profileData['left_handed'] ?? null,
             ]);
         }
+
+        // Save prior experiences (Form 2) from enrollment
+        $priorExp = $profileData['prior_experiences'] ?? [];
+        if (!empty($priorExp)) {
+            PriorExperience::updateOrCreate(['child_id' => $child->id], [
+                'nursery_type'     => $priorExp['Nursery'] ?? null,
+                'kindergarten_type'=> $priorExp['Kindergarten'] ?? null,
+                'preparatory_type' => $priorExp['Preparatory'] ?? null,
+            ]);
+        }
+
+        // Save performance/social data (Form 2) from enrollment
+        PerformanceInput::updateOrCreate(['child_id' => $child->id], [
+            'learns_at_home_with'   => !empty($profileData['learns_at_home_with'])
+                ? (is_array($profileData['learns_at_home_with']) ? implode(', ', $profileData['learns_at_home_with']) : $profileData['learns_at_home_with'])
+                : null,
+            'play_older_siblings'   => $profileData['plays_older_siblings'] ?? null,
+            'play_younger_siblings' => $profileData['plays_younger_siblings'] ?? null,
+            'play_neighbors'        => $profileData['plays_neighbors'] ?? null,
+        ]);
 
         // Save health data (Form 2 health) from enrollment
         $healthData = $enrollment->health_data ?? [];

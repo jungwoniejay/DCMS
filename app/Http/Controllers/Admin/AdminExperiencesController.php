@@ -33,9 +33,9 @@ class AdminExperiencesController extends Controller
     private function getSocialInteraction()
     {
         return PerformanceInput::select(
-            DB::raw('SUM(CASE WHEN play_older_siblings IS NOT NULL THEN 1 ELSE 0 END) as with_older_siblings'),
-            DB::raw('SUM(CASE WHEN play_younger_siblings IS NOT NULL THEN 1 ELSE 0 END) as with_younger_siblings'),
-            DB::raw('SUM(CASE WHEN play_neighbors IS NOT NULL THEN 1 ELSE 0 END) as with_neighbors')
+            DB::raw("SUM(CASE WHEN play_older_siblings IN ('Always','Sometimes') THEN 1 ELSE 0 END) as with_older_siblings"),
+            DB::raw("SUM(CASE WHEN play_younger_siblings IN ('Always','Sometimes') THEN 1 ELSE 0 END) as with_younger_siblings"),
+            DB::raw("SUM(CASE WHEN play_neighbors IN ('Always','Sometimes') THEN 1 ELSE 0 END) as with_neighbors")
         )->first();
     }
     
