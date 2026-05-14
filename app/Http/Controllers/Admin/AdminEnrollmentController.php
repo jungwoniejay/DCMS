@@ -253,19 +253,26 @@ class AdminEnrollmentController extends Controller
                 }
             }
             $child->childDetails()->updateOrCreate(['child_id' => $child->id], [
-                'birth_order'           => $profileData['birth_order'] ?? null,
-                'registered'            => $profileData['registered'] ?? null,
-                'born_at'               => $profileData['born_at'] ?? null,
-                'mother_tongue'         => $profileData['mother_tongue'] ?? null,
-                'other_dialects'        => $profileData['other_dialects'] ?? null,
-                'height_cm'             => $profileData['height_cm'] ?? null,
-                'weight_kg'             => $profileData['weight_kg'] ?? null,
-                'eccd_card'             => !empty($profileData['eccd_card']),
-                'mother_child_book'     => !empty($profileData['mother_child_book']),
-                'vaccinations'          => !empty($vaccinations) ? $vaccinations : null,
-                'physical_deformity'    => $profileData['physical_deformity'] ?? null,
-                'problems_with'         => $profileData['problems_with'] ?? null,
-                'left_handed'           => $profileData['left_handed'] ?? null,
+                'birth_order'            => $profileData['birth_order'] ?? null,
+                'registered'             => $profileData['registered'] ?? null,
+                'born_at'                => $profileData['born_at'] ?? null,
+                'mother_tongue'          => $profileData['mother_tongue'] ?? null,
+                'other_dialects'         => $profileData['other_dialects'] ?? null,
+                'height_cm'              => $profileData['height_cm'] ?? null,
+                'weight_kg'              => $profileData['weight_kg'] ?? null,
+                'eccd_card'              => !empty($profileData['eccd_card']),
+                'mother_child_book'      => !empty($profileData['mother_child_book']),
+                'vaccinations'           => !empty($vaccinations) ? $vaccinations : null,
+                'physical_deformity'     => $profileData['physical_deformity'] ?? null,
+                'problems_with'          => $profileData['problems_with'] ?? null,
+                'left_handed'            => $profileData['left_handed'] ?? null,
+                'prior_experiences'      => !empty($profileData['prior_experiences']) ? json_encode($profileData['prior_experiences']) : null,
+                'learns_at_home_with'    => !empty($profileData['learns_at_home_with'])
+                    ? (is_array($profileData['learns_at_home_with']) ? implode(', ', $profileData['learns_at_home_with']) : $profileData['learns_at_home_with'])
+                    : null,
+                'plays_older_siblings'   => $profileData['plays_older_siblings'] ?? null,
+                'plays_younger_siblings' => $profileData['plays_younger_siblings'] ?? null,
+                'plays_neighbors'        => $profileData['plays_neighbors'] ?? null,
             ]);
         }
 
