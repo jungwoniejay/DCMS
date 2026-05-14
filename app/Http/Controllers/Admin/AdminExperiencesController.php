@@ -13,21 +13,30 @@ class AdminExperiencesController extends Controller
 {
     public function index()
     {
-        $developmentData = [
-            'prior_schooling'    => $this->getPriorSchooling(),
-            'social_interaction' => $this->getSocialInteraction(),
-            'home_learning'      => $this->getHomeLearning(),
-        ];
+        try {
+            $priorSchooling   = $this->getPriorSchooling();
+            $socialInteraction = $this->getSocialInteraction();
+            $homeLearning     = $this->getHomeLearning();
+        } catch (\Exception $e) {
+            \Log::error('AdminExperiencesController error: ' . $e->getMessage());
+            $priorSchooling    = (object)['nursery' => 0, 'kindergarten' => 0, 'preparatory' => 0];
+            $socialInteraction = (object)['with_older_siblings' => 0, 'with_younger_siblings' => 0, 'with_neighbors' => 0];
+            $homeLearning      = collect();
+        }
 
-        return Inertia::render('admin/Development', $developmentData);
+        return Inertia::render('admin/Development', [
+            'prior_schooling'    => $priorSchooling,
+            'social_interaction' => $socialInteraction,
+            'home_learning'      => $homeLearning,
+        ]);
     }
 
     private function getPriorSchooling()
     {
         return ChildDetail::select(
-            DB::raw("SUM(CASE WHEN prior_experiences IS NOT NULL AND prior_experiences LIKE '%Nursery%' THEN 1 ELSE 0 END) as nursery"),
-            DB::raw("SUM(CASE WHEN prior_experiences IS NOT NULL AND prior_experiences LIKE '%Kindergarten%' THEN 1 ELSE 0 END) as kindergarten"),
-            DB::raw("SUM(CASE WHEN prior_experiences IS NOT NULL AND prior_experiences LIKE '%Preparatory%' THEN 1 ELSE 0 END) as preparatory")
+            DB::raw("SUM(CASE WHEN prior_experiences::text ILIKE '%Nursery%' THEN 1 ELSE 0 END) as nursery"),
+            DB::raw("SUM(CASE WHEN prior_experiences::text ILIKE '%Kindergarten%' THEN 1 ELSE 0 END) as kindergarten"),
+            DB::raw("SUM(CASE WHEN prior_experiences::text ILIKE '%Preparatory%' THEN 1 ELSE 0 END) as preparatory")
         )->first();
     }
 
@@ -49,8 +58,8 @@ class AdminExperiencesController extends Controller
             $items = is_array($val)
                 ? $val
                 : (json_decode($val, true) ?? array_map('trim', explode(',', $val)));
-            foreach ($items as $item) {
-                $item = trim($item);
+            foreach ((array) $items as $item) {
+                $item = trim((string) $item);
                 if ($item) $counts[$item] = ($counts[$item] ?? 0) + 1;
             }
         }
