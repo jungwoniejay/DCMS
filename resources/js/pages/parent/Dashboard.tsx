@@ -1,7 +1,6 @@
 import ParentLayout from '@/layouts/parent-layout';
 import { Head, Link, router } from '@inertiajs/react';
 import { Users, Clock, CheckCircle, AlertTriangle, Baby, Calendar, Plus, ArrowRight, User, Activity, Apple, GraduationCap } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
 
 interface Child {
     id: number;
@@ -35,13 +34,7 @@ interface Props {
 }
 
 export default function Dashboard({ children, stats, recentAppointments, pendingEnrollments, announcements }: Props) {
-    const { t } = useTranslation();
-    const statCards = [
-        { label: t('dashboard.my_children'),   value: stats.total_children,        icon: Users,         color: 'from-sky-400 to-sky-600',       bg: 'bg-sky-50 border-sky-100 text-sky-700' },
-        { label: t('dashboard.pending'),        value: stats.pending_registrations,  icon: Clock,         color: 'from-amber-400 to-orange-500',  bg: 'bg-amber-50 border-amber-100 text-amber-700' },
-        { label: t('dashboard.approved'),       value: stats.approved_children,      icon: CheckCircle,   color: 'from-teal-400 to-emerald-500',  bg: 'bg-teal-50 border-teal-100 text-teal-700' },
-        { label: t('dashboard.health_alerts'),  value: stats.health_alerts,          icon: AlertTriangle, color: 'from-red-400 to-rose-500',      bg: 'bg-red-50 border-red-100 text-red-700' },
-    ];
+
 
     const statusColor = (status: string) =>
         status?.toLowerCase() === 'approved'
@@ -63,15 +56,15 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-slate-800">{t('dashboard.title')}</h1>
-                        <p className="text-slate-500 mt-1 text-sm">{t('dashboard.welcome')}</p>
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-800">My Dashboard</h1>
+                        <p className="text-slate-500 mt-1 text-sm">Welcome back! Here's an overview of your children.</p>
                     </div>
                     <Link
                         href="/parent/enroll"
                         className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-sky-500 to-teal-600 text-white rounded-xl text-sm font-semibold shadow-md hover:shadow-lg transition-all self-start sm:self-auto"
                     >
                         <Plus className="w-4 h-4" />
-                        {t('dashboard.enroll_new')}
+                        Enroll New Child
                     </Link>
                 </div>
 
@@ -91,10 +84,10 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                 {/* Stat Cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     {[
-                        { label: t('dashboard.my_children'),   value: stats.total_children,       icon: Users,         color: 'from-sky-400 to-sky-600',      bg: 'bg-sky-50 border-sky-100 text-sky-700',     href: '/parent/my-children' },
-                        { label: t('dashboard.pending'),       value: stats.pending_registrations, icon: Clock,         color: 'from-amber-400 to-orange-500', bg: 'bg-amber-50 border-amber-100 text-amber-700', href: '/parent/enrollment-requests' },
-                        { label: t('dashboard.approved'),      value: stats.approved_children,     icon: CheckCircle,   color: 'from-teal-400 to-emerald-500', bg: 'bg-teal-50 border-teal-100 text-teal-700',   href: '/parent/my-children' },
-                        { label: t('dashboard.health_alerts'), value: stats.health_alerts,         icon: AlertTriangle, color: 'from-red-400 to-rose-500',     bg: 'bg-red-50 border-red-100 text-red-700',      href: '/parent/health' },
+                        { label: 'My Children',   value: stats.total_children,        icon: Users,         color: 'from-sky-400 to-sky-600',      bg: 'bg-sky-50 border-sky-100 text-sky-700',      href: '/parent/my-children' },
+                        { label: 'Pending',        value: stats.pending_registrations, icon: Clock,         color: 'from-amber-400 to-orange-500', bg: 'bg-amber-50 border-amber-100 text-amber-700', href: '/parent/enrollment-requests' },
+                        { label: 'Approved',       value: stats.approved_children,     icon: CheckCircle,   color: 'from-teal-400 to-emerald-500', bg: 'bg-teal-50 border-teal-100 text-teal-700',   href: '/parent/my-children' },
+                        { label: 'Health Alerts',  value: stats.health_alerts,         icon: AlertTriangle, color: 'from-red-400 to-rose-500',     bg: 'bg-red-50 border-red-100 text-red-700',      href: '/parent/health' },
                     ].map((s) => (
                         <Link key={s.label} href={s.href} className={`flex items-center gap-3 p-4 rounded-2xl border ${s.bg} hover:shadow-md transition-all`}>
                             <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center shadow-sm shrink-0`}>
@@ -113,10 +106,10 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                     <div className="lg:col-span-2 space-y-4">
                         <div className="flex items-center justify-between">
                             <h2 className="text-base font-semibold text-slate-800 flex items-center gap-2">
-                                <Baby className="w-4 h-4 text-teal-500" /> {t('dashboard.my_children')}
+                                <Baby className="w-4 h-4 text-teal-500" /> My Children
                             </h2>
                             <Link href="/parent/my-children" className="text-xs text-sky-600 hover:underline font-medium flex items-center gap-1">
-                                {t('dashboard.view_all')} <ArrowRight className="w-3 h-3" />
+                                View all <ArrowRight className="w-3 h-3" />
                             </Link>
                         </div>
 
@@ -125,8 +118,8 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-100 to-teal-100 flex items-center justify-center mx-auto mb-3">
                                     <Baby className="w-8 h-8 text-teal-400" />
                                 </div>
-                                <p className="text-slate-500 font-medium">{t('dashboard.no_children')}</p>
-                                <p className="text-slate-400 text-sm mt-1">{t('dashboard.no_children_sub')}</p>
+                                <p className="text-slate-500 font-medium">No children registered yet</p>
+                                <p className="text-slate-400 text-sm mt-1">Click "Enroll New Child" to get started</p>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -188,14 +181,14 @@ export default function Dashboard({ children, stats, recentAppointments, pending
                         <div className="bg-white/70 backdrop-blur rounded-2xl border border-white/80 shadow-sm p-4">
                             <div className="flex items-center justify-between mb-3">
                                 <h2 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-sky-500" /> {t('dashboard.recent_appts')}
+                                    <Calendar className="w-4 h-4 text-sky-500" /> Recent Appointments
                                 </h2>
                                 <Link href="/parent/appointments" className="text-xs text-sky-600 hover:underline font-medium">
-                                    {t('dashboard.view_all')}
+                                    View all
                                 </Link>
                             </div>
                             {recentAppointments.length === 0 ? (
-                                <p className="text-xs text-slate-400 text-center py-4">{t('dashboard.no_appts')}</p>
+                                <p className="text-xs text-slate-400 text-center py-4">No appointments yet</p>
                             ) : (
                                 <div className="space-y-2">
                                     {recentAppointments.map((apt: any) => (
@@ -215,13 +208,13 @@ export default function Dashboard({ children, stats, recentAppointments, pending
 
                         {/* Quick Actions */}
                         <div className="bg-white/70 backdrop-blur rounded-2xl border border-white/80 shadow-sm p-4">
-                            <h2 className="text-sm font-semibold text-slate-800 mb-3">{t('dashboard.quick_actions')}</h2>
+                            <h2 className="text-sm font-semibold text-slate-800 mb-3">Quick Actions</h2>
                             <div className="space-y-2">
                                 {[
-                                    { label: t('dashboard.enroll_child'),    href: '/parent/enroll',               color: 'from-sky-400 to-teal-500',     icon: Plus },
-                                    { label: t('dashboard.request_appt'),    href: '/parent/appointments',          color: 'from-blue-400 to-sky-500',     icon: Calendar },
-                                    { label: t('dashboard.view_health'),     href: '/parent/health',                color: 'from-teal-400 to-emerald-500', icon: Activity },
-                                    { label: t('dashboard.enroll_requests'), href: '/parent/enrollment-requests',   color: 'from-amber-400 to-orange-500', icon: Clock },
+                                    { label: 'Enroll a Child',         href: '/parent/enroll',              color: 'from-sky-400 to-teal-500',     icon: Plus },
+                                    { label: 'Request Appointment',    href: '/parent/appointments',         color: 'from-blue-400 to-sky-500',     icon: Calendar },
+                                    { label: 'View Health Records',    href: '/parent/health',               color: 'from-teal-400 to-emerald-500', icon: Activity },
+                                    { label: 'Enrollment Requests',    href: '/parent/enrollment-requests',  color: 'from-amber-400 to-orange-500', icon: Clock },
                                 ].map((action) => (
                                     <Link
                                         key={action.label}
