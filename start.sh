@@ -13,7 +13,7 @@ cat > /app/.env << EOF
 APP_NAME=${APP_NAME:-KidCareHinoba-an}
 APP_ENV=production
 APP_KEY=${APP_KEY}
-APP_DEBUG=false
+APP_DEBUG=true
 APP_URL=${APP_URL:-http://localhost}
 APP_LOCALE=en
 APP_FALLBACK_LOCALE=en
@@ -90,12 +90,12 @@ php artisan route:cache && echo "Routes cached"
 cat > /app/server.php << 'ROUTER'
 <?php
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-if ($uri !== '/' && file_exists(__DIR__.'/public'.$uri)) {
+$publicPath = __DIR__.'/public';
+if ($uri !== '/' && file_exists($publicPath.$uri)) {
     return false;
 }
-$_SERVER['SCRIPT_FILENAME'] = __DIR__.'/public/index.php';
-require_once __DIR__.'/public/index.php';
+require_once $publicPath.'/index.php';
 ROUTER
 
 echo "=== DCMS Ready on port ${PORT:-8080} ==="
-exec php -S 0.0.0.0:${PORT:-8080} /app/server.php
+exec php -S 0.0.0.0:${PORT:-8080} -t /app/public /app/server.php
